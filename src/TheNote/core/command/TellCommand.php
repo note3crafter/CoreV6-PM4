@@ -13,10 +13,9 @@ namespace TheNote\core\command;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
-use pocketmine\command\utils\InvalidCommandSyntaxException;
 
 class TellCommand extends Command
 {
@@ -42,14 +41,14 @@ class TellCommand extends Command
             return false;
         }
 
-        $player = $sender->getServer()->getPlayer(strtolower($args[0]));
+        $player = $sender->getServer()->getPlayerExact(strtolower($args[0]));
         unset($args[0]);
         if ($player == null) {
             $sender->sendMessage($config->get("error") . "Der Spieler ist nicht Online!");
             return false;
         }
-        $cfg = new Config($this->plugin->getDataFolder() . Main::$userfile . $sender->getLowerCaseName() . ".json", Config::JSON);
-        $stats = new Config($this->plugin->getDataFolder() . Main::$statsfile . $player->getLowerCaseName() . ".json", Config::JSON);
+        $cfg = new Config($this->plugin->getDataFolder() . Main::$userfile . $sender->getName() . ".json", Config::JSON);
+        $stats = new Config($this->plugin->getDataFolder() . Main::$statsfile . $player->getName() . ".json", Config::JSON);
         $vote = new Config($this->plugin->getDataFolder() . Main::$setup . "vote.yml", Config::YAML);
         if ($vote->get("votes") == true) {
             if ($stats->get("votes") < 1) {

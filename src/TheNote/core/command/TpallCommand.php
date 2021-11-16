@@ -11,11 +11,11 @@
 
 namespace TheNote\core\command;
 
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
 
 class TpallCommand extends Command
 {
@@ -39,7 +39,7 @@ class TpallCommand extends Command
             return false;
         }
         foreach ($this->plugin->getServer()->getOnlinePlayers() as $player) {
-            $player->teleport($sender);
+            $player->teleport($sender->getLocation());
         }
         $sender->sendMessage($config->get("info") . "Du hast nun alle Spieler zu dir Teleportiert");
         return true;

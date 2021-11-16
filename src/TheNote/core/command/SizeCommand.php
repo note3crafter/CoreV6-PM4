@@ -11,16 +11,10 @@
 
 namespace TheNote\core\command;
 
-use pocketmine\block\Block;
-use pocketmine\entity\Entity;
-use pocketmine\level\Explosion;
-use pocketmine\network\mcpe\protocol\SetActorDataPacket;
-use pocketmine\Server;
-use TheNote\core\events\PlayerBurnEvent;
+use pocketmine\player\Player;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
 use pocketmine\utils\Config;
 
 class SizeCommand extends Command

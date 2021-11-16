@@ -15,9 +15,8 @@ use DateTimeZone;
 use Exception;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\ConsoleCommandSender;
 use pocketmine\item\Item;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use TheNote\core\Main;
 use TheNote\core\formapi\SimpleForm;
 use onebone\economyapi\EconomyAPI;
@@ -44,8 +43,8 @@ class KitCommand extends Command
             return false;
         }
         $form = new SimpleForm(function (Player $sender, $data) {
-            $name = $sender->getLowerCaseName();
-            $item = $sender->getPlayer();
+            $name = $sender->getName();
+            $item = $sender->getPlayerInfo()->getUsername();
             $mymoney = $this->plugin->getServer()->getPluginManager()->getPlugin("EconomyAPI");
             $user = new Config($this->plugin->getDataFolder() . Main::$userfile . $name . ".json", Config::JSON);
             $result = $data;

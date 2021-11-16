@@ -14,7 +14,7 @@ namespace TheNote\core\command;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
@@ -39,12 +39,12 @@ class SoundsCommand extends Command
         }
         $sound = new PlaySoundPacket();
         $sound->soundName = "note.flute";
-        $sound->x = $sender->getX();
-        $sound->y = $sender->getY();
-        $sound->z = $sender->getZ();
+        $sound->x = $sender->getLocation()->getX();
+        $sound->y = $sender->getLocation()->getY();
+        $sound->z = $sender->getLocation()->getZ();
         $sound->volume = 1;
         $sound->pitch = 0.5;
-        Server::getInstance()->broadcastPacket($sender->getLevel()->getPlayers(), $sound);
+        Server::getInstance()->broadcastPackets($sender->getWorld()->getPlayers(),[$sound]);
         return true;
     }
 }

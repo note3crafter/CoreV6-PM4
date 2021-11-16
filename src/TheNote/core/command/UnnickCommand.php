@@ -11,7 +11,7 @@
 
 namespace TheNote\core\command;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 use pocketmine\command\Command;
@@ -42,7 +42,7 @@ class UnnickCommand extends Command
             return false;
         }
         $pf = new Config($this->plugin->getDataFolder() . Main::$gruppefile . $sender->getName() . ".json", Config::JSON);
-        $hei = new Config($this->plugin->getDataFolder() . Main::$heifile . $sender->getLowerCaseName() . ".json", Config::JSON);
+        $hei = new Config($this->plugin->getDataFolder() . Main::$heifile . $sender->getName() . ".json", Config::JSON);
         if ($pf->get("Nick") === false) {
             $sender->sendMessage($config->get("error") . "Du hast keinen Nickname!");
             return true;

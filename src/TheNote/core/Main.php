@@ -28,6 +28,7 @@ use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\QueryRegenerateEvent;
 use pocketmine\item\Armor;
 use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
 use pocketmine\item\Tool;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
@@ -46,7 +47,6 @@ use pocketmine\Server;
 use pocketmine\utils\Binary;
 use pocketmine\utils\Config;
 use pocketmine\utils\Random;
-use pocketmine\item\ItemFactory;
 
 use pocketmine\world\ChunkManager;
 use pocketmine\world\generator\object\BirchTree;
@@ -234,7 +234,7 @@ class Main extends PluginBase implements Listener
     public static $version = "6.0.0 ALPHA";
     public static $protokoll = "440";
     public static $mcpeversion = "1.17.41";
-    public static $dateversion = "15.11.2021";
+    public static $dateversion = "16.11.2021";
     public static $plname = "CoreV6";
     public static $configversion = "6.0.0";
 
@@ -338,8 +338,7 @@ class Main extends PluginBase implements Listener
 
     function onJoin(PlayerJoinEvent $event)
     {
-        $player = $event->getPlayer();
-        //$this->getScheduler()->scheduleDelayedTask(new ScoreboardTask($this, $player->getName(), 20));
+    	$this->getScheduler()->scheduleDelayedTask(new ScoreboardTask($this, $event->getPlayer()), 20);
         $this->economyAPI = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI");
     }
 
@@ -608,7 +607,7 @@ class Main extends PluginBase implements Listener
             $this->getServer()->getCommandMap()->register("mycoins", new MyCoinsCommand($this));
             $this->getServer()->getCommandMap()->register("nick", new NickCommand($this));
             $this->getServer()->getCommandMap()->register("night", new NightCommand($this));
-            $this->getServer()->getCommandMap()->register("nightvision", new NightVisionCommand($this));
+            // $this->getServer()->getCommandMap()->register("nightvision", new NightVisionCommand($this)); ##Keine Funktion Effekts
             $this->getServer()->getCommandMap()->register("notell", new NoDMCommand($this));
             $this->getServer()->getCommandMap()->register("nuke", new NukeCommand($this));
             $this->getServer()->getCommandMap()->register("payall", new PayallCommand($this));
@@ -630,11 +629,11 @@ class Main extends PluginBase implements Listener
             $this->getServer()->getCommandMap()->register("gms", new SurvivalCommand($this));
             $this->getServer()->getCommandMap()->register("tell", new TellCommand($this));
             $this->getServer()->getCommandMap()->register("tpall", new TpallCommand($this));
-            $this->getServer()->getCommandMap()->register("tree", new TreeCommand($this));
+            //$this->getServer()->getCommandMap()->register("tree", new TreeCommand($this));
             $this->getServer()->getCommandMap()->register("unban", new UnbanCommand($this));
             $this->getServer()->getCommandMap()->register("unnick", new UnnickCommand($this));
             $this->getServer()->getCommandMap()->register("userdata", new UserdataCommand($this));
-            $this->getServer()->getCommandMap()->register("vanish", new VanishCommand($this));
+            //$this->getServer()->getCommandMap()->register("vanish", new VanishCommand($this));
             if ($votes->get("votes") == true) {
                 $this->getServer()->getCommandMap()->info("vote", new VoteCommand($this));
             } elseif ($votes->get("votes") == false) {
@@ -652,7 +651,7 @@ class Main extends PluginBase implements Listener
             $this->getServer()->getCommandMap()->register("tpaccept", new TpaacceptCommand($this));
             $this->getServer()->getCommandMap()->register("tpadeny", new TpadenyCommand($this));
             $this->getServer()->getCommandMap()->register("hub", new HubCommand($this));
-            $this->getServer()->getCommandMap()->register("seeperms", new SeePermsCommand($this));
+            //$this->getServer()->getCommandMap()->register("seeperms", new SeePermsCommand($this));
             $this->getServer()->getCommandMap()->register("id", new ItemIDCommand($this));
             $this->getServer()->getCommandMap()->register("enderinvsee", new EnderInvSeeCommand($this));
             $this->getServer()->getCommandMap()->register("invsee", new InvSeeCommand($this));
@@ -688,7 +687,7 @@ class Main extends PluginBase implements Listener
             $this->getServer()->getPluginManager()->registerEvents(new ColorChat($this), $this);
             $this->getServer()->getPluginManager()->registerEvents(new DeathMessages($this), $this);
             //$this->getServer()->getPluginManager()->registerEvents(new Particle($this), $this);
-            $this->getServer()->getPluginManager()->registerEvents(new AdminItemsEvents($this), $this);
+            //$this->getServer()->getPluginManager()->registerEvents(new AdminItemsEvents($this), $this);
             //$this->getServer()->getPluginManager()->registerEvents(new EconomySell($this), $this);
             //$this->getServer()->getPluginManager()->registerEvents(new EconomyShop($this), $this);
             //$this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
@@ -743,11 +742,7 @@ class Main extends PluginBase implements Listener
 
     public function isSpoon()
     {
-        if (!$this->getServer()->getName() == "PocketMine-MP") {
-            $this->getLogger()->error("Die Core wurde wurde nicht für Pocketmine Ausgelegt sondern Funktioniert nur mit Altay");
-            return false;
-        }
-        if (!$this->getDescription()->getVersion() == Main::$version || $this->getDescription()->getName() !== "CoreV5") {
+        if (!$this->getDescription()->getVersion() == Main::$version || $this->getDescription()->getName() !== "CoreV6") {
             $this->getLogger()->error("Du benutzt keine Originale Version der Core!");
             return false;
         }
@@ -827,10 +822,10 @@ class Main extends PluginBase implements Listener
             //StarterKit
             $player = $event->getPlayer();
             $ainv = $player->getArmorInventory();
-            /*if ($config->get("StarterKit") == true) {
+            if ($config->get("StarterKit") == true) {
                 if ($cfg->get("Inventory", false)) {
                     foreach ($cfg->get("Slots", []) as $item) {
-                        $result = Item::get($item["id"], $item["damage"], $item["count"]);
+                    	$result = ItemFactory::getInstance()->get($item["id"], $item["damage"], $item["count"]);
                         $result->setCustomName($item["name"]);
                         $result->setLore([$item["lore"]]);
                         $player->getInventory()->setItem($item["slot"], $result);
@@ -838,30 +833,30 @@ class Main extends PluginBase implements Listener
                 }
                 if ($cfg->get("Armor", false)) {
                     $data = $cfg->get("helm");
-                    $item = Item::get($data["id"]);
+                    $item = ItemFactory::getInstance()->get($data["id"]);
                     $item->setCustomName($data["name"]);
                     $item->setLore([$data["lore"]]);
                     $ainv->setHelmet($item);
 
                     $data = $cfg->get("chest");
-                    $item = Item::get($data["id"]);
+                    $item = ItemFactory::getInstance()->get($data["id"]);
                     $item->setCustomName($data["name"]);
                     $item->setLore([$data["lore"]]);
                     $ainv->setChestplate($item);
 
                     $data = $cfg->get("leggins");
-                    $item = Item::get($data["id"]);
+                    $item = ItemFactory::getInstance()->get($data["id"]);
                     $item->setCustomName($data["name"]);
                     $item->setLore([$data["lore"]]);
                     $ainv->setLeggings($item);
 
                     $data = $cfg->get("boots");
-                    $item = Item::get($data["id"]);
+                    $item =  ItemFactory::getInstance()->get($data["id"]);
                     $item->setCustomName($data["name"]);
                     $item->setLore([$data["lore"]]);
                     $ainv->setBoots($item);
                 }
-            }*/
+            }
             //Groupsystem
             $defaultgroup = $groups->get("DefaultGroup");
             $player = $event->getPlayer();

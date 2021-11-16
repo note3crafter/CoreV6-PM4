@@ -12,9 +12,7 @@
 
 namespace TheNote\core\command;
 
-use pocketmine\command\ConsoleCommandSender;
 use pocketmine\event\Listener;
-use pocketmine\Player;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;

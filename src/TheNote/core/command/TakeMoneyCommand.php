@@ -12,7 +12,7 @@
 namespace TheNote\core\command;
 
 use pocketmine\event\Listener;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\Server;
 use TheNote\core\Main;
 use pocketmine\command\Command;
@@ -53,13 +53,13 @@ class TakeMoneyCommand extends Command implements Listener
             $sender->sendMessage($config->get("error") . "Bitte gebe eine Numeriche Zahl an!");
             return false;
         }
-        $player = $sender->getServer()->getPlayer(strtolower($args[0]));
+        $player = $sender->getServer()->getPlayerExact(strtolower($args[0]));
         if($player === $sender){
             $sender->sendMessage($config->get("error") . "Du kannst dir nicht selbst geld Abziehen!");
             return false;
         }
 
-        $target = Server::getInstance()->getPlayer(strtolower($args[0]));
+        $target = Server::getInstance()->getPlayerExact(strtolower($args[0]));
         if ($target == null) {
             $sender->sendMessage($config->get("error") . "Der Spieler ist nicht Online");
             return false;

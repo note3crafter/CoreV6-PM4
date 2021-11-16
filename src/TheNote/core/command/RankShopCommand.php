@@ -11,12 +11,12 @@
 
 namespace TheNote\core\command;
 
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\formapi\SimpleForm;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
 use onebone\economyapi\EconomyAPI;
 
 class RankShopCommand extends Command

@@ -11,10 +11,10 @@
 
 namespace TheNote\core\command;
 
+use pocketmine\player\Player;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
 use pocketmine\utils\Config;
 
 class SudoCommand extends Command

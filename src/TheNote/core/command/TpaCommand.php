@@ -11,12 +11,13 @@
 
 namespace TheNote\core\command;
 
+use pocketmine\player\Player;
 use pocketmine\Server;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
 use pocketmine\utils\Config;
+
 class TpaCommand extends Command
 {
     private $plugin;
@@ -39,7 +40,7 @@ class TpaCommand extends Command
             $sender->sendMessage($configs->get("info") . "Nutze : /tpa {player}");
             return false;
         }
-        $target = Server::getInstance()->getPlayer(strtolower($args[0]));
+        $target = Server::getInstance()->getPlayerExact(strtolower($args[0]));
         if ($target === $sender){
             $sender->sendMessage($configs->get("error") . "§cDu kannst dir keine TPA´s schicken!");
             return false;

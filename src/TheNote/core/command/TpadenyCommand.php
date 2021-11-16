@@ -11,10 +11,10 @@
 
 namespace TheNote\core\command;
 
+use pocketmine\player\Player;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
 use pocketmine\utils\Config;
 
 class TpadenyCommand extends Command
@@ -44,9 +44,9 @@ class TpadenyCommand extends Command
     }
     public function tpar($name) : void{
         $configs = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        $player = $this->plugin->getServer()->getPlayer($name);
+        $player = $this->plugin->getServer()->getPlayerExact($name);
         if($this->plugin->getInviteControl($name)){
-            $sender = $this->plugin->getServer()->getPlayer($this->plugin->getInvite($name));
+            $sender = $this->plugin->getServer()->getPlayerExact($this->plugin->getInvite($name));
             unset($this->plugin->invite[$name]);
             $sender->sendMessage($configs->get("tpa") . "§6Der Spieler§e $name §6hat deine TPA-Anfrage abgelehnt.");
 

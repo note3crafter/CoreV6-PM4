@@ -11,12 +11,12 @@
 
 namespace TheNote\core\command;
 
-    use pocketmine\Player;
-    use pocketmine\utils\Config;
-    use TheNote\core\Main;
-    use TheNote\core\formapi\SimpleForm;
-    use pocketmine\command\Command;
-    use pocketmine\command\CommandSender;
+use pocketmine\player\Player;
+use pocketmine\utils\Config;
+use TheNote\core\Main;
+use TheNote\core\formapi\SimpleForm;
+use pocketmine\command\Command;
+use pocketmine\command\CommandSender;
 
 class ServerStatsCommand extends Command
 {

@@ -11,12 +11,12 @@
 
 namespace TheNote\core\command;
 
-use pocketmine\level\sound\AnvilUseSound;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
+use pocketmine\world\sound\AnvilUseSound;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
 
 class RepairCommand extends Command
 {
@@ -48,8 +48,9 @@ class RepairCommand extends Command
         if ($item->getDamage() > 0) {
             $item->setDamage(0);
             $sender->getInventory()->setItemInHand($item);
-            $sender->getLevel()->addSound(new AnvilUseSound($sender));
-            $sender->sendMessage($config->get("info") . "Das Item wurde erfolgreich Repaiert");
+			$sender->getWorld()->addSound($sender->getPosition(), new AnvilUseSound());
+
+			$sender->sendMessage($config->get("info") . "Das Item wurde erfolgreich Repaiert");
         } else {
             $sender->sendMessage($config->get("error") . "Dieses Item hat keine Beschädigung");
             return true;

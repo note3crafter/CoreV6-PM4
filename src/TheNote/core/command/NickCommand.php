@@ -11,7 +11,7 @@
 
 namespace TheNote\core\command;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 use pocketmine\command\Command;

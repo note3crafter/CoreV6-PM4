@@ -11,7 +11,7 @@
 
 namespace TheNote\core\command;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 use pocketmine\command\Command;
@@ -30,7 +30,7 @@ class PayCoinsCommand extends Command
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
-        $coins = new Config($this->plugin->getDataFolder() . Main::$userfile . $sender->getLowerCaseName() . ".json", Config::JSON);
+        $coins = new Config($this->plugin->getDataFolder() . Main::$userfile . $sender->getName() . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         if (!$sender instanceof Player) {
             $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");

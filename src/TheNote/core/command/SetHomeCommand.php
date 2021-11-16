@@ -13,7 +13,7 @@ namespace TheNote\core\command;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 
@@ -44,10 +44,10 @@ class SetHomeCommand extends Command
             return true;
         }
         if (isset($args[0])) {
-            $x = $sender->getX();
-            $y = $sender->getY();
-            $z = $sender->getZ();
-            $world = $sender->getLevel()->getName();
+            $x = $sender->getLocation()->getX();
+            $y = $sender->getLocation()->getY();
+            $z = $sender->getLocation()->getZ();
+            $world = $sender->getWorld()->getFolderName();
             $name = $args[0];
             $user = new Config($this->plugin->getDataFolder() . Main::$userfile . $sender->getName() . ".json", Config::JSON);
             $user->set("homes", $user->set("homes") + 1);

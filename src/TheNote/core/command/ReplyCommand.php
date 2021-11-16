@@ -13,10 +13,9 @@ namespace TheNote\core\command;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
-use pocketmine\command\utils\InvalidCommandSyntaxException;
 
 class ReplyCommand extends Command
 {
@@ -43,7 +42,7 @@ class ReplyCommand extends Command
             $sender->sendMessage($config->get("info") . "Nutze: /reply {message}");
         }
         if(!empty($this->plugin->getLastSent($sender->getName()))) {
-            $player = $this->plugin->getServer()->getPlayer($this->plugin->getLastSent($sender->getName()));
+            $player = $this->plugin->getServer()->getPlayerExact($this->plugin->getLastSent($sender->getName()));
                 if($player instanceof CommandSender) {
                     $msg = implode(" ", $args);
                     $sName = $sender->getName();

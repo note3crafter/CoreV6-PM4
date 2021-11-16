@@ -11,11 +11,11 @@
 
 namespace TheNote\core\command;
 
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
 
 class NoDMCommand extends Command
 {
@@ -38,7 +38,7 @@ class NoDMCommand extends Command
             $sender->sendMessage($config->get("info") . "/notell <on|off>");
             return true;
         }
-        $cfg = new Config($this->plugin->getDataFolder() . Main::$userfile . $sender->getLowerCaseName() . ".json", Config::JSON);
+        $cfg = new Config($this->plugin->getDataFolder() . Main::$userfile . $sender->getName() . ".json", Config::JSON);
         if (isset($args[0])) {
             if ($args[0] == "on") {
                 $cfg->set("nodm", true);

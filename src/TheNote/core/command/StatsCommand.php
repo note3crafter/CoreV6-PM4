@@ -11,7 +11,7 @@
 
 namespace TheNote\core\command;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 use TheNote\core\formapi\SimpleForm;
@@ -35,7 +35,7 @@ class StatsCommand extends Command {
             $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
             return false;
         }
-        $stats = new Config($this->plugin->getDataFolder() . Main::$statsfile . $sender->getLowerCaseName() . ".json", Config::JSON);
+        $stats = new Config($this->plugin->getDataFolder() . Main::$statsfile . $sender->getName() . ".json", Config::JSON);
         $form = new SimpleForm(function (Player $sender, $data) {
             $result = $data;
             if ($result === null) {

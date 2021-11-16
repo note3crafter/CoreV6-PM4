@@ -11,11 +11,11 @@
 
 namespace TheNote\core\command;
 
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
 
 class PosCommand extends Command
 {
@@ -39,9 +39,9 @@ class PosCommand extends Command
             $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
             return false;
         }
-        $x = $sender->getX();
-        $y = $sender->getY();
-        $z = $sender->getZ();
+        $x = $sender->getLocation()->getX();
+        $y = $sender->getLocation()->getY();
+        $z = $sender->getLocation()->getZ();
         $sender->sendMessage($config->get("prefix") . "Deine Aktuelle Position ist §eX§f: §a$x- §eY§f: §a$y- §eZ§f: §a$z");
         return true;
     }

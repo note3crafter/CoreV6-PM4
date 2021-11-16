@@ -18,9 +18,9 @@ use pocketmine\event\entity\EntityShootBowEvent;
 use pocketmine\event\entity\ProjectileHitBlockEvent;
 use pocketmine\event\Listener;
 use pocketmine\item\ItemFactory;
-use pocketmine\level\Explosion;
-use pocketmine\level\Position;
 use pocketmine\utils\Config;
+use pocketmine\world\Explosion;
+use pocketmine\world\Position;
 use TheNote\core\Main;
 
 class AdminItemsEvents implements Listener
@@ -35,11 +35,11 @@ class AdminItemsEvents implements Listener
     public function onShoot(EntityShootBowEvent $event)
     {
         $bogen = $event->getBow();
-        if ($bogen->getNamedTag()->hasTag("custom_data")) {
+        if ($bogen->getNamedTag()->getCompoundTag("custom_data")) {
             $value = $bogen->getNamedTag()->getString("custom_data");
             if ($value == "super_bow") {
                 $projectile = $event->getProjectile();
-                $projectile->namedtag->setString("custom_data", "super_arrow");
+                $projectile->setNameTag(string["custom_data", "super_arrow"]);
             }
             if ($value == "explode_bow") {
                 $projectile = $event->getProjectile();
@@ -67,8 +67,8 @@ class AdminItemsEvents implements Listener
             }
             if ($value == "super_arrow") {
                 $entity->flagForDespawn();
-                $block->getLevel()->setBlock($block, BlockFactory::get(0, 0, null));
-                $block->getLevel()->dropItem($block, ItemFactory::get($block->getId(), $block->getDamage(), 1));
+                $block->getPosition()->getWorld()->setBlock($block->getPosition(), BlockFactory::getInstance()->get(0, 0, null));
+                $block->getPosition()->getWorld()->dropItem($block->getPosition(), ItemFactory::getInstance()->get($block->getId(), $block->getDamage(), 1));
             }
             if ($value == "explode_arrow") {
                 if (!$event->getEntity() instanceof Arrow) {
@@ -82,10 +82,10 @@ class AdminItemsEvents implements Listener
         }
         if ($configs->get("ExplodeEgg") == true) {
             if ($entity instanceof Egg) {
-                $theX = $entity->getX();
-                $theY = $entity->getY();
-                $theZ = $entity->getZ();
-                $level = $entity->getLevel();
+                $theX = $entity->getLocation()->getX();
+                $theY = $entity->getLocation()->getY();
+                $theZ = $entity->getLocation()->getZ();
+                $level = $entity->getWorld();
                 $thePosition = new Position($theX, $theY, $theZ, $level);
                 $theExplosion = new Explosion($thePosition, 5, NULL);
                 $theExplosion->explodeB();

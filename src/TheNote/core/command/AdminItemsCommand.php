@@ -84,17 +84,15 @@ class AdminItemsCommand extends Command implements Listener
     }
     public function superbow(Player $player)
     {
-    	$sbogen = ItemIds::BOW;
-        //$sbogen = ItemFactory::get(261, 0, 1);
-        //$sbogen->setCustomName("§f[§cSuperBow§f]");
-        //$sbogen->get
-        //$sbogen->getNamedTag()->setString("custom_data", "super_bow");
+    	$sbogen = ItemFactory::getInstance()->get(261, 0, 1);
+        $sbogen->setCustomName("§f[§cSuperBow§f]");
+        $sbogen->getNamedTag()->setString("custom_data", "super_bow");
         $player->getInventory()->addItem($sbogen);
 
     }
     public function explosivbow(Player $player)
     {
-        $ebow = ItemFactory::get(261, 0, 1);
+    	$ebow = ItemFactory::getInstance()->get(261, 0, 1);
         $ebow->setCustomName("§f[§cExplosivBow§f]");
         $ebow->getNamedTag()->setString("custom_data", "explode_bow");
         $player->getInventory()->addItem($ebow);
@@ -102,7 +100,7 @@ class AdminItemsCommand extends Command implements Listener
     }
     public function explodeegg(Player $player)
     {
-        $egg = ItemFactory::get(344, 0, 16);
+        $egg = ItemFactory::getInstance()->get(344, 0, 16);
         $egg->setCustomName("§f[§cExplosivEgg§f]");
         $egg->getNamedTag()->setString("custom_data", "explode_egg");
         $player->getInventory()->addItem($egg);

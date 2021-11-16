@@ -53,8 +53,6 @@ class HealCommand extends Command
                 } else {
                     $sender->setAllowFlight(true);
                     $sender->setHealth(20);
-                    $volume = mt_rand();
-                    $sender->getWorld()->broadcastLevelSoundEvent($sender, LevelSoundEventPacket::SOUND_EAT, (int) $volume);
                     $sender->sendMessage($config->get("prefix") . "§6Du wurdest §eGeheilt§6 von " . $sender->getNameTag());
                     $sender->sendMessage($config->get("prefix") . "§6Du hast " .  $victim->getName() . " §eGeheilt§6.");
                     return false;

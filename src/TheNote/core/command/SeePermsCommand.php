@@ -11,7 +11,7 @@
 
 namespace TheNote\core\command;
 
-use pocketmine\command\ConsoleCommandSender;
+use pocketmine\console\ConsoleCommandSender;
 use pocketmine\permission\DefaultPermissions;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
@@ -19,7 +19,6 @@ use pocketmine\utils\Config;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
 
 class SeePermsCommand extends Command
 {
@@ -73,7 +72,7 @@ class SeePermsCommand extends Command
             $sender->sendMessage($config->get("group") . "§6Seite §f: §e" . $pageNumber . "§f/§e" . $maxPageNumber);
         }
         foreach ($chunkedPermissions[$pageNumber - 1] as $permission) {
-            $sender->sendMessage("§e" . $permission->getName());
+            $sender->sendMessage("§e" . $permission->getPluginName());
         }
         return true;
     }
@@ -84,7 +83,7 @@ class SeePermsCommand extends Command
     public function getPocketMinePerms()
     {
         if ($this->pmDefaultPerms === []) {
-            foreach ($this->plugin->getServer()->getPluginManager()->getPermissions() as $permission) {
+            foreach ($this->plugin->getServer()->getPluginManager()->getPermission() as $permission) {
                 if (strpos($permission->getName(), DefaultPermissions::ROOT) !== false)
                     $this->pmDefaultPerms[] = $permission;
             }

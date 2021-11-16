@@ -13,7 +13,7 @@ namespace TheNote\core\command;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 use onebone\economyapi\EconomyAPI;
@@ -36,7 +36,6 @@ class PerkShopCommand extends Command
             $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
             return false;
         }
-        $name = $sender->getLowerCaseName();
         if (!$this->testPermission($sender)) {
             $sender->sendMessage($config->get("info") . "Du kannst dir diesen Perk im Perkshop kaufen");
             return true;
@@ -607,7 +606,7 @@ class PerkShopCommand extends Command
                     break;
             }
         });
-        $player = $sender->getLowerCaseName();
+        $player = $sender->getName();
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         $perk = new Config($this->plugin->getDataFolder() . Main::$setup . "PerkSettings.yml", Config::YAML);
         $daten = new Config($this->plugin->getDataFolder() . Main::$userfile . $player . ".json", Config::JSON);

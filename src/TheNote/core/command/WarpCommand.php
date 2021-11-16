@@ -11,12 +11,11 @@
 
 namespace TheNote\core\command;
 
-
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\level\Position;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
+use pocketmine\world\Position;
 use TheNote\core\Main;
 
 class WarpCommand extends Command
@@ -54,8 +53,8 @@ class WarpCommand extends Command
                     $sender->sendMessage($config->get("error") . "§6Der angegebene Warp §c$args[0] §6existiert nicht.");
                     return false;
                 } else {
-                    $this->plugin->getServer()->loadLevel($world);
-                    $sender->teleport(new Position($x, $y, $z, $this->plugin->getServer()->getLevelByName($world)));
+                    $this->plugin->getServer()->getWorldManager()->loadWorld($world);
+					$sender->teleport(new Position($x , $y , $z, $this->plugin->getServer()->getWorldManager()->getWorld($world)));
                 }
                 return false;
             }

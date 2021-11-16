@@ -13,7 +13,7 @@ namespace TheNote\core\command;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 
@@ -37,10 +37,10 @@ class SetstatstextCommand extends Command
             return false;
         }
         $cfg = new Config($this->plugin->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
-        $cfg->set("level", $sender->getLevel()->getFolderName());
-        $cfg->set("X", $sender->getX());
-        $cfg->set("Y", $sender->getY());
-        $cfg->set("Z", $sender->getZ());
+        $cfg->set("level", $sender->getWorld()->getFolderName());
+        $cfg->set("X", $sender->getLocation()->getX());
+        $cfg->set("Y", $sender->getLocation()->getY());
+        $cfg->set("Z", $sender->getLocation()->getZ());
         $cfg->set("statstext", true);
         $cfg->save();
         $sender->sendMessage($config->get("info") . "§eDas Statstext wurde erfolgtreich geupdatet und gesetzt!");

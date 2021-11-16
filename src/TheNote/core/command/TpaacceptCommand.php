@@ -11,10 +11,10 @@
 
 namespace TheNote\core\command;
 
+use pocketmine\player\Player;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
 use pocketmine\utils\Config;
 
 class TpaacceptCommand extends Command
@@ -45,10 +45,10 @@ class TpaacceptCommand extends Command
     public function tpak(string $name): void
     {
         $configs = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        $player = $this->plugin->getServer()->getPlayer($name);
+        $player = $this->plugin->getServer()->getPlayerExact($name);
         if ($this->plugin->getInviteControl($name)) {
-            $sender = $this->plugin->getServer()->getPlayer($this->plugin->getInvite($name));
-            $sender->teleport($player->asPosition());
+            $sender = $this->plugin->getServer()->getPlayerExact($this->plugin->getInvite($name));
+            $sender->teleport($player->getLocation()->asPosition());
             unset($this->plugin->invite[$name]);
             $sender->sendMessage($configs->get("tpa") . "§6Der Spieler§e $name §6hat deine TPA-Anfrage angenommen.");
         } else {

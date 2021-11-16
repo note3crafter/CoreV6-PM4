@@ -13,12 +13,12 @@ namespace TheNote\core\command;
 
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
+use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
 
 class SuperVanishCommand extends Command
 {
@@ -67,7 +67,7 @@ class SuperVanishCommand extends Command
                 $stp3 = str_replace("{slots}", $slots , $stp2);
                 $quitmsg = str_replace("{prefix}", $prefix, $stp3);
                 $this->plugin->getServer()->broadcastMessage($quitmsg);
-                $sender->getServer()->removePlayerListData($sender->getUniqueId());
+                //$sender->getServer()->removePlayerListData($sender->getUniqueId());
                 $sender->getServer()->removeOnlinePlayer($sender);
 
                 foreach (Server::getInstance()->getOnlinePlayers() as $player) {
@@ -92,7 +92,7 @@ class SuperVanishCommand extends Command
                 $stp3 = str_replace("{slots}", $slots , $stp2);
                 $joinmsg = str_replace("{prefix}", $prefix, $stp3);
                 $this->plugin->getServer()->broadcastMessage($joinmsg);
-                $sender->getServer()->updatePlayerListData($sender->getUniqueId(), $sender->getId(), $sender->getDisplayName(), $sender->getSkin(), $sender->getXuid());
+               // $sender->getServer()->updatePlayerListData($sender->getUniqueId(), $sender->getId(), $sender->getDisplayName(), $sender->getSkin(), $sender->getXuid());
 
                 foreach (Server::getInstance()->getOnlinePlayers() as $player) {
                     assert(true);

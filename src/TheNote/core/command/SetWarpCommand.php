@@ -11,10 +11,9 @@
 
 namespace TheNote\core\command;
 
-
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 
@@ -40,10 +39,10 @@ class SetWarpCommand extends Command
             return false;
         }
         if (isset($args[0])) {
-            $x = $sender->getX();
-            $y = $sender->getY();
-            $z = $sender->getZ();
-            $world = $sender->getLevel()->getName();
+            $x = $sender->getLocation()->getX();
+            $y = $sender->getLocation()->getY();
+            $z = $sender->getLocation()->getZ();
+            $world = $sender->getWorld()->getFolderName();
             $name = $args[0];
             $warp = new Config($this->plugin->getDataFolder() . Main::$cloud . "warps.json", Config::JSON);
             $warp->set($name, ["X" => $x, "Y" => $y, "Z" => $z, "world" => $world]);

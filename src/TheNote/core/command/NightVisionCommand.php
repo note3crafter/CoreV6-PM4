@@ -11,13 +11,11 @@
 
 namespace TheNote\core\command;
 
-use pocketmine\entity\EffectInstance;
-use pocketmine\entity\Effect;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
 
 class NightVisionCommand extends Command
 {

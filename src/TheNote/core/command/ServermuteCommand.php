@@ -59,7 +59,7 @@ class ServermuteCommand extends Command implements Listener
         $configs = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         $player = $event->getPlayer();
         if($this->plugin->isMuted()){
-            $event->setCancelled();
+            $event->cancel();
             $player->sendMessage($configs->get("error") . "Der Serverchat ist derzeit Stummgeschaltet!");
             return;
         }

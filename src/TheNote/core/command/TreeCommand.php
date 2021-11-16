@@ -14,18 +14,18 @@ namespace TheNote\core\command;
 use pocketmine\block\Sapling;
 use pocketmine\event\Cancellable;
 use pocketmine\event\player\PlayerEvent;
-use pocketmine\level\ChunkManager;
-use pocketmine\level\generator\object\BirchTree;
-use pocketmine\level\generator\object\JungleTree;
-use pocketmine\level\generator\object\OakTree;
-use pocketmine\level\generator\object\SpruceTree;
-use pocketmine\level\Position;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use pocketmine\utils\Random;
+use pocketmine\world\ChunkManager;
+use pocketmine\world\generator\object\BirchTree;
+use pocketmine\world\generator\object\JungleTree;
+use pocketmine\world\generator\object\OakTree;
+use pocketmine\world\generator\object\SpruceTree;
+use pocketmine\world\Position;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
 
 class TreeCommand extends Command
 {

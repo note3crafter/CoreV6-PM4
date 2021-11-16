@@ -12,11 +12,11 @@
 namespace TheNote\core\command;
 
 use pocketmine\entity\Entity;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
 
 class VanishCommand extends Command
 {
@@ -46,6 +46,7 @@ class VanishCommand extends Command
             if(!isset($this->vanish[$sender->getName()])){
                 $this->vanish[$sender->getName()] = true;
                 $sender->setNameTagVisible(false);
+                $sender->sendData(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
                 $sender->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
                 $sender->sendMessage($config->get("prefix") . "Dein §eVanish §6wurde §aAktiviert§6.");
             }else{

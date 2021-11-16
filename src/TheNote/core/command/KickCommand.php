@@ -12,7 +12,7 @@
 namespace TheNote\core\command;
 
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 use pocketmine\command\Command;
@@ -41,12 +41,12 @@ class KickCommand extends Command
         }
         if(isset($args[0])) {
             if(empty($args[1])) {
-                if ($this->plugin->getServer()->getPlayer($args[0]) instanceof Player) {
-                    $victim = $this->plugin->getServer()->getPlayer($args[0]);
+                if ($this->plugin->getServer()->getPlayerExact($args[0]) instanceof Player) {
+                    $victim = $this->plugin->getServer()->getPlayerExact($args[0]);
                     $victim->kick("§cDu wurdest gekickt von " . $sender->getName(), false);
                 }
-            } elseif ($this->plugin->getServer()->getPlayer($args[0]) instanceof Player) {
-                $victim = $this->plugin->getServer()->getPlayer($args[0]);
+            } elseif ($this->plugin->getServer()->getPlayerExact($args[0]) instanceof Player) {
+                $victim = $this->plugin->getServer()->getPlayerExact($args[0]);
                 $victim->kick("§cDu wurdest gekickt von " . $sender->getName() . "§c wegen " . $args[1] , false);
             }
         }
