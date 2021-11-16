@@ -22,7 +22,7 @@ QuitMessage: true
 Quitmsg: "§f[§c-§f] {prefix} {player} §chat den Server verlassen! §f[§a{count}§f/§a{slots}§f]"
 #Stelle hier den JoinTip ein / {player}
 JoinTip: true
-Tipmsg: "§eDanke das du die CoreV5 benutzt {player}"
+Tipmsg: "§eDanke das du die CoreV6 benutzt {player}"
 #Stelle hier den JoinTitle ein / {player}
 JoinTitle: true
 Titlemsg: "§dWillkommen"
@@ -33,7 +33,7 @@ totem: true #aktiviere/deaktivere den TotenEffect
 sound: true #aktiviere/deaktiviere den Donner
 
 #NetzwerkName
-networkname: "§f[§eCore§4V5§f] §eALPHA" #schreibe hier dein servername oder was frag mich rein...
+networkname: "§f[§eCore§4V6§f] §eALPHA" #schreibe hier dein servername oder was frag mich rein...
 
 #EconomySystem
 DefaultMoney: 1000
