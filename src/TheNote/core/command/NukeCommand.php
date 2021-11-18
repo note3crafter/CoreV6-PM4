@@ -12,6 +12,7 @@
 namespace TheNote\core\command;
 
 use pocketmine\block\Block;
+use pocketmine\block\BlockFactory;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\world\Explosion;
@@ -51,7 +52,7 @@ class NukeCommand extends Command
                     $sender->sendMessage($configs->get("error") . "Der Spieler ist nicht Online!");
                     return false;
                 } else {
-                    $explosion = new Explosion($sender->getPosition(),100, Block::TNT);
+                    $explosion = new Explosion($sender->getPosition(),100, 46);
                     $explosion->explodeA();
                     $explosion->explodeB();
                     $victim->sendMessage($configs->get("prefix") . "§6Du wurdest genuket!!!.");
@@ -63,7 +64,7 @@ class NukeCommand extends Command
                 return false;
             }
         }
-        $explosion = new Explosion($sender->getPosition(),100, Block::TNT);
+        $explosion = new Explosion($sender->getPosition(),100, 46);
         $explosion->explodeA();
         $explosion->explodeB();
         $sender->sendMessage($configs->get("prefix") . "§6Du hast eine Atombombe gelegt!");

@@ -18,6 +18,7 @@ use pocketmine\event\entity\EntityShootBowEvent;
 use pocketmine\event\entity\ProjectileHitBlockEvent;
 use pocketmine\event\Listener;
 use pocketmine\item\ItemFactory;
+use pocketmine\item\StringItem;
 use pocketmine\utils\Config;
 use pocketmine\world\Explosion;
 use pocketmine\world\Position;
@@ -40,6 +41,7 @@ class AdminItemsEvents implements Listener
             if ($value == "super_bow") {
                 $projectile = $event->getProjectile();
                 $projectile->setNameTag(string["custom_data", "super_arrow"]);
+                $projectile->setNameTag;
             }
             if ($value == "explode_bow") {
                 $projectile = $event->getProjectile();
@@ -54,8 +56,8 @@ class AdminItemsEvents implements Listener
         $entity = $event->getEntity();
         $block = $event->getBlockHit();
         $radius = 5;
-        if ($entity->namedtag->hasTag("custom_data")) {
-            $value = $entity->namedtag->getString("custom_data");
+        if ($entity->hasTag("custom_data")) {
+            $value = $entity->getNameTag() === "custom_data";
             if ($value == "explode_egg") {
                 if (!$event->getEntity() instanceof Egg) {
                     return;

@@ -65,7 +65,7 @@ class PayallCommand extends Command
                             EconomyAPI::getInstance()->reduceMoney($sender, $amount);
                         }
                     }
-                    $this->plugin->getServer()->broadcastMessage($config->get("prefix") . "§e" . $sender->getNameTag() . "§6 hat §c" . $maxpay . "€ §6 an alle Spieler verteilt. Jeder hat: §e" . $amount . "€§6 erhalten.");
+                    $this->plugin->getServer()->broadcastMessage($config->get("prefix") . "§e" . $sender->getNameTag() . "§6 hat §c" . $args[0] . "€ §6 an alle Spieler verteilt. Jeder hat: §e" . $amount . "€§6 erhalten.");
                 } else {
                     $sender->sendMessage($config->get("error") . "§cTut mir leid du hast zu wenig Geld auf deinem Konto!");
                 }

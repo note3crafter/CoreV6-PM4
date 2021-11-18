@@ -1,12 +1,13 @@
-<h1>CoreV6 ALPHA PmmP4<img src="https://github.com/note3crafter/Core-V5/blob/main/resources/icon.png" height="64" width="64" align="left"></img></h1>
+<h1>CoreV6 ALPHA<img src="https://github.com/note3crafter/Core-V5/blob/main/resources/icon.png" height="64" width="64" align="left"></img></h1>
 <br />
 Für Pocketmine API 4.0
 
 Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/427472879072968714.svg?style=flat-square&label=discord&colorB=7289da)](https://discord.gg/Pebq8Wu) <br>
 # Download und Wichtig 
 
-- [Hier downloaden](https://poggit.pmmp.io/ci/note3crafter/CoreV6-API4/CoreV6-API4)!
+- [Hier downloaden](https://poggit.pmmp.io/ci/note3crafter/Core-V6/Core-V6)!
   Das Core Plugin wurde speziell für CityBuild Server entwickelt! Bitte beachtet, dass es eine ALPHA Version ist und womöglich instabil läuft.
+- Entwicklung vorerst eingestellt! Werde nur updaten und fixxen wenn was kommt! Da ich Aktuell keine Zeit habe :/
 # Fehler & Bugs
 Aktuell ist sie Instabiel! Sie befindet sich in der Alpha Phase!
 # Mindestanforderungen 
@@ -20,7 +21,6 @@ Aktuell ist sie Instabiel! Sie befindet sich in der Alpha Phase!
 - Neuschreiben des Booster Commands
 - Neuschreiben des Ban Systems
 - API für das Economy System
-- Weitere Blöcke aus der 1.16 hinzufügen
 - Internes World Edit System
 - Language System (Sprachen System) - Da es sehr Arbeitsintensiv ist, kann dies noch dauern!
   -> Mit Auswahl eigener Sprachen und Erweiterung auf weiterer Sprachen!
@@ -46,7 +46,7 @@ Aktuell ist sie Instabiel! Sie befindet sich in der Alpha Phase!
 - Gruppensystem (Inkompatible zu PurePerms!!!)
 - Farbiges Schreiben mit &
 - Economy System (Kompatible mit EconomyAPI) (Money.yml kann weitergenutzt werden)
-- Wolrd Managment System
+- World Managment System
 
 # Hilfe & Support
 Ich werde die Core solange wie Möglich Aktuell halten und Updaten sofern es meine Zeit zulässt...

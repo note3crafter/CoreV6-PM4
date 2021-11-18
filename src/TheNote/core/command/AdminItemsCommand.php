@@ -56,7 +56,7 @@ class AdminItemsCommand extends Command implements Listener
         }
         if (isset($args[0])) {
             if ($args[0] == "superbow") {
-                if ($sender->hasPermission("core.command.adminitems.superbow")) {
+                if ($sender->hasPermission("core.command.adminitems.superbow")or $sender->getServer()->isOp($sender->getName())) {
                     $this->superbow($sender);
                     $sender->sendMessage($configs->get("prefix") . $lang->get("adminitems1"));
                 } else {
@@ -64,7 +64,7 @@ class AdminItemsCommand extends Command implements Listener
                 }
             }
             if ($args[0] == "explosivbow") {
-                if ($sender->hasPermission("core.command.adminitems.explosivbow")) {
+                if ($sender->hasPermission("core.command.adminitems.explosivbow") or $sender->getServer()->isOp($sender->getName())) {
                     $this->explosivbow($sender);
                     $sender->sendMessage($configs->get("prefix") . $lang->get("adminitems1"));
                 } else {
@@ -72,7 +72,7 @@ class AdminItemsCommand extends Command implements Listener
                 }
             }
             if ($args[0] == "explosivegg") {
-                if ($sender->hasPermission("core.command.adminitems.explosivbow")) {
+                if ($sender->hasPermission("core.command.adminitems.explosivbow") or $sender->getServer()->isOp($sender->getName())) {
                     $this->explodeegg($sender);
                     $sender->sendMessage($configs->get("prefix") . $lang->get("adminitems1"));
                 } else {

@@ -19,7 +19,9 @@ use TheNote\core\Main;
 class ColorChat implements Listener
 {
 
-    public function __construct(Main $plugin)
+	private Main $plugin;
+
+	public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
     }
@@ -27,7 +29,7 @@ class ColorChat implements Listener
     public function onChat(PlayerChatEvent $ev)
     {
         $player = $ev->getPlayer();
-        if ($player->hasPermission("core.event.colorchat") or $player->isOp()) {
+        if ($player->hasPermission("core.event.colorchat")) {
             $message = $ev->getMessage();
             $ev->setMessage($this->plugin->getServer()->getLanguage()->translateString($this->translateColors('&', $message)));
         }

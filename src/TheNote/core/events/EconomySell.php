@@ -11,15 +11,14 @@
 
 namespace TheNote\core\events;
 
+use pocketmine\block\utils\SignText;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\SignChangeEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\item\ItemFactory;
-use pocketmine\item\ItemIds;
 use pocketmine\utils\Config;
-use pocketmine\item\Item;
 use TheNote\core\Main;
 
 class EconomySell implements Listener
@@ -47,7 +46,7 @@ class EconomySell implements Listener
     {
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         $tag = $event->getNewText()->getLine(0);
-        if (($val = $this->checkTag($tag)) !== false) {
+        if (($result = $this->checkTag($tag)) !== false) {
             $player = $event->getPlayer();
             if (!$player->hasPermission("core.economy.sell.create")) {
                 $player->sendMessage($config->get("error") . "§cDu hast keine Berechtigung um einen Verkaufsshop zu erstellen!");
@@ -56,7 +55,7 @@ class EconomySell implements Listener
             if (!is_numeric($event->getOldText()->getLine(1)) or !is_numeric($event->getNewText()->getLine(3))) {
                 return;
             }
-            $item = ItemIds::fromString($event->getNewText()->getLine(2));
+			$item = ItemFactory::getInstance()->get($event->getOldText()->getLine(2));
             if ($item === false) {
                 $player->sendMessage($this->getMessage($config->get("error") . "§cDas Item wird nicht Unterstützt! §e", array($event->getNewText()->getLine(2), "", "")));
                 return;
@@ -77,13 +76,14 @@ class EconomySell implements Listener
             $cfg = new Config($this->plugin->getDataFolder() . Main::$cloud . "Sell.yml", Config::YAML);
             $cfg->setAll($this->sell);
             $cfg->save();
-            //$sellcreate = $item->getName() . (int)$event->getLine(3);
             $player->sendMessage($config->get("money") . "§6Du hast den Verkaufsshop erfolgreich erstellt!"/* . $sellcreate*/);
 
-            $event->getNewText()->getLine(0, $val[0]);
-            $event->getNewText()->getLine(1, str_replace("{price}", $event->getNewText()->getLine(1), $val[1])); // PRICE
-            $event->getNewText()->getLine(2, str_replace("{item}", $item->getName(), $val[2])); // ITEM NAME
-            $event->getNewText()->getLine(3, str_replace("{amount}", $event->getLine(3), $val[3])); // AMOUNT
+			$event->setNewText(new SignText([
+				"§f[§aKaufen§f]",
+				str_replace("{price}",$event->getOldText()->getLine(1),  $result[1]),
+				str_replace("{item}", $item->getName(), $result[2]),
+				str_replace("{amount}", $event->getOldText()->getLine(3), $result[3])
+			]));
         }
     }
 
@@ -97,19 +97,14 @@ class EconomySell implements Listener
         }
 
         $block = $event->getBlock();
-        $loc = $block->getX() . ":" . $block->getY() . ":" . $block->getZ() . ":" . $block->getLevel()->getName();
+		$loc = $block->getPosition()->getX() . ":" . $block->getPosition()->getY() . ":" . $block->getPosition()->getZ() . ":" . $block->getPosition()->getWorld()->getFolderName();
         if (isset($this->sell[$loc])) {
             $sell = $this->sell[$loc];
             $player = $event->getPlayer();
 
-            if ($player->getGamemode() % 2 === 1) {
-                $player->sendMessage($config->get("error") . "Du kannst nur im Gamemode 0 was verkaufen!");
-                $event->setCancelled();
-                return;
-            }
             if (!$player->hasPermission("core.economy.sell.sell")) {
                 $player->sendMessage($config->get("error") . "§cDu hast keine Berechtigung um was zu verkaufen!");
-                $event->setCancelled();
+                $event->cancel();
                 return;
             }
             $cnt = 0;
@@ -119,7 +114,7 @@ class EconomySell implements Listener
                 }
             }
             if (!isset($sell["itemName"])) {
-                $item = $this->getItem($sell["item"], $sell["meta"], $sell["amount"]);
+                $item = ItemFactory::getInstance()->get($sell["item"], $sell["meta"], $sell["amount"]);
                 if ($item === false) {
                     $item = $sell["item"] . ":" . $sell["meta"];
                 } else {
@@ -138,7 +133,7 @@ class EconomySell implements Listener
             }
 
             if ($cnt >= $sell["amount"]) {
-                $signsell = ItemFactory::get((int)$sell["item"], (int)$sell["meta"], (int)$sell["amount"]);
+                $signsell = ItemFactory::getInstance()->get((int)$sell["item"], (int)$sell["meta"], (int)$sell["amount"]);
                 $player->getInventory()->removeItem($signsell);
                 if ($this->plugin->economyapi == null) {
                     $money->setNested("money." . $player->getName(), $money->getNested("money." . $player->getName()) + $sell ["cost"]);
@@ -150,7 +145,7 @@ class EconomySell implements Listener
             } else {
                 $player->sendTip($config->get("error") . "§cDu hast bereits alles verkauft!");
             }
-            $event->setCancelled(true);
+            $event->cancel();
             if ($event->getItem()->canBePlaced()) {
                 $this->placeQueue [$player->getName()] = true;
             }
@@ -161,7 +156,7 @@ class EconomySell implements Listener
     {
         $username = $event->getPlayer()->getName();
         if (isset($this->placeQueue [$username])) {
-            $event->setCancelled(true);
+            $event->cancel();
             unset($this->placeQueue [$username]);
         }
     }
@@ -170,15 +165,15 @@ class EconomySell implements Listener
     {
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         $block = $event->getBlock();
-        if (isset($this->sell[$block->getX() . ":" . $block->getY() . ":" . $block->getZ() . ":" . $block->getLevel()->getName()])) {
+        if (isset($this->sell[$block->getPosition()->getX() . ":" . $block->getPosition()->getY() . ":" . $block->getPosition()->getZ() . ":" . $block->getPosition()->getWorld()->getFolderName()])) {
             $player = $event->getPlayer();
             if (!$player->hasPermission("core.economy.remove.sell")) {
                 $player->sendMessage($config->get("error") . "§cDu hast keine Berechtigung um diesen Verkaufsshop zu zerstören!");
-                $event->setCancelled(true);
+                $event->cancel();
                 return;
             }
-            $this->sell[$block->getX() . ":" . $block->getY() . ":" . $block->getZ() . ":" . $block->getLevel()->getName()] = null;
-            unset($this->sell[$block->getX() . ":" . $block->getY() . ":" . $block->getZ() . ":" . $block->getLevel()->getName()]);
+            $this->sell[$block->getPosition()->getX() . ":" . $block->getPosition()->getY() . ":" . $block->getPosition()->getZ() . ":" . $block->getPosition()->getWorld()->getFolderName()] = null;
+            unset($this->sell[$block->getPosition()->getX() . ":" . $block->getPosition()->getY() . ":" . $block->getPosition()->getZ() . ":" . $block->getPosition()->getWorld()->getFolderName()]);
             $player->sendMessage($config->get("money") . "§6Der Verkaufsshop wurde erfolgreich entfernt.");
         }
     }
@@ -203,9 +198,9 @@ class EconomySell implements Listener
             if ($getitem->getID() == $setitem->getID() and $getitem->getDamage() == $setitem->getDamage()) {
                 if ($getcount >= $setitem->getCount()) {
                     $getcount -= $setitem->getCount();
-                    $sender->getInventory()->setItem($index, Item::get(Item::AIR, 0, 1));
+                    $sender->getInventory()->setItem($index, ItemFactory::getInstance()->get(0, 0, 1));
                 } else if ($getcount < $setitem->getCount()) {
-                    $sender->getInventory()->setItem($index, Item::get($getitem->getID(), 0, $setitem->getCount() - $getcount));
+                    $sender->getInventory()->setItem($index, ItemFactory::getInstance()->get($getitem->getID(), 0, $setitem->getCount() - $getcount));
                     break;
                 }
             }

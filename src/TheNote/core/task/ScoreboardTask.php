@@ -64,7 +64,8 @@ class ScoreboardTask extends Task
         $joins = $stats->get("joins");
         $break = $stats->get("break");
         $this->player->setScoreTag("§eVotes §f: §6$votes\n §eJoins §f: §6$joins\n§eAbgebaut §f: §6$break");
-        //$this->plugin->getScheduler()->scheduleDelayedRepeatingTask(new ScoreboardTask($this->plugin->player), 20);
+        //$this->plugin->getScheduler()->scheduleDelayedTask(new ScoreboardTask($this->plugin->player), 20);
+
 		//foreach ($this->plugin->getServer()->getOnlinePlayers() as $player) {
 			$pk = new SetDisplayObjectivePacket();
 			$pk->displaySlot = "sidebar";

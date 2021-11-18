@@ -53,7 +53,7 @@ class HomeCommand extends Command
                     $sender->sendMessage($config->get("error") . "§6Das angegebene Home §c$args[0] §6existiert nicht.");
                     return false;
                 }
-                $sender->teleport(new Position($x , $y , $z, $this->plugin->getServer()->getWorldManager()->getWorld($world)));
+                $sender->teleport(new Position($x , $y , $z, $this->plugin->getServer()->getWorldManager()->getWorldByName($world)));
                 return false;
             }
         }

@@ -49,7 +49,7 @@ class FakeCommand extends Command {
         }
         if (isset($args[0])) {
             if ($args[0] == "join") {
-                if ($sender->hasPermission("core.command.fake") || $sender->isOp()) {
+                if ($sender->hasPermission("core.command.fake") || $sender->getServer()->isOp($sender->getName())) {
                     $all = $this->plugin->getServer()->getOnlinePlayers();
                     $prefix = $playerdata->getNested($sender->getName() . ".groupprefix");
                     $slots = $settings->get("slots");
@@ -62,7 +62,7 @@ class FakeCommand extends Command {
                 }
             }
             if ($args[0] == "leave") {
-                if ($sender->hasPermission("core.command.fake") || $sender->isOp()) {
+                if ($sender->hasPermission("core.command.fake") || $sender->getServer()->isOp($sender->getName())) {
                     $all = $this->plugin->getServer()->getOnlinePlayers();
                     $prefix = $playerdata->getNested($sender->getName() . ".groupprefix");
                     $slots = $settings->get("slots");

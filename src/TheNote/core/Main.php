@@ -15,6 +15,7 @@ use pocketmine\block\Block;
 use pocketmine\block\DaylightSensor;
 use pocketmine\block\Sapling;
 use pocketmine\command\CommandSender;
+use pocketmine\console\ConsoleCommandSender;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Skin;
 use pocketmine\event\entity\ItemSpawnEvent;
@@ -31,9 +32,10 @@ use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
 use pocketmine\item\Tool;
 use pocketmine\math\Vector3;
+use pocketmine\nbt\BigEndianNbtSerializer;
+use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\StringTag;
-use pocketmine\network\mcpe\protocol\ActorEventPacket;
 use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\network\mcpe\protocol\LoginPacket;
@@ -41,10 +43,12 @@ use pocketmine\network\mcpe\protocol\OnScreenTextureAnimationPacket;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\network\mcpe\protocol\ScriptCustomEventPacket;
 use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
+use pocketmine\network\mcpe\protocol\serializer\PacketBatch;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
 use pocketmine\utils\Binary;
+use pocketmine\utils\BinaryStream;
 use pocketmine\utils\Config;
 use pocketmine\utils\Random;
 
@@ -54,6 +58,7 @@ use pocketmine\world\generator\object\JungleTree;
 use pocketmine\world\generator\object\OakTree;
 use pocketmine\world\generator\object\SpruceTree;
 use pocketmine\world\particle\DustParticle;
+use TheNote\core\blocks\BlockManager;
 use TheNote\core\blocks\multiblock\MultiBlockFactory;
 use TheNote\core\command\CreditsCommand;
 use TheNote\core\command\HeadCommand;
@@ -206,7 +211,7 @@ use TheNote\core\server\Rezept;
 //Anderes
 use TheNote\core\item\ItemManager;
 use TheNote\core\entity\EntityManager;
-use TheNote\core\blocks\BlockManager;
+use TheNote\core\blocks\BlockManager as TheBlock;
 use TheNote\core\blocks\PowerBlock;
 use TheNote\core\server\LiftSystem\BlockBreakListener;
 use TheNote\core\server\LiftSystem\BlockPlaceListener;
@@ -231,10 +236,10 @@ class Main extends PluginBase implements Listener
 {
 
     //PluginVersion
-    public static $version = "6.0.0 ALPHA";
+    public static $version = "6.0.2 ALPHA";
     public static $protokoll = "440";
     public static $mcpeversion = "1.17.41";
-    public static $dateversion = "16.11.2021";
+    public static $dateversion = "18.11.2021";
     public static $plname = "CoreV6";
     public static $configversion = "6.0.0";
 
@@ -309,36 +314,16 @@ class Main extends PluginBase implements Listener
     private $palette;
     public const GEOMETRY = '{"format_version": "1.12.0", "minecraft:geometry": [{"description": {"identifier": "geometry.skull", "texture_width": 64, "texture_height": 64, "visible_bounds_width": 2, "visible_bounds_height": 4, "visible_bounds_offset": [0, 0, 0]}, "bones": [{"name": "Head", "pivot": [0, 24, 0], "cubes": [{"origin": [-4, 0, -4], "size": [8, 8, 8], "uv": [0, 0]}, {"origin": [-4, 0, -4], "size": [8, 8, 8], "inflate": 0.5, "uv": [32, 0]}]}]}]}';
 
-    final public static function constructPlayerHeadItem(string $name, Skin $skin): Item
-    {
-        $item = Item::get(Item::SKULL, 3);
-        $lengths = str_split(base64_encode($skin->getSkinData()), 32767);
-        $tag = new CompoundTag("skull", [
-            new StringTag("skull_name", $name),
-            new StringTag("skull_data", array_shift($lengths))
-        ]);
-        foreach ($lengths as $key => $length) {
-            // preventing random errors
-            if (strlen($length) === 0) break;
-
-            $tag->setString("skull_data_" . ($key + 1), $length);
-        }
-        $item->setCustomBlockData($tag);
-        $item->setCustomName("§6" . $name . "'s head");
-        return $item;
-    }
-
-    final public static function getPacketsFromBatch(BatchPacket $packet)
-    {
-        $stream = new NetworkBinaryStream($packet->payload);
-        while (!$stream->feof()) {
-            yield $stream->getString();
-        }
-    }
-
+	final public static function getPacketsFromBatch(PacketBatch $packet)
+	{
+		$stream = new BinaryStream($packet->pay);
+		while (!$stream->feof()) {
+			yield $stream->getString();
+		}
+	}
     function onJoin(PlayerJoinEvent $event)
     {
-    	$this->getScheduler()->scheduleDelayedTask(new ScoreboardTask($this, $event->getPlayer()), 20);
+    	//$this->getScheduler()->scheduleDelayedTask(new ScoreboardTask($this, $event->getPlayer()), 20);
         $this->economyAPI = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI");
     }
 
@@ -350,33 +335,6 @@ class Main extends PluginBase implements Listener
     public static function getMain(): self
     {
         return self::$instance;
-    }
-
-    private static function registerRuntimeIds(): void
-    {
-        $nameToLegacyMap = json_decode(file_get_contents(RESOURCE_PATH . "vanilla/block_id_map.json"), true);
-        $metaMap = [];
-
-        foreach (RuntimeBlockMapping::getBedrockKnownStates() as $runtimeId => $state) {
-            $name = $state->getString("name");
-            if (!isset($nameToLegacyMap[$name])) {
-                continue;
-            }
-
-            $legacyId = $nameToLegacyMap[$name];
-            if (!isset($metaMap[$legacyId])) {
-                $metaMap[$legacyId] = 0;
-            }
-
-            $meta = $metaMap[$legacyId]++;
-            if ($meta > 15) {
-                continue;
-            }
-
-            $registerMapping = new \ReflectionMethod(RuntimeBlockMapping::class, 'registerMapping');
-            $registerMapping->setAccessible(true);
-            $registerMapping->invoke(null, $runtimeId, $legacyId, $meta);
-        }
     }
 
     public function onLoad() : void
@@ -424,15 +382,12 @@ class Main extends PluginBase implements Listener
             $this->saveResource("permissions.md", false);
             $this->saveResource("Language/LangConfig.yml", false);
             $this->saveResource("Language/Lang_deu.json", true);
-            //$this->craftingrecipe();
             $this->groupsgenerate();
             $this->configgenerate();
             $this->sessionManager = new SessionManager();
-            //ItemManager::init();
+            ItemManager::init();
             //EntityManager::init();
-            //BlockManager::init();
-            //MultiBlockFactory::init();
-            //Tiles::init();
+            BlockManager::init();
             if (!file_exists($this->getDataFolder() . "Setup/Config.yml")) {
                 //rename("Setup/Config.yml", "Setup/ConfigOLD.yml");
                 $this->getLogger()->alert("§cDie Config.yml ist nicht vorhanden! Der Server wird automatisch neugestartet!");
@@ -440,33 +395,9 @@ class Main extends PluginBase implements Listener
                 $this->getServer()->shutdown();
             } else {
                 $config = new Config($this->getDataFolder() . "Setup/Config.yml", Config::YAML);
-                if ($config->get("NewItems") == true) {
-                    self::registerRuntimeIds();
-                    BlockFactory::init();
-                    ItemManagerNewItems::init();
-                    Tile::registerTile(PTile::class);
-                    $this->getLogger()->info("Neue Items geladen!");
-                }
             }
             //PacketPool::registerPacket(new InventoryTransactionPacketV2());
             //Achievement::add("create_full_beacon", "Beaconator", ["Create a full beacon"]);
-            /*$this->getServer()->getCraftingManager()->registerShapedRecipe(
-                new ShapedRecipe(
-                    [
-                        "aaa",
-                        "aba",
-                        "ccc"
-                    ],
-                    [
-                        "a" => ItemFactory::get(Item::GLASS),
-                        "b" => ItemFactory::get(Item::NETHER_STAR),
-                        "c" => ItemFactory::get(Item::OBSIDIAN)
-                    ],
-                    [ItemFactory::get(Item::BEACON)]
-                )
-            );
-            $this->brewingManager = new BrauManager();
-            $this->brewingManager->init();
             self::$instance = $this;
             if (isset($c["API-Key"])) {
                 if (trim($c["API-Key"]) != "") {
@@ -475,7 +406,7 @@ class Main extends PluginBase implements Listener
                     }
                     file_put_contents($this->getDataFolder() . "Setup/minecraftpocket-servers.com.vrc", "{\"website\":\"http://minecraftpocket-servers.com/\",\"check\":\"http://minecraftpocket-servers.com/api-vrc/?object=votes&element=claim&key=" . $c["API-Key"] . "&username={USERNAME}\",\"claim\":\"http://minecraftpocket-servers.com/api-vrc/?action=post&object=votes&element=claim&key=" . $c["API-Key"] . "&username={USERNAME}\"}");
                 }
-            }*/
+            }
 
         }
     }
@@ -568,11 +499,11 @@ class Main extends PluginBase implements Listener
             $votes = new Config($this->getDataFolder() . Main::$setup . "vote.yml", Config::YAML);
             //Blocks
 
-            //$this->getServer()->getPluginManager()->registerEvents(new PowerBlock($this), $this);
+            $this->getServer()->getPluginManager()->registerEvents(new PowerBlock($this), $this);
 
             //Commands
             $this->getServer()->getCommandMap()->register("gma", new AbenteuerCommand($this));
-            $this->getServer()->getCommandMap()->register("adminitem", new AdminItemsCommand($this));
+            //$this->getServer()->getCommandMap()->register("adminitem", new AdminItemsCommand($this));
             $this->getServer()->getCommandMap()->register("animation", new AnimationCommand($this));
             $this->getServer()->getCommandMap()->register("ban", new BanCommand($this));
             $this->getServer()->getCommandMap()->register("banids", new BanIDListCommand($this));
@@ -635,7 +566,7 @@ class Main extends PluginBase implements Listener
             $this->getServer()->getCommandMap()->register("userdata", new UserdataCommand($this));
             //$this->getServer()->getCommandMap()->register("vanish", new VanishCommand($this));
             if ($votes->get("votes") == true) {
-                $this->getServer()->getCommandMap()->info("vote", new VoteCommand($this));
+                $this->getServer()->getCommandMap()->register("vote", new VoteCommand($this));
             } elseif ($votes->get("votes") == false) {
                 $this->getLogger()->info("Voten ist Deaktiviert! Wenn du es Nutzen möchtest Aktiviere es in den Einstelungen..");
             }
@@ -686,10 +617,10 @@ class Main extends PluginBase implements Listener
             //$this->getServer()->getPluginManager()->registerEvents(new BanEventListener($this), $this);
             $this->getServer()->getPluginManager()->registerEvents(new ColorChat($this), $this);
             $this->getServer()->getPluginManager()->registerEvents(new DeathMessages($this), $this);
-            //$this->getServer()->getPluginManager()->registerEvents(new Particle($this), $this);
+            $this->getServer()->getPluginManager()->registerEvents(new Particle($this), $this);
             //$this->getServer()->getPluginManager()->registerEvents(new AdminItemsEvents($this), $this);
-            //$this->getServer()->getPluginManager()->registerEvents(new EconomySell($this), $this);
-            //$this->getServer()->getPluginManager()->registerEvents(new EconomyShop($this), $this);
+            $this->getServer()->getPluginManager()->registerEvents(new EconomySell($this), $this);
+            $this->getServer()->getPluginManager()->registerEvents(new EconomyShop($this), $this);
             //$this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
             //$this->getServer()->getPluginManager()->registerEvents(new EventsListener(), $this);
             //$this->getServer()->getPluginManager()->registerEvents(new Eventsettings($this), $this);
@@ -729,6 +660,7 @@ class Main extends PluginBase implements Listener
             $this->getServer()->getCommandMap()->register("version", new Version($this));
 
             //Task
+			$this->getScheduler()->scheduleRepeatingTask(new StatstextTask($this), 60);
             //$this->getScheduler()->scheduleRepeatingTask(new CallbackTask([$this, "particle"]), 10);
             //$this->getScheduler()->scheduleDelayedTask(new RTask($this), (20 * 60 * 10));
             //$this->getScheduler()->scheduleRepeatingTask(new StatstextTask($this), 60);
@@ -767,7 +699,10 @@ class Main extends PluginBase implements Listener
 
     public function onPlayerJoin(PlayerJoinEvent $event): void
     {
-        //Allgemeines
+
+		$this->getScheduler()->scheduleDelayedTask(new ScoreboardTask($this, $event->getPlayer()), 20);
+
+		//Allgemeines
         $player = $event->getPlayer();
         $fj = date('d.m.Y H:I') . date_default_timezone_set("Europe/Berlin");
 
@@ -1071,11 +1006,11 @@ class Main extends PluginBase implements Listener
         $config = new Config($this->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
         if ($config->get("totem") == true) {
             $original = $player->getInventory()->getItemInHand();
-            $player->getInventory()->setItemInHand(Item::get(450, 0, 1));
+            $player->getInventory()->setItemInHand(ItemFactory::getInstance()->get(450, 0, 1));
             $player->broadcastAnimation(AddActorPacket::CONSUME_TOTEM);
             $pk = new LevelEventPacket();
             $pk->evid = LevelEventPacket::EVENT_SOUND_TOTEM;
-            $pk->position = $player->add(0, $player->eyeHeight, 0);
+            $pk->position = $player->getEyePos();
             $pk->data = 0;
             $player->sendData((array)$pk);
             $player->getInventory()->setItemInHand($original);
@@ -1118,7 +1053,7 @@ class Main extends PluginBase implements Listener
         for ($yaw = 0, $y = $pos->y; $y < $pos->y + 4; $yaw += (M_PI * 2) / 20, $y += 1 / 20) {
             $x = -sin($yaw) + $pos->x;
             $z = cos($yaw) + $pos->z;
-            $particle->setComponents($x, $y, $z);
+            $particle->setCompunets($x, $y, $z);
             $level->addParticle($particle);
         }
     }
@@ -1408,11 +1343,11 @@ class Main extends PluginBase implements Listener
 
     public function getClicks(Player $player)
     {
-        if (!isset($this->clicks[$player->getLowerCaseName()])) return 0;
-        $time = $this->clicks[$player->getLowerCaseName()][0];
-        $clicks = $this->clicks[$player->getLowerCaseName()][1];
+        if (!isset($this->clicks[$player->getName()])) return 0;
+        $time = $this->clicks[$player->getName()][0];
+        $clicks = $this->clicks[$player->getName()][1];
         if ($time !== time()) {
-            unset($this->clicks[$player->getLowerCaseName()]);
+            unset($this->clicks[$player->getName()]);
             return 0;
         }
         return $clicks;
@@ -1420,15 +1355,15 @@ class Main extends PluginBase implements Listener
 
     public function addClick(Player $player)
     {
-        if (!isset($this->clicks[$player->getLowerCaseName()])) $this->clicks[$player->getLowerCaseName()] = [time(), 0];
-        $time = $this->clicks[$player->getLowerCaseName()][0];
-        $clicks = $this->clicks[$player->getLowerCaseName()][1];
+        if (!isset($this->clicks[$player->getName()])) $this->clicks[$player->getName()] = [time(), 0];
+        $time = $this->clicks[$player->getName()][0];
+        $clicks = $this->clicks[$player->getName()][1];
         if ($time !== time()) {
             $time = time();
             $clicks = 0;
         }
         $clicks++;
-        $this->clicks[$player->getLowerCaseName()] = [$time, $clicks];
+        $this->clicks[$player->getName()] = [$time, $clicks];
     }
 
     public function getElevators(Block $block, string $where = "", bool $searchForPrivate = false): int
@@ -1436,22 +1371,22 @@ class Main extends PluginBase implements Listener
         if (!$searchForPrivate) {
             $blocks = DaylightSensor::class;
         } else {
-            $blocks = [Block::DAYLIGHT_SENSOR, Block::DAYLIGHT_SENSOR_INVERTED];
+            $blocks = [BlockFactory::DAYLIGHT_DETECTOR, BlockFactory::DAYLIGHT_DETECTOR_INVERTED];
         }
         $count = 0;
         if ($where === "up") {
-            $y = $block->getY() + 1;
-            while ($y < $block->getLevel()->getWorldHeight()) {
-                $blockToCheck = $block->getLevel()->getBlock(new Vector3($block->getX(), $y, $block->getZ()));
+            $y = $block->getPosition()->getY() + 1;
+            while ($y < $block->getPosition()->getWorld()->getMaxY()) {
+                $blockToCheck = $block->getPosition()->getWorld()->getBlock(new Vector3($block->getPosition()->getX(), $y, $block->getPosition()->getZ()));
                 if (in_array($blockToCheck->getId(), $blocks)) {
                     $count = $count + 1;
                 }
                 $y++;
             }
         } elseif ($where === "down") {
-            $y = $block->getY() - 1;
+            $y = $block->getPosition()->getY() - 1;
             while ($y >= 0) {
-                $blockToCheck = $block->getLevel()->getBlock(new Vector3($block->getX(), $y, $block->getZ()));
+                $blockToCheck = $block->getPosition()->getWorld()->getBlock(new Vector3($block->getPosition()->getX(), $y, $block->getPosition()->getZ()));
                 if (in_array($blockToCheck->getId(), $blocks)) {
                     $count = $count + 1;
                 }
@@ -1459,8 +1394,8 @@ class Main extends PluginBase implements Listener
             }
         } else {
             $y = 0;
-            while ($y < $block->getLevel()->getWorldHeight()) {
-                $blockToCheck = $block->getLevel()->getBlock(new Vector3($block->getX(), $y, $block->getZ()));
+            while ($y < $block->getPosition()->getWorld()->getMaxY()) {
+                $blockToCheck = $block->getPosition()->getWorld()->getBlock(new Vector3($block->getPosition()->getX(), $y, $block->getPosition()->getZ()));
                 if (in_array($blockToCheck->getId(), $blocks)) {
                     $count = $count + 1;
                 }
@@ -1474,15 +1409,15 @@ class Main extends PluginBase implements Listener
     public function getNextElevator(Block $block, string $where = "", bool $searchForPrivate = false): ?Block
     {
         if (!$searchForPrivate) {
-            $blocks = [Block::DAYLIGHT_SENSOR];
+            $blocks = [BlockFactory::DAYLIGHT_DETECTOR];
         } else {
-            $blocks = [Block::DAYLIGHT_SENSOR, Block::DAYLIGHT_SENSOR_INVERTED];
+            $blocks = [BlockFactory::DAYLIGHT_DETECTOR, BlockFactory::DAYLIGHT_DETECTOR_INVERTED];
         }
         $elevator = null;
         if ($where === "up") {
-            $y = $block->getY() + 1;
-            while ($y < $block->getLevel()->getWorldHeight()) {
-                $blockToCheck = $block->getLevel()->getBlock(new Vector3($block->getX(), $y, $block->getZ()));
+            $y = $block->getPosition()->getY() + 1;
+            while ($y < $block->getPosition()->getWorld()->getMaxY()) {
+                $blockToCheck = $block->getPosition()->getWorld()->getBlock(new Vector3($block->getPosition()->getX(), $y, $block->getPosition()->getZ()));
                 if (in_array($blockToCheck->getId(), $blocks)) {
                     $elevator = $blockToCheck;
                     break;
@@ -1490,9 +1425,9 @@ class Main extends PluginBase implements Listener
                 $y++;
             }
         } else {
-            $y = $block->getY() - 1;
+            $y = $block->getPosition()->getY() - 1;
             while ($y >= 0) {
-                $blockToCheck = $block->getLevel()->getBlock(new Vector3($block->getX(), $y, $block->getZ()));
+                $blockToCheck = $block->getPosition()->getWorld()->getBlock(new Vector3($block->getPosition()->getX(), $y, $block->getPosition()->getZ()));
                 if (in_array($blockToCheck->getId(), $blocks)) {
                     $elevator = $blockToCheck;
                     break;
@@ -1504,23 +1439,23 @@ class Main extends PluginBase implements Listener
 
         if ($this->config->get("checkFloor") !== true) return $elevator;
 
-        $block1 = $elevator->getLevel()->getBlock(new Vector3($elevator->getX(), $elevator->getY() + 1, $elevator->getZ()));
-        $block2 = $elevator->getLevel()->getBlock(new Vector3($elevator->getX(), $elevator->getY() + 2, $elevator->getZ()));
+        $block1 = $elevator->getPosition()->getWorld()->getBlock(new Vector3($elevator->getPosition()->getX(), $elevator->getPosition()->getY() + 1, $elevator->getPosition()->getZ()));
+        $block2 = $elevator->getPosition()->getWorld()->getBlock(new Vector3($elevator->getPosition()->getX(), $elevator->getPosition()->getY() + 2, $elevator->getPosition()->getZ()));
         if ($block1->getId() !== 0 || $block2->getId() !== 0) return $block;
 
         $blocksToCheck = [];
 
-        $blocksToCheck[] = $block1->getLevel()->getBlock(new Vector3($block1->getX() + 1, $block1->getY(), $block1->getZ()));
-        $blocksToCheck[] = $block1->getLevel()->getBlock(new Vector3($block1->getX() - 1, $block1->getY(), $block1->getZ()));
-        $blocksToCheck[] = $block1->getLevel()->getBlock(new Vector3($block1->getX(), $block1->getY(), $block1->getZ() + 1));
-        $blocksToCheck[] = $block1->getLevel()->getBlock(new Vector3($block1->getX(), $block1->getY(), $block1->getZ() - 1));
+        $blocksToCheck[] = $block1->getPosition()->getWorld()->getBlock(new Vector3($block1->getPosition()->getX() + 1, $block1->getPosition()->getY(), $block1->getPosition()->getZ()));
+        $blocksToCheck[] = $block1->getPosition()->getWorld()->getBlock(new Vector3($block1->getPosition()->getX() - 1, $block1->getPosition()->getY(), $block1->getPosition()->getZ()));
+        $blocksToCheck[] = $block1->getPosition()->getWorld()->getBlock(new Vector3($block1->getPosition()->getX(), $block1->getPosition()->getY(), $block1->getPosition()->getZ() + 1));
+        $blocksToCheck[] = $block1->getPosition()->getWorld()->getBlock(new Vector3($block1->getPosition()->getX(), $block1->getPosition()->getY(), $block1->getPosition()->getZ() - 1));
 
-        $blocksToCheck[] = $block2->getLevel()->getBlock(new Vector3($block2->getX() + 1, $block2->getY(), $block2->getZ()));
-        $blocksToCheck[] = $block2->getLevel()->getBlock(new Vector3($block2->getX() - 1, $block2->getY(), $block2->getZ()));
-        $blocksToCheck[] = $block2->getLevel()->getBlock(new Vector3($block2->getX(), $block2->getY(), $block2->getZ() + 1));
-        $blocksToCheck[] = $block2->getLevel()->getBlock(new Vector3($block2->getX(), $block2->getY(), $block2->getZ() - 1));
+        $blocksToCheck[] = $block2->getPosition()->getWorld()->getBlock(new Vector3($block2->getPosition()->getX() + 1, $block2->getPosition()->getY(), $block2->getPosition()->getZ()));
+        $blocksToCheck[] = $block2->getPosition()->getWorld()->getBlock(new Vector3($block2->getPosition()->getX() - 1, $block2->getPosition()->getY(), $block2->getPosition()->getZ()));
+        $blocksToCheck[] = $block2->getPosition()->getWorld()->getBlock(new Vector3($block2->getPosition()->getX(), $block2->getPosition()->getY(), $block2->getPosition()->getZ() + 1));
+        $blocksToCheck[] = $block2->getPosition()->getWorld()->getBlock(new Vector3($block2->getPosition()->getX(), $block2->getPosition()->getY(), $block2->getPosition()->getZ() - 1));
 
-        $deniedBlocks = [Block::LAVA, Block::FLOWING_LAVA, Block::WATER, Block::FLOWING_WATER];
+        $deniedBlocks = [BlockFactory::LAVA, BlockFactory::FLOWING_LAVA, BlockFactory::WATER, BlockFactory::FLOWING_WATER];
         foreach ($blocksToCheck as $blockToCheck) {
             if (in_array($blockToCheck->getId(), $deniedBlocks)) return $block;
         }
@@ -1531,15 +1466,15 @@ class Main extends PluginBase implements Listener
     public function getFloor(Block $block, bool $searchForPrivate = false): int
     {
         if (!$searchForPrivate) {
-            $blocks = [Block::DAYLIGHT_SENSOR];
+            $blocks = [BlockFactory::DAYLIGHT_SENSOR];
         } else {
-            $blocks = [Block::DAYLIGHT_SENSOR, Block::DAYLIGHT_SENSOR_INVERTED];
+            $blocks = [BlockFactory::DAYLIGHT_SENSOR, BlockFactory::DAYLIGHT_SENSOR_INVERTED];
         }
         $sw = 0;
         $y = -1;
-        while ($y < $block->getLevel()->getWorldHeight()) {
+        while ($y < $block->getPosition()->getWorld()->getMaxY()) {
             $y++;
-            $blockToCheck = $block->getLevel()->getBlock(new Vector3($block->getX(), $y, $block->getZ()));
+            $blockToCheck = $block->getPosition()->getWorld()->getBlock(new Vector3($block->getPosition()->getX(), $y, $block->getPosition()->getZ()));
             if (!in_array($blockToCheck->getId(), $blocks)) continue;
             $sw++;
             if ($blockToCheck === $block) break;
@@ -1647,7 +1582,7 @@ class Main extends PluginBase implements Listener
     //Redstone
     private function initCreativeItem(): void
     {
-        Item::initCreativeItems();
+        ItemManagerNewItems::init();
     }
 
     public function getScheduledBlockUpdateLoader(): ScheduledBlockUpdateLoader
@@ -1758,12 +1693,12 @@ class Main extends PluginBase implements Listener
         }
     }
     //World
-    /*public function buildBlockIdTable() {
-        $stream = new NetworkLittleEndianNBTStream();
+    public function buildBlockIdTable() {
+        $stream = new LittleEndianNbtSerializer();
         $values = $stream->read(file_get_contents(RESOURCE_PATH . "/vanilla/canonical_block_states.nbt"));
 
-        $outputStream = new BigEndianNBTStream();
+        $outputStream = new BigEndianNbtSerializer();
         $compound = new CompoundTag("Data", [$values]);
         file_put_contents("states.dat", $outputStream->write($compound));
-    }*/
+    }
 }

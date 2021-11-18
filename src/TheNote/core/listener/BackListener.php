@@ -26,7 +26,7 @@ class BackListener implements Listener {
     public function playerDeath(PlayerDeathEvent $event){
     $player = $event->getPlayer();
     $config = new Config($this->plugin->getDataFolder() . Main::$backfile . "Back.json", Config::JSON);
-    $config->set($player->getName(), "{$player->getX()} {$player->getY()} {$player->getZ()} {$player->getLevel()->getName()}");
+    $config->set($player->getName(), "{$player->getPosition()->getX()} {$player->getPosition()->getY()} {$player->getPosition()->getZ()} {$player->getWorld()->getFolderName()}");
     $config->save();
     }
     public function playerQuit(PlayerQuitEvent $event){

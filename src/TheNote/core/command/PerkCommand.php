@@ -1080,7 +1080,7 @@ class PerkCommand extends Command
             }
         });
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        $player = $sender->getLowerCaseName();
+        $player = $sender->getName();
         $daten = new Config($this->plugin->getDataFolder() . Main::$userfile . $player . ".json", Config::JSON);
         $perk = new Config($this->plugin->getDataFolder() . Main::$setup . "PerkSettings.yml", Config::YAML);
         $form->setTitle($config->get("uiname"));

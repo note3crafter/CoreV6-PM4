@@ -14,11 +14,7 @@ namespace TheNote\core\listener;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerJoinEvent;
-use pocketmine\event\player\PlayerLoginEvent;
-use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\utils\Config;
-use pocketmine\Item\Item;
-use pocketmine\Player;
 use TheNote\core\Main;
 
 class GroupListener implements Listener
@@ -80,7 +76,7 @@ class GroupListener implements Listener
         $msg = $event->getMessage();
         $pf = new Config($this->plugin->getDataFolder() . Main::$gruppefile . $player->getName() . ".json", Config::JSON);
         $clan = new Config($this->plugin->getDataFolder() . Main::$gruppefile . $player->getName() . ".json", Config::JSON);
-        $hei = new Config($this->plugin->getDataFolder() . Main::$userfile . $player->getLowerCaseName() . ".json", Config::JSON);
+        $hei = new Config($this->plugin->getDataFolder() . Main::$userfile . $player->getName() . ".json", Config::JSON);
         $settings = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         $playergroup = $playerdata->getNested($name . ".group");
         //$getformat = $groups->getNested("Groups." . $playergroup . ".format");

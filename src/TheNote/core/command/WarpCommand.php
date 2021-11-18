@@ -54,7 +54,7 @@ class WarpCommand extends Command
                     return false;
                 } else {
                     $this->plugin->getServer()->getWorldManager()->loadWorld($world);
-					$sender->teleport(new Position($x , $y , $z, $this->plugin->getServer()->getWorldManager()->getWorld($world)));
+					$sender->teleport(new Position($x , $y , $z, $this->plugin->getServer()->getWorldManager()->getWorldByName($world)));
                 }
                 return false;
             }

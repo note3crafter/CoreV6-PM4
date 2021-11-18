@@ -1,6 +1,6 @@
 name: CoreV6
 main: TheNote\core\Main
-version: 6.0.1
+version: 6.0.2
 api:
   - 4.0.0
 author: TheNote/Rudolf2000
@@ -23,7 +23,7 @@ authors:
   - muqsit #InvMenü
   - TheBalkanDev #ecinvsee, invsee
   - jasonwynn10 #Beacons
-description: Core v6.0.1 ALPHA
+description: Core v6.0.2 ALPHA
 
 permissions:
   core.command.adventure:
@@ -231,6 +231,14 @@ permissions:
     default: op
   core.command.world:
     description: "Teleportiere dich zwichen welten"
+    default: op
+  core.command.shop.create:
+    default: op
+  core.command.sell.create:
+      default: op
+  core.command.shop.buy:
+    default: op
+  core.command.sell.sell:
     default: op
   core.events.bucketfill:
     default: op

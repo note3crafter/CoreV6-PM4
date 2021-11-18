@@ -38,7 +38,7 @@ class SudoCommand extends Command
             $sender->sendMessage($config->get("prefix") . "Benutze: /sudo (player) (command)");
             return true;
         }
-        $player = $this->plugin->getServer()->getPlayer(array_shift($args));
+        $player = $this->plugin->getServer()->getPlayerExact(array_shift($args));
         if ($player instanceof Player) {
             $player->chat(trim(implode(" ", $args)));
             return true;

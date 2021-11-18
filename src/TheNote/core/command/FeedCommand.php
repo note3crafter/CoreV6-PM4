@@ -53,8 +53,8 @@ class FeedCommand extends Command
                 } else {
                     $sender->setAllowFlight(true);
                     $sender->getHungerManager()->setFood(20);
-                    $volume = mt_rand();
-					$sender->getWorld()->addSound($sender->getPosition(), SOUND_EAT, [$volume]);
+                    //$volume = mt_rand();
+					//$sender->getWorld()->addSound($sender->getPosition(), LevelSoundEventPacket::SOUND_EAT, [$volume]);
                     $sender->sendMessage($config->get("prefix") . "§6Dein §eHunger §6wurde gestillt von " . $sender->getNameTag());
                     $sender->sendMessage($config->get("prefix") . "§6Du hast den §eHunger von " . $victim->getName() . " gestillt.");
                     return false;
@@ -66,8 +66,8 @@ class FeedCommand extends Command
         }
         $sender->setAllowFlight(true);
         $sender->getHungerManager()->setFood(20);
-        $volume = mt_rand();
-		$sender->getWorld()->addSound($sender->getPosition(), SOUND_EAT, [$volume]);
+        //$volume = mt_rand();
+		//$sender->getWorld()->addSound($sender->getPosition(), LevelSoundEventPacket::SOUND_EAT, [$volume]);
         $sender->sendMessage($config->get("prefix") . "§6Dein §eHunger §6wurde gestillt.");
         return false;
     }

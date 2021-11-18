@@ -13,14 +13,15 @@ namespace TheNote\core\listener;
 
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerJoinEvent;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 
 class HeiratsListener implements Listener {
 
-    public function __construct(Main $plugin){
+	private Main $plugin;
+
+	public function __construct(Main $plugin){
         $this->plugin = $plugin;
     }
 
@@ -30,8 +31,8 @@ class HeiratsListener implements Listener {
         $x = new Config($this->plugin->getDataFolder() . Main::$heifile . strtolower($player) . ".json", Config::JSON);
         $hochzeit = $x->get("heiraten");
 
-        $got = $this->plugin->getServer()->getPlayer($hochzeit);
-        $victim = $got->getLowerCaseName();
+        $got = $this->plugin->getServer()->getPlayerExact($hochzeit);
+        $victim = $got->getName();
 
         $v = new Config($this->plugin->getDataFolder() . Main::$heifile . strtolower($victim) . ".json", Config::JSON);
         $hei = new Config($this->plugin->getDataFolder() . Main::$userfile . $player . ".json", Config::JSON);
@@ -66,14 +67,14 @@ class HeiratsListener implements Listener {
         $damager = $event->getDamager();
 
         if ($victim instanceof Player AND $damager instanceof Player) {
-            $name = $victim->getLowerCaseName();
-            $dname = $damager->getLowerCaseName();
+            $name = $victim->getName();
+            $dname = $damager->getName();
 
             $v = new Config($this->plugin->getDataFolder() . Main::$heifile . strtolower($name) . ".json", Config::JSON);
             $x = new Config($this->plugin->getDataFolder() . Main::$heifile . strtolower($dname) . ".json", Config::JSON);
             $ve = $v->get("heiraten");
             $vag = $v->get("heiraten-hit");
-            $got = $this->plugin->getServer()->getPlayer($ve);
+            $got = $this->plugin->getServer()->getPlayerExact($ve);
 
             if ($got instanceof Player) {
                 $gotcha = $got->getName();

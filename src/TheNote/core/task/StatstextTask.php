@@ -37,7 +37,7 @@ class StatstextTask extends Task
         foreach ($all as $player) {
 
             $config = new Config($this->plugin->getDataFolder() . Main::$setup . "Config" . ".yml", Config::YAML);
-            $level = $this->plugin->getServer()->getWorldManager()->getWorld($config->get("level")); int:
+            $level = $this->plugin->getServer()->getWorldManager()->getWorldByName($config->get("level")); int:
             $text = $this->getText($player);
             $x = $config->get("X");
             $y = $config->get("Y");

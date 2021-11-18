@@ -14,18 +14,20 @@ namespace TheNote\core\events;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJumpEvent;
 use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\level\particle\AngryVillagerParticle;
-use pocketmine\level\particle\PortalParticle;
-use pocketmine\level\particle\LavaParticle;
-use pocketmine\level\particle\HeartParticle;
-use pocketmine\level\particle\RedstoneParticle;
-use pocketmine\level\particle\SmokeParticle;
-use pocketmine\level\particle\FlameParticle;
-use pocketmine\level\particle\ExplodeParticle;
-use pocketmine\level\particle\SporeParticle;
-use pocketmine\level\particle\SplashParticle;
 use pocketmine\math\Vector3;
+use pocketmine\network\mcpe\protocol\LevelEventPacket;
+use pocketmine\network\mcpe\protocol\types\ParticleIds;
 use pocketmine\utils\Config;
+use pocketmine\world\particle\AngryVillagerParticle;
+use pocketmine\world\particle\ExplodeParticle;
+use pocketmine\world\particle\FlameParticle;
+use pocketmine\world\particle\HeartParticle;
+use pocketmine\world\particle\LavaParticle;
+use pocketmine\world\particle\PortalParticle;
+use pocketmine\world\particle\RedstoneParticle;
+use pocketmine\world\particle\SmokeParticle;
+use pocketmine\world\particle\SplashParticle;
+use pocketmine\world\particle\SporeParticle;
 use TheNote\core\Main;
 
 class Particle implements Listener
@@ -45,46 +47,46 @@ class Particle implements Listener
         $x = $player->getLocation()->getX();
         $y = $player->getLocation()->getY();
         $z = $player->getLocation()->getZ();
+        $pos = new Vector3($x, $y , $z);
         $pf =  new Config($this->plugin->getDataFolder() . Main::$userfile . $player->getName() . ".json", Config::JSON);
         if ($pf->get("explode") === true) {
 
-            $level->addParticle(new ExplodeParticle(new Vector3($x, $y, $z)), $player);
+			$level->addParticle(new Vector3($x, $y, $z),new ExplodeParticle);
 
         } else if ($pf->get("angry") === true) {
-
-            $level->addParticle(new AngryVillagerParticle(new Vector3($x, $y, $z)));
+			$level->addParticle(new Vector3($x, $y, $z),new AngryVillagerParticle);
 
         } else if ($pf->get("redstone") === true) {
 
-            $level->addParticle(new RedstoneParticle(new Vector3($x, $y, $z)));
+			$level->addParticle(new Vector3($x, $y, $z),new RedstoneParticle);
 
         } else if ($pf->get("smoke") === true) {
 
-            $level->addParticle(new SmokeParticle(new Vector3($x, $y, $z)));
+			$level->addParticle(new Vector3($x, $y, $z),new SmokeParticle);
 
         } else if ($pf->get("lava") === true) {
 
-            $level->addParticle(new LavaParticle(new Vector3($x, $y, $z)));
+			$level->addParticle(new Vector3($x, $y, $z),new LavaParticle);
 
         } else if ($pf->get("heart") === true) {
 
-            $level->addParticle(new HeartParticle(new Vector3($x, $y, $z)));
+			$level->addParticle(new Vector3($x, $y, $z),new HeartParticle);
 
         } else if ($pf->get("flame") === true) {
 
-            $level->addParticle(new FlameParticle(new Vector3($x, $y, $z)));
+			$level->addParticle(new Vector3($x, $y, $z),new FlameParticle);
 
         } else if ($pf->get("portal") === true) {
 
-            $level->addParticle(new PortalParticle(new Vector3($x, $y, $z)));
+			$level->addParticle(new Vector3($x, $y, $z),new PortalParticle);
 
         } else if ($pf->get("spore") === true) {
 
-            $level->addParticle(new SporeParticle(new Vector3($x, $y, $z)));
+			$level->addParticle(new Vector3($x, $y, $z),new SporeParticle);
 
         } else if ($pf->get("splash") === true) {
 
-            $level->addParticle(new SplashParticle(new Vector3($x, $y, $z)));
+			$level->addParticle(new Vector3($x, $y, $z),new SplashParticle);
 
         }
     }

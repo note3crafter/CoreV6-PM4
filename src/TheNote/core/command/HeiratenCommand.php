@@ -81,8 +81,8 @@ class HeiratenCommand extends Command implements Listener
                             $this->addPCFG($sender->getName(), "heiraten", $victim->getName());
                             $packet = new OnScreenTextureAnimationPacket();
                             $packet->effectId = 10;
-                            $sender->sendData((array)$packet);
-                            $victim->sendData((array)$packet);
+                            $sender->getNetworkSession()->sendDataPacket($packet);
+                            $victim->getNetworkSession()->sendDataPacket($packet);
 
                             $x = $this->getPCFG($sender->getName(), "antrag-angenommen");
                             $this->addPCFG($sender->getName(), "antrag-angenommen", ($x + 1));
