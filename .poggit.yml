@@ -1,0 +1,8 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/note3crafter/CoreV6-API4
+build-by-default: true
+branches:
+- main
+projects:
+  CoreV6-API4:
+    path: ""
+...
