@@ -13,7 +13,7 @@ Aktuell ist sie Instabiel! Sie befindet sich in der Alpha Phase!
 # Mindestanforderungen 
 - 2 Kern CPU (Bestenfalls hohe Singlecore Performance)
 - 1GB Ram 
-- 1GB Festplatte -
+- 512MB Festplatte -
 
 # Für die Zukunft Geplant :
 - ScoreBoard Feature überarbeiten
