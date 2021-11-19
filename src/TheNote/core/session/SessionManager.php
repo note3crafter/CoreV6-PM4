@@ -2,7 +2,8 @@
 
 namespace TheNote\core\session;
 
-use pocketmine\Player;
+
+use pocketmine\player\Player;
 
 class SessionManager{
 

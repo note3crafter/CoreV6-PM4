@@ -11,11 +11,10 @@
 
 namespace TheNote\core\session;
 
+use pocketmine\player\Player;
 use TheNote\core\inventory\FakeInventory;
-use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
-use pocketmine\Player;
 
 class Session{
 
@@ -78,7 +77,7 @@ class Session{
         if($packet){
             return $pk;
         }elseif($player instanceof Player){
-            $player->dataPacket($pk);
+            $player->sendData([$pk]);
         }
         return null;
     }

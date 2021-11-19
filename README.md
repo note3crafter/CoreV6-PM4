@@ -6,14 +6,16 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 # Download und Wichtig 
 
 - [Hier downloaden](https://poggit.pmmp.io/ci/note3crafter/Core-V6/Core-V6)!
-  Das Core Plugin wurde speziell für CityBuild Server entwickelt! Bitte beachtet, dass es eine ALPHA Version ist und womöglich instabil läuft.
-- Entwicklung vorerst eingestellt! Werde nur updaten und fixxen wenn was kommt! Da ich Aktuell keine Zeit habe :/
+  Das Core Plugin wurde speziell für CityBuild Server entwickelt!
+# Neues!
+-v.6.0.3 ALPHA 
+Neue Blöcke Hinzugefügt! Sind setzbar aber nicht korrekt abbaubar und plazierbar (treppen & falltür)
 # Fehler & Bugs
 Aktuell ist sie Instabiel! Sie befindet sich in der Alpha Phase!
 # Mindestanforderungen 
 - 2 Kern CPU (Bestenfalls hohe Singlecore Performance)
 - 1GB Ram 
-- 512MB Festplatte 
+- 1GB Festplatte -
 
 # Für die Zukunft Geplant :
 - ScoreBoard Feature überarbeiten

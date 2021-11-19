@@ -12,10 +12,12 @@
 namespace TheNote\core;
 
 use pocketmine\block\Block;
+use pocketmine\block\BlockLegacyIds;
 use pocketmine\block\DaylightSensor;
 use pocketmine\block\Sapling;
 use pocketmine\command\CommandSender;
 use pocketmine\console\ConsoleCommandSender;
+use pocketmine\data\bedrock\LegacyBlockIdToStringIdMap;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Skin;
 use pocketmine\event\entity\ItemSpawnEvent;
@@ -46,6 +48,7 @@ use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\network\mcpe\protocol\serializer\PacketBatch;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
+use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\Binary;
 use pocketmine\utils\BinaryStream;
@@ -230,16 +233,17 @@ use TheNote\core\task\RTask;
 use TheNote\core\task\PingTask;
 use TheNote\core\utils\GlobalBlockPalette;
 use TheNote\core\utils\ScheduledBlockUpdateLoader;
+
 use const pocketmine\RESOURCE_PATH;
 
 class Main extends PluginBase implements Listener
 {
 
     //PluginVersion
-    public static $version = "6.0.2 ALPHA";
+    public static $version = "6.0.3 ALPHA";
     public static $protokoll = "440";
     public static $mcpeversion = "1.17.41";
-    public static $dateversion = "18.11.2021";
+    public static $dateversion = "19.11.2021";
     public static $plname = "CoreV6";
     public static $configversion = "6.0.0";
 
@@ -313,6 +317,7 @@ class Main extends PluginBase implements Listener
     private $scheduledBlockUpdateLoader;
     private $palette;
     public const GEOMETRY = '{"format_version": "1.12.0", "minecraft:geometry": [{"description": {"identifier": "geometry.skull", "texture_width": 64, "texture_height": 64, "visible_bounds_width": 2, "visible_bounds_height": 4, "visible_bounds_offset": [0, 0, 0]}, "bones": [{"name": "Head", "pivot": [0, 24, 0], "cubes": [{"origin": [-4, 0, -4], "size": [8, 8, 8], "uv": [0, 0]}, {"origin": [-4, 0, -4], "size": [8, 8, 8], "inflate": 0.5, "uv": [32, 0]}]}]}]}';
+	private BlockManager $blockManager;
 
 	final public static function getPacketsFromBatch(PacketBatch $packet)
 	{
@@ -336,9 +341,42 @@ class Main extends PluginBase implements Listener
     {
         return self::$instance;
     }
+	public static function registerRuntimeIds(): void{
+		$legacyBlockIdToStringIdMap = LegacyBlockIdToStringIdMap::getInstance();
+		$runtimeBlockMapping = RuntimeBlockMapping::getInstance();
+		$registerMapping = new \ReflectionMethod($runtimeBlockMapping, 'registerMapping');
+		$registerMapping->setAccessible(true);
+
+		$metaMap = [];
+		foreach($runtimeBlockMapping->getBedrockKnownStates() as $runtimeId => $state){
+			$legacyId = $legacyBlockIdToStringIdMap->stringToLegacy($state->getString("name"));
+			if($legacyId === null or $legacyId <= BlockLegacyIds::LIT_BLAST_FURNACE){
+				continue;
+			}
+
+			$metaMap[$legacyId] ??= 0;
+
+			$meta = $metaMap[$legacyId]++;
+			if($meta > 15){
+				continue;
+			}
+
+			$registerMapping->invoke($runtimeBlockMapping, $runtimeId, $legacyId, $meta);
+		}
+	}
 
     public function onLoad() : void
     {
+		self::registerRuntimeIds();
+
+		$asyncPool = $this->getServer()->getAsyncPool();
+		$asyncPool->addWorkerStartHook(static function(int $worker) use($asyncPool): void{
+			$asyncPool->submitTaskToWorker(new class extends AsyncTask{
+				public function onRun(): void{
+					Main::registerRuntimeIds();
+				}
+			}, $worker);
+		});
         $start = (bool) !(self::$instance instanceof $this);
         self::$instance = $this;
 
@@ -387,8 +425,8 @@ class Main extends PluginBase implements Listener
             $this->sessionManager = new SessionManager();
             ItemManager::init();
             //EntityManager::init();
-            BlockManager::init();
-            if (!file_exists($this->getDataFolder() . "Setup/Config.yml")) {
+			$this->blockManager = new BlockManager();
+			if (!file_exists($this->getDataFolder() . "Setup/Config.yml")) {
                 //rename("Setup/Config.yml", "Setup/ConfigOLD.yml");
                 $this->getLogger()->alert("§cDie Config.yml ist nicht vorhanden! Der Server wird automatisch neugestartet!");
                 $this->saveResource("Setup/Config.yml", true);
@@ -418,6 +456,7 @@ class Main extends PluginBase implements Listener
                 $this->getServer()->loadLevel($file);
             }
         }*/
+		$this->blockManager->startup();
         if (!$this->isSpoon()) {
             $this->default = "";
             $this->reload();
