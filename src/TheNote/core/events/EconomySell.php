@@ -21,6 +21,8 @@ use pocketmine\item\ItemFactory;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 
+use onebone\economyapi\EconomyAPI;
+
 class EconomySell implements Listener
 {
 
@@ -45,14 +47,14 @@ class EconomySell implements Listener
     public function onSignChange(SignChangeEvent $event)
     {
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        $tag = $event->getNewText()->getLine(0);
+        $tag = $event->getOldText()->getLine(0);
         if (($result = $this->checkTag($tag)) !== false) {
             $player = $event->getPlayer();
             if (!$player->hasPermission("core.economy.sell.create")) {
                 $player->sendMessage($config->get("error") . "§cDu hast keine Berechtigung um einen Verkaufsshop zu erstellen!");
                 return;
             }
-            if (!is_numeric($event->getOldText()->getLine(1)) or !is_numeric($event->getNewText()->getLine(3))) {
+            if (!is_numeric($event->getOldText()->getLine(1)) or !is_numeric($event->getOldText()->getLine(3))) {
                 return;
             }
 			$item = ItemFactory::getInstance()->get($event->getOldText()->getLine(2));
@@ -62,16 +64,16 @@ class EconomySell implements Listener
             }
 
             $block = $event->getBlock();
-            $this->sell[$block->getPosition()->getX() . ":" . $block->getPosition()->getY() . ":" . $block->getPosition()->getZ() . ":" . $player->getWorld()->getDisplayName()] = array(
+            $this->sell[$block->getPosition()->getX() . ":" . $block->getPosition()->getY() . ":" . $block->getPosition()->getZ() . ":" . $player->getWorld()->getFolderName()] = array(
                 "x" => $block->getPosition()->getX(),
                 "y" => $block->getPosition()->getY(),
                 "z" => $block->getPosition()->getZ(),
-                "level" => $player->getWorld(),
-                "cost" => (int)$event->getNewText()->getLine(1),
+                "level" => $block->getPosition()->getWorld()->getFolderName(),
+				"cost" => (int) $event->getOldText()->getLine(1),
                 "item" => (int)$item->getID(),
                 "itemName" => $item->getName(),
-                "meta" => (int)$item->getDamage(),
-                "amount" => (int)$event->getNewText()->getLine(3)
+                "meta" => (int)$item->getMeta(),
+				"amount" => (int) $event->getOldText()->getLine(3)
             );
             $cfg = new Config($this->plugin->getDataFolder() . Main::$cloud . "Sell.yml", Config::YAML);
             $cfg->setAll($this->sell);
@@ -79,7 +81,7 @@ class EconomySell implements Listener
             $player->sendMessage($config->get("money") . "§6Du hast den Verkaufsshop erfolgreich erstellt!"/* . $sellcreate*/);
 
 			$event->setNewText(new SignText([
-				"§f[§aKaufen§f]",
+				"§f[§aVerkaufen§f]",
 				str_replace("{price}",$event->getOldText()->getLine(1),  $result[1]),
 				str_replace("{item}", $item->getName(), $result[2]),
 				str_replace("{amount}", $event->getOldText()->getLine(3), $result[3])
@@ -167,7 +169,7 @@ class EconomySell implements Listener
         $block = $event->getBlock();
         if (isset($this->sell[$block->getPosition()->getX() . ":" . $block->getPosition()->getY() . ":" . $block->getPosition()->getZ() . ":" . $block->getPosition()->getWorld()->getFolderName()])) {
             $player = $event->getPlayer();
-            if (!$player->hasPermission("core.economy.remove.sell")) {
+            if (!$player->hasPermission("core.economy.sell.remove")) {
                 $player->sendMessage($config->get("error") . "§cDu hast keine Berechtigung um diesen Verkaufsshop zu zerstören!");
                 $event->cancel();
                 return;

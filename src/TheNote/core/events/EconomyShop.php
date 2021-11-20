@@ -23,7 +23,8 @@ use TheNote\core\Main;
 
 use onebone\economyapi\EconomyAPI;
 
-class EconomyShop implements Listener{
+class EconomyShop implements Listener
+{
 
     private $shop;
     private $placeQueue;
@@ -38,12 +39,13 @@ class EconomyShop implements Listener{
         $this->shop = (new Config($this->plugin->getDataFolder(). Main::$cloud . "Shop.yml", Config::YAML))->getAll();
     }
 
-    public function onSignChange(SignChangeEvent $event){
+    public function onSignChange(SignChangeEvent $event)
+	{
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         $result = $this->tagExists($event->getOldText()->getLine(0));
         if($result !== false){
             $player = $event->getPlayer();
-            if(!$player->hasPermission("core.command.shop.create")){
+            if(!$player->hasPermission("core.economy.shop.create")){
                 $player->sendMessage($config->get("error") . "§cDu hast keine Berechtigung um einen Shop zu erstellen!");
                 return;
             }
@@ -72,6 +74,7 @@ class EconomyShop implements Listener{
             $cfg->setAll($this->shop);
             $cfg->save();
             $player->sendMessage($config->get("money") . "§6Du hast den Shop erfolgreich erstellt!"/* . $a*/);
+
             $event->setNewText(new SignText([
 				"§f[§aKaufen§f]",
 				str_replace("{price}",$event->getOldText()->getLine(1),  $result[1]),
@@ -93,7 +96,7 @@ class EconomyShop implements Listener{
         if (isset($this->shop[$loc])) {
             $shop = $this->shop[$loc];
             $player = $event->getPlayer();
-            if (!$player->hasPermission("core.command.shop.buy")) {
+            if (!$player->hasPermission("core.economy.shop.buy")) {
                 $player->sendMessage($config->get("error") . "§cDu hast keine Berechtigung um was zu kaufen!");
                 $event->cancel();
                 return;
