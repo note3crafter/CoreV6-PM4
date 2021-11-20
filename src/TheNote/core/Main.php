@@ -15,6 +15,7 @@ use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\block\DaylightSensor;
 use pocketmine\block\Sapling;
+use pocketmine\color\Color;
 use pocketmine\command\CommandSender;
 use pocketmine\console\ConsoleCommandSender;
 use pocketmine\data\bedrock\LegacyBlockIdToStringIdMap;
@@ -27,6 +28,7 @@ use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
 use pocketmine\event\player\PlayerLoginEvent;
+use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\QueryRegenerateEvent;
 use pocketmine\item\Armor;
@@ -240,10 +242,10 @@ class Main extends PluginBase implements Listener
 {
 
     //PluginVersion
-    public static $version = "6.0.3 ALPHA";
+    public static $version = "6.0.4 ALPHA";
     public static $protokoll = "440";
     public static $mcpeversion = "1.17.41";
-    public static $dateversion = "19.11.2021";
+    public static $dateversion = "20.11.2021";
     public static $plname = "CoreV6";
     public static $configversion = "6.0.0";
 
@@ -689,7 +691,7 @@ class Main extends PluginBase implements Listener
 
             //Server
             //$this->getServer()->getPluginManager()->registerEvents(new PlotBewertung($this), $this);
-            $this->getServer()->getCommandMap()->register("restart", new RestartServer($this));
+            //$this->getServer()->getCommandMap()->register("restart", new RestartServer($this));
             $this->getServer()->getPluginManager()->registerEvents(new Rezept($this), $this);
             $this->getServer()->getPluginManager()->registerEvents(new Stats($this), $this);
             if ($configs->get("Regeln") == true) {
@@ -735,7 +737,10 @@ class Main extends PluginBase implements Listener
         );
         $this->getLogger()->info($banner);
     }
-
+	public function onPreLogin(PlayerPreLoginEvent $event): void
+	{
+		$this->correctName($event->getEventName());
+	}
     public function onPlayerJoin(PlayerJoinEvent $event): void
     {
 
@@ -1088,12 +1093,15 @@ class Main extends PluginBase implements Listener
         $level = $this->getServer()->getWorldManager()->getDefaultWorld();
         $pos = $level->getSafeSpawn();
         $count = 100;
-        $particle = new DustParticle($pos, mt_rand(), mt_rand(), mt_rand(), mt_rand());
+		$particle = new DustParticle(Color::mix(Color::fromARGB("§6")));
+        //$particle = new DustParticle($pos, mt_rand(), mt_rand(), mt_rand(), mt_rand());
         for ($yaw = 0, $y = $pos->y; $y < $pos->y + 4; $yaw += (M_PI * 2) / 20, $y += 1 / 20) {
             $x = -sin($yaw) + $pos->x;
             $z = cos($yaw) + $pos->z;
-            $particle->setCompunets($x, $y, $z);
-            $level->addParticle($particle);
+			$particle->encode($pos);
+
+			//$particle->setCompunets($x, $y, $z);
+            $level->addParticle($pos,$particle);
         }
     }
 
@@ -1160,8 +1168,8 @@ class Main extends PluginBase implements Listener
         }
     }
 
-    public function correctName($name)
-    {
+    public function correctName($name): bool|string
+	{
         if ($this->multibyte and mb_strlen($name) !== strlen($name)) {
             $length = mb_strlen($name, "UTF-8");
             $new = "";
@@ -1634,13 +1642,13 @@ class Main extends PluginBase implements Listener
         return $this->palette;
     }
 
-    public function onDisable() : void
+    /*public function onDisable() : void
     {
         $config = new Config($this->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
         foreach ($this->getServer()->getOnlinePlayers() as $player) {
             $player->transfer($config->get("rejoinserverip"), $config->get("rejoinserverport"));
         }
-    }
+    }*/
 
     //TPASystem
     public function setInvite(Player $sender, Player $target): void

@@ -14,7 +14,7 @@ class CrimsonPlanks extends Opaque
 
 	public function __construct(BlockIdentifier $idInfo, ?BlockBreakInfo $breakInfo = null)
 	{
-		parent::__construct($idInfo, "Crimson Planks",$breakInfo ?? new BlockBreakInfo(0.9, BlockToolType::NONE));
+		parent::__construct($idInfo, "Crimson Planks",$breakInfo ?? new BlockBreakInfo(0.9, BlockToolType::AXE));
 	}
 
 	public function canBePlaced() : bool{
