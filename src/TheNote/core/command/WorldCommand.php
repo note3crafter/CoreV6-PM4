@@ -18,6 +18,7 @@ use pocketmine\utils\Config;
 use pocketmine\world\generator\Flat;
 use pocketmine\world\generator\normal\Normal;
 use pocketmine\world\World;
+use pocketmine\world\WorldCreationOptions;
 use TheNote\core\Main;
 use TheNote\core\server\generators\ender\EnderGenerator;
 use TheNote\core\server\generators\nether\NetherGenerator;
@@ -230,8 +231,9 @@ class WorldCommand extends Command
                 $generatorClass = Flat::class;
                 break;
         }
-        return Server::getInstance()->getWorldManager()->generateWorld($levelName, $seed, $generatorClass) ;
-    }
+        return Server::getInstance()->getWorldManager()->generateWorld($levelName, WorldCreationOptions::create()->setSeed($seed), $generatorClass) ;
+
+	}
 
     public static function removeLevel(string $name): int
     {

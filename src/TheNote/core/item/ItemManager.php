@@ -11,7 +11,6 @@
 
 namespace TheNote\core\item;
 
-use pocketmine\block\Block;
 use pocketmine\inventory\ArmorInventory;
 use pocketmine\item\Armor;
 use pocketmine\item\ArmorTypeInfo;
@@ -25,7 +24,6 @@ use pocketmine\item\Pickaxe;
 use pocketmine\item\Shovel;
 use pocketmine\item\Sword;
 use pocketmine\item\ToolTier;
-use TheNote\core\blocks\BlockManager;
 
 class ItemManager
 {
@@ -49,6 +47,8 @@ class ItemManager
 		ItemFactory::getInstance()->register(new Item(new ItemIdentifier(ItemIds::CROSSBOW, 0), "Crossbow"), true);
 		ItemFactory::getInstance()->register(new Item(new ItemIdentifier(ItemIds::ENDER_EYE, 0), "Ender Eye"), true);
 		ItemFactory::getInstance()->register(new Item(new ItemIdentifier(ItemIds::SADDLE, 0), "Saddle"), true);
+		ItemFactory::getInstance()->register(new Item(new ItemIdentifier(ItemIds::FIREWORKS, 0), "Fireworks"), true);
+
 		ItemFactory::getInstance()->register(new Item(new ItemIdentifier(720, 0), "Campfire"), true);
 		ItemFactory::getInstance()->register(new Item(new ItemIdentifier(449, 0), "Turtle Helmet"), true);
 		ItemFactory::getInstance()->register(new Item(new ItemIdentifier(451, 0), "Bleach"), true);

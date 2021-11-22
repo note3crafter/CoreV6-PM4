@@ -47,7 +47,7 @@ class AFKCommand extends Command implements Listener
             return false;
         }
         if (isset($this->afk[strtolower($sender->getName())])) {
-            $cfg = new Config($this->plugin->getDataFolder() . Main::$userfile . $sender->getPlayerInfo()->getUsername()(), Config::JSON);
+            $cfg = new Config($this->plugin->getDataFolder() . Main::$userfile . $sender->getPlayerInfo()->getUsername(), Config::JSON);
             unset($this->afk[strtolower($sender->getName())]);
             $sender->sendMessage($config->get("afk") . $lang->get("afknowafk"));
             $sender->setImmobile(false);
@@ -55,7 +55,7 @@ class AFKCommand extends Command implements Listener
             $cfg->set($cfg->get("afkchat") == false);
             $cfg->save();
         } else {
-            $cfg = new Config($this->plugin->getDataFolder() . Main::$userfile . $sender->getPlayerInfo()->getUsername()(), Config::JSON);
+            $cfg = new Config($this->plugin->getDataFolder() . Main::$userfile . $sender->getPlayerInfo()->getUsername(), Config::JSON);
             $this->afk[strtolower($sender->getName())] = strtolower($sender->getName());
             $sender->sendMessage($config->get("afk") . $lang->get("afknoafk"));
             $sender->setImmobile(true);
@@ -67,7 +67,7 @@ class AFKCommand extends Command implements Listener
     }
     public function onQuit(PlayerQuitEvent $event){
         $player = $event->getPlayer();
-        $cfg = new Config($this->plugin->getDataFolder() . Main::$userfile . $player->getPlayerInfo()->getUsername()(), Config::JSON);
+        $cfg = new Config($this->plugin->getDataFolder() . Main::$userfile . $player->getPlayerInfo()->getUsername(), Config::JSON);
         $cfg->set($cfg->get("afkmove") == false);
         $cfg->set($cfg->get("afkchat") == false);
         $cfg->save();
@@ -91,7 +91,7 @@ class AFKCommand extends Command implements Listener
         $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
         $l = $langsettings->get("Lang");
         $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
-        $cfg = new Config($this->plugin->getDataFolder() . Main::$userfile . $player->getPlayerInfo()->getUsername()(), Config::JSON);
+        $cfg = new Config($this->plugin->getDataFolder() . Main::$userfile . $player->getPlayerInfo()->getUsername(), Config::JSON);
         if($cfg->get("afkchat") == true) {
             $player->sendMessage($lang->get("afknochat"));
             $event->cancel();

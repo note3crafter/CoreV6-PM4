@@ -26,7 +26,7 @@ class SendAsyncTask extends AsyncTask
         $this->curlopts = $curlopts;
     }
 
-    public function onRun()
+    public function onRun() :void
     {
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $this->webhook);
@@ -59,7 +59,7 @@ class SendAsyncTask extends AsyncTask
         $this->setResult($result, true);
     }
 
-    public function onCompletion(Server $server)
+    public function onCompletion(Server $server) :void
     {
         $plugin = $server->getPluginManager()->getPlugin('Core');
         if(!$plugin instanceof Main){

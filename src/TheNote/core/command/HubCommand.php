@@ -45,7 +45,7 @@ class HubCommand extends Command
 		}
 		$this->plugin->getServer()->getWorldManager()->loadWorld($config->get("Defaultworld"));
 		$sender->teleport(Server::getInstance()->getWorldManager()->getWorldByName($config->get("Defaultworld"))->getSafeSpawn());
-		$sender->setGamemode(GameModeIdMap::getInstance()->fromId(int: $config->get("Gamemode")));
+		$sender->setGamemode(GameMode::fromString($config->get("Gamemode")));
 		if ($config->get("Food") == true) {
 			$sender->getHungerManager()->setFood(20);
 		}

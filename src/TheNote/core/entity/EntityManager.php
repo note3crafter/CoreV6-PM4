@@ -20,7 +20,6 @@ class EntityManager extends Entity {
 	public static function init(): void{
 		self::registerEntity(ThrownTrident::class, true, ['Trident', 'minecraft:trident']);
         self::registerEntity(SkullEntity::class, true, ["SkullEntity", "minecraft:skull_entity"]);
-        self::registerEntity(FireworksRocket::class, true, ['FireworksRocket', 'minecraft:firework']);
         self::registerEntity(EnderCrystal::class, true, ['EnderCrystal', 'minecraft:ender_crystal']);
         self::registerEntity(BoatEntity::class, true, ['Boat', 'minecraft:boat']);
 

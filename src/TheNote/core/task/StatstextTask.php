@@ -37,8 +37,10 @@ class StatstextTask extends Task
         foreach ($all as $player) {
 
             $config = new Config($this->plugin->getDataFolder() . Main::$setup . "Config" . ".yml", Config::YAML);
-            $level = $this->plugin->getServer()->getWorldManager()->getWorldByName($config->get("level")); int:
-            $text = $this->getText($player);
+            //$level = $this->plugin->getServer()->getWorldManager()->getWorldByName($config->get("level")); int:
+			$level = $this->plugin->getServer()->getWorldManager()->getWorldByName($config->get("level"));
+
+			$text = $this->getText($player);
             $x = $config->get("X");
             $y = $config->get("Y");
             $z = $config->get("Z");
@@ -51,21 +53,24 @@ class StatstextTask extends Task
             if ($config->get("statstext") == true) {
                 if (!isset($this->floattext[$player->getName()])) {
                     # existiert noch nicht
-                    $this->floattext[$player->getName()] = new FloatingTextParticle(new Vector3($x, $y, $z), $text);
+                    $this->floattext[$player->getName()] = new FloatingTextParticle($text);
                     $particle = $this->floattext[$player->getName()];
                     #$packet = $particle->encode()
                     $particle->setInvisible(false);
-                    $level->addParticle($particle, $player);
-                } else {
+                    $level->addParticle(new Vector3($x, $y, $z),$particle, $all);
+
+				} else {
                     # is schon da
                     $particle = $this->floattext[$player->getName()];
                     $particle->setInvisible(true);
-                    $level->addParticle($particle, $player);
-                    $this->floattext[$player->getName()] = new FloatingTextParticle(new Vector3($x, $y, $z), $text);
+                    $level->addParticle(new Vector3($x, $y, $z), $particle, $all);
+                    $this->floattext[$player->getName()] = new FloatingTextParticle($text);
                     $newparticle = $this->floattext[$player->getName()];
                     $newparticle->setInvisible(false);
-                    $level->addParticle($newparticle, $player);
-                }
+					$level->addParticle(new Vector3($x, $y, $z), $newparticle, $all);
+
+
+				}
             }
         }
     }

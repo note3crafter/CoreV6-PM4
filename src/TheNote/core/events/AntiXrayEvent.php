@@ -50,7 +50,7 @@ class AntiXrayEvent implements Listener {
 		if ($event->isCancelled()) return;
 		$players = $event->getBlock()->getPosition()->getWorld()->getChunkPlayers($event->getBlock()->getPosition()->getFloorX() >> 4, $event->getBlock()->getPosition()->getFloorZ() >> 4);
         $blocks = Main::getInvolvedBlocks([$event->getBlock()->getPosition()->asVector3()]);
-		$event->getPlayer()->getWorld()->sendblock($players, $blocks, UpdateBlockPacket::FLAG_NEIGHBORS);
+		$event->getPlayer()->getWorld()->sendBlock($players, $blocks, UpdateBlockPacket::FLAG_NEIGHBORS);
 	}
 
     public function onExplode(EntityExplodeEvent $event) {

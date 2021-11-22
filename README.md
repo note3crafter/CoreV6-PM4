@@ -8,8 +8,16 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 - [Hier downloaden](https://poggit.pmmp.io/ci/note3crafter/Core-V6/Core-V6)!
   Das Core Plugin wurde speziell für CityBuild Server entwickelt!
 # Neues!
--v.6.0.3 ALPHA 
-Neue Blöcke Hinzugefügt! Sind setzbar aber nicht korrekt abbaubar und plazierbar (treppen & falltür)
+-v.6.0.5 ALPHA 
+Blöcke und Items wurden weiter bearbeitet
+Statstext funktioniert wieder
+WorldCommand wieder vollständig nutzbar
+EconomyShop & Sell Bugfix
+AFKCommand Fix
+HubCommand fix
+Emotes Fix
+
+Danke an galaxytweenty für fixes in den Blöcken :D
 # Fehler & Bugs
 Aktuell ist sie Instabiel! Sie befindet sich in der Alpha Phase!
 # Mindestanforderungen 

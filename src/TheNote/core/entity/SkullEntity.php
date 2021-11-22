@@ -13,6 +13,7 @@ namespace TheNote\core\entity;
 
 use pocketmine\entity\Human;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\nbt\tag\CompoundTag;
 
 class SkullEntity extends Human {
 
@@ -24,11 +25,11 @@ class SkullEntity extends Human {
 		$this->setMaxHealth(1);
 		$this->setImmobile();
 		$this->setScale(1.1275);
-		parent::initEntity();
+		parent::initEntity(CompoundTag::create());
 	}
 
 	public function attack(EntityDamageEvent $source): void {
-		$source->setCancelled();
+		$source->cancel();
 	}
 
 	public function onUpdate(int $currentTick): bool {

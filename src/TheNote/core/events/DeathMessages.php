@@ -37,7 +37,7 @@ class DeathMessages implements Listener
     {
         $player = $event->getPlayer();
         $name = $player->getNameTag();
-        $this->Lightning($event->getPlayer());
+        //$this->Lightning($event->getPlayer());
         if ($player instanceof Player) {
             $cause = $player->getLastDamageCause();
             $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings.json", Config::JSON);
@@ -77,7 +77,7 @@ class DeathMessages implements Listener
         return true;
     }
 
-    public function Lightning(Player $player): void
+    /*public function Lightning(Player $player): void
     {
         $light = new AddActorPacket();
         $light->type = "minecraft:lightning_bolt";
@@ -99,6 +99,5 @@ class DeathMessages implements Listener
         $sound->volume = 1;
         $sound->pitch = 1;
         Server::getInstance()->broadcastPackets($player->getWorld()->getPlayers(), [$sound]);
-    }
-
+    }*/
 }

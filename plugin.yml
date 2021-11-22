@@ -1,6 +1,6 @@
 name: CoreV6
 main: TheNote\core\Main
-version: 6.0.4
+version: 6.0.5
 api:
   - 4.0.0
 author: TheNote/Rudolf2000
@@ -23,7 +23,7 @@ authors:
   - muqsit #InvMenü
   - TheBalkanDev #ecinvsee, invsee
   - jasonwynn10 #Beacons
-description: Core v6.0.4 ALPHA
+description: Core v6.0.5 ALPHA
 
 permissions:
   core.command.adventure:
@@ -254,27 +254,12 @@ permissions:
     default: op
   core.events.blockbreak:
     default: op
-  core.redstone.dommandblock:
+  core.lift.admin.remove:
     default: op
-  core.redstone.hopper:
+  core.lift.admin.create:
     default: op
-  core.redstone.dispenser:
+  core.lift.admin.interact:
     default: op
-  core.redstone.dropper:
+  core.lift.admin.use:
     default: op
-  core.redstone.wire:
-    default: op
-  core.redstone.torch:
-    default: op
-  core.redstone.observer:
-    default: op
-  core.redstone.stickypiston:
-    default: op
-  core.redstone.piston:
-    default: op
-  core.redstone.lamp:
-    default: op
-  core.redstone.repeater:
-    default: op
-  core.redstone.comparator:
-    default: op
+  core.event.colorchat:

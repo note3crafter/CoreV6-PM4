@@ -41,11 +41,11 @@ class AdminItemsEvents implements Listener
             if ($value == "super_bow") {
                 $projectile = $event->getProjectile();
                 $projectile->setNameTag(string["custom_data", "super_arrow"]);
-                $projectile->setNameTag;
+                $projectile->setNameTag();
             }
             if ($value == "explode_bow") {
                 $projectile = $event->getProjectile();
-                $projectile->namedtag->setString("custom_data", "explode_arrow");
+                $projectile->getNameTag()->setString("custom_data", "explode_arrow");
             }
         }
     }

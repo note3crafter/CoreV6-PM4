@@ -13,13 +13,16 @@ namespace TheNote\core\task;
 
 use Exception;
 use pocketmine\block\Block;
-use pocketmine\level\format\Chunk;
+use pocketmine\block\BlockFactory;
+use pocketmine\block\VanillaBlocks;
+use pocketmine\item\ItemIds;
 use pocketmine\network\mcpe\protocol\BatchPacket;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\LevelChunkPacket;
+use pocketmine\player\Player;
 use pocketmine\Server;
-use pocketmine\Player;
 use pocketmine\scheduler\AsyncTask;
+use pocketmine\world\format\Chunk;
 use TheNote\core\Main;
 use TheNote\core\server\ModifiedChunk;
 use function array_rand;
@@ -50,7 +53,7 @@ class ChunkModificationTask extends AsyncTask {
         $this->chunk = $chunk->fastSerialize();
         $this->player = $player->getName();
         $this->ores = Main::getInstance()->ores;
-        $this->level = $player->getLevel()->getId();
+        $this->level = $player->getWorld()->getId();
     }
 
 
@@ -70,7 +73,7 @@ class ChunkModificationTask extends AsyncTask {
 
                         foreach (self::BLOCK_SIDES as $side) {
                             $side = $vector->getSide($side);
-                            if ($chunk->getBlockId($side->x & 0x0f, $side->y, $side->z & 0x0f) !== Block::STONE)
+                            if ($chunk->getBlockId($side->x & 0x0f, $side->y, $side->z & 0x0f) !== ItemIds::STONE)
                                 continue 2;
                         }
                         $subchunk->setBlockId($x, $y, $z, $ores[array_rand($ores)]);
@@ -83,12 +86,12 @@ class ChunkModificationTask extends AsyncTask {
     }
 
     public function onCompletion(Server $server) {
-        $player = $server->getPlayer($this->player);
+        $player = $server->getPlayerExact($this->player);
 
-        if ($player instanceof Player && $player->getLevel()->getId() === $this->level && $this->hasResult()) {
+        if ($player instanceof Player && $player->getWorld()->getId() === $this->level && $this->hasResult()) {
             $chunk = $this->getResult();
             try {
-                foreach ($player->getLevelNonNull()->getChunkTiles($chunk->getX(), $chunk->getZ()) as $tile) {
+                foreach ($player->getServer()->getWorldManager()->getWorlds()->getWorldNonNull()->getChunkTiles($chunk->getX(), $chunk->getZ()) as $tile) {
                     $chunk->addTile($tile);
                 }
             } catch (Exception $exception) {
