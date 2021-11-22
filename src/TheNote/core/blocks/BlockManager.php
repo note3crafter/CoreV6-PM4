@@ -15,6 +15,7 @@ use pocketmine\block\Block;
 use pocketmine\block\BlockBreakInfo;
 use pocketmine\block\BlockFactory as VBF;
 use pocketmine\block\BlockIdentifier as BID;
+use pocketmine\block\BlockIdentifierFlattened;
 use pocketmine\block\BlockLegacyIds as Ids;
 use pocketmine\block\BlockToolType;
 use pocketmine\block\UnknownBlock;
@@ -27,15 +28,18 @@ use pocketmine\utils\Config;
 use pocketmine\utils\SingletonTrait;
 use ReflectionMethod;
 use TheNote\core\Main;
+use const pocketmine\BEDROCK_DATA_PATH;
+use const pocketmine\LOCALE_DATA_PATH;
 use const pocketmine\RESOURCE_PATH;
 
 class BlockManager
 {
 	use SingletonTrait;
-
 	public function __construct()
 	{
 		self::setInstance($this);
+
+		//$this->plugin = $plugin;
 	}
 	public function startup(): void
 	{
@@ -52,8 +56,8 @@ class BlockManager
 
 		VBF::getInstance()->register(new BeeNest(new BID(473, 0, -218), new BlockBreakInfo(0.3, BlockToolType::AXE, 0.3)), true);
 		VBF::getInstance()->register(new Beehive(new BID(474, 0, -219,), new BlockBreakInfo(0.6, BlockToolType::AXE, 0.6)), true);
-		VBF::getInstance()->register(new HoneyBlock(new BID(475, 0, -220), new BlockBreakInfo(0.6, BlockToolType::SHOVEL, 0.9)), true);
-		VBF::getInstance()->register(new HoneyCombBlock(new BID(476, 0, -221), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
+		VBF::getInstance()->register(new HoneyBlock(new BID(475, 0, -220), new BlockBreakInfo(0)), true);
+		VBF::getInstance()->register(new HoneyCombBlock(new BID(476, 0, -221), new BlockBreakInfo(0.6)), true);
 		VBF::getInstance()->register(new Lodestone(new BID(477, 0, -222), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
 		VBF::getInstance()->register(new CrimsonRoots(new BID(478, 0, -223), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
 		VBF::getInstance()->register(new WarpedRoots(new BID(479, 0, -224), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
@@ -111,7 +115,7 @@ class BlockManager
 		VBF::getInstance()->register(new PolishedBlackstoneBrickWall(new BID(533, 0, -278), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
 		VBF::getInstance()->register(new ChiseledPolishedBlackstone(new BID(534, 0, -279), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
 		VBF::getInstance()->register(new CrackedPolishedBlackstoneBricks(new BID(535, 0, -280), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
-		VBF::getInstance()->register(new BlackstoneSlab(new BID(536, 0, -281), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
+		VBF::getInstance()->register(new BlackstoneSlab(new  BID(536,0, -281), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
 		VBF::getInstance()->register(new GildedBlackstone(new BID(537, 0, -282), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
 		VBF::getInstance()->register(new BlackstoneDoubleSlab(new BID(538, 0, -283), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
 		VBF::getInstance()->register(new PolishedBlackstoneBrickSlab(new BID(539, 0, -284), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
@@ -171,7 +175,7 @@ class BlockManager
 		$method = new ReflectionMethod(RuntimeBlockMapping::class, "registerMapping");
 		$method->setAccessible(true);
 
-		$blockIdMap = json_decode(file_get_contents(\pocketmine\BEDROCK_DATA_PATH . 'block_id_map.json'), true);
+		$blockIdMap = json_decode(file_get_contents(BEDROCK_DATA_PATH . 'block_id_map.json'), true);
 		$metaMap = [];
 
 		foreach ($instance->getBedrockKnownStates() as $runtimeId => $nbt) {

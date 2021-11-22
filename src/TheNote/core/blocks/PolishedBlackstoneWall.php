@@ -14,7 +14,7 @@ class PolishedBlackstoneWall extends Opaque
 
 	public function __construct(BlockIdentifier $idInfo, ?BlockBreakInfo $breakInfo = null)
 	{
-		parent::__construct($idInfo, "Polished Blackstone Wall",$breakInfo ?? new BlockBreakInfo(0.9, BlockToolType::NONE));
+		parent::__construct($idInfo, "Polished Blackstone Wall",$breakInfo ?? new BlockBreakInfo(0.9, BlockToolType::PICKAXE));
 	}
 
 	public function canBePlaced() : bool{

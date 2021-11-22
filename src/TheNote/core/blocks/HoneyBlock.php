@@ -1,5 +1,13 @@
 <?php
 
+//   ╔═════╗╔═╗ ╔═╗╔═════╗╔═╗    ╔═╗╔═════╗╔═════╗╔═════╗
+//   ╚═╗ ╔═╝║ ║ ║ ║║ ╔═══╝║ ╚═╗  ║ ║║ ╔═╗ ║╚═╗ ╔═╝║ ╔═══╝
+//     ║ ║  ║ ╚═╝ ║║ ╚══╗ ║   ╚══╣ ║║ ║ ║ ║  ║ ║  ║ ╚══╗
+//     ║ ║  ║ ╔═╗ ║║ ╔══╝ ║ ╠══╗   ║║ ║ ║ ║  ║ ║  ║ ╔══╝
+//     ║ ║  ║ ║ ║ ║║ ╚═══╗║ ║  ╚═╗ ║║ ╚═╝ ║  ║ ║  ║ ╚═══╗
+//     ╚═╝  ╚═╝ ╚═╝╚═════╝╚═╝    ╚═╝╚═════╝  ╚═╝  ╚═════╝
+//   Copyright by TheNote! Not for Resale! Not for others
+//
 
 namespace TheNote\core\blocks;
 
@@ -13,7 +21,7 @@ class HoneyBlock extends Opaque
 
 	public function __construct(BlockIdentifier $idInfo, ?BlockBreakInfo $breakInfo = null)
 	{
-		parent::__construct($idInfo, "Honey Block", $breakInfo ?? new BlockBreakInfo(0.9, BlockToolType::NONE));
+		parent::__construct($idInfo, "Honey Block", $breakInfo ?? new BlockBreakInfo(0));
 	}
 
 	public function canBePlaced() : bool{

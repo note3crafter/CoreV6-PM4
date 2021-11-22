@@ -1,8 +1,15 @@
 <?php
 
+//   ╔═════╗╔═╗ ╔═╗╔═════╗╔═╗    ╔═╗╔═════╗╔═════╗╔═════╗
+//   ╚═╗ ╔═╝║ ║ ║ ║║ ╔═══╝║ ╚═╗  ║ ║║ ╔═╗ ║╚═╗ ╔═╝║ ╔═══╝
+//     ║ ║  ║ ╚═╝ ║║ ╚══╗ ║   ╚══╣ ║║ ║ ║ ║  ║ ║  ║ ╚══╗
+//     ║ ║  ║ ╔═╗ ║║ ╔══╝ ║ ╠══╗   ║║ ║ ║ ║  ║ ║  ║ ╔══╝
+//     ║ ║  ║ ║ ║ ║║ ╚═══╗║ ║  ╚═╗ ║║ ╚═╝ ║  ║ ║  ║ ╚═══╗
+//     ╚═╝  ╚═╝ ╚═╝╚═════╝╚═╝    ╚═╝╚═════╝  ╚═╝  ╚═════╝
+//   Copyright by TheNote! Not for Resale! Not for others
+//
 
 namespace TheNote\core\blocks;
-
 
 use pocketmine\block\Block;
 use pocketmine\block\BlockBreakInfo;
@@ -28,7 +35,7 @@ class PolishedBlackstoneStairs extends Opaque
 
 	public function __construct(BlockIdentifier $idInfo, ?BlockBreakInfo $breakInfo = null)
 	{
-		parent::__construct($idInfo, "Polished Blackstone Stairs",$breakInfo ?? new BlockBreakInfo(0.9, BlockToolType::NONE));
+		parent::__construct($idInfo, "Polished Blackstone Stairs",$breakInfo ?? new BlockBreakInfo(0.9, BlockToolType::PICKAXE));
 	}
 
 	public function canBePlaced() : bool{
