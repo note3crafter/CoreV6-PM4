@@ -111,7 +111,7 @@ class EconomySell implements Listener
             }
             $cnt = 0;
             foreach ($player->getInventory()->getContents() as $item) {
-                if ($item->getID() == $sell["item"] and $item->getDamage() == $sell["meta"]) {
+                if ($item->getID() == $sell["item"] and $item->getMeta() == $sell["meta"]) {
                     $cnt = $item->getCount();
                 }
             }
