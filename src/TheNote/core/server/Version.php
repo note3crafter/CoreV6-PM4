@@ -38,7 +38,8 @@ class Version extends Command {
         $p = Main::$protokoll;
         $mcpe = Main::$mcpeversion;
         $date = Main::$dateversion;
-        $sender->sendMessage($config->get("info"). "Dieser Server läuft mir Core Version $v für Minecraft: Bedrock Edition v$mcpe (Protokollversion $p) Stand : $date ");
+		$pmmpv = $this->plugin->getServer()->getPocketMineVersion();
+        $sender->sendMessage($config->get("info"). "Dieser Server läuft auf PocketMine-MP $pmmpv mir Core Version $v für Minecraft: Bedrock Edition v$mcpe (Protokollversion $p) Stand : $date ");
 
         return false;
     }
