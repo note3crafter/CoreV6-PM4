@@ -7,19 +7,15 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 
 - [Hier downloaden](https://poggit.pmmp.io/ci/note3crafter/Core-V6/Core-V6)!
   Das Core Plugin wurde speziell für CityBuild Server entwickelt!
-# Neues!
--v.6.0.5 ALPHA 
-Blöcke und Items wurden weiter bearbeitet
-Statstext funktioniert wieder
-WorldCommand wieder vollständig nutzbar
-EconomyShop & Sell Bugfix
-AFKCommand Fix
-HubCommand fix
-Emotes Fix
+# Neues! v6.0.6 ALPHA
+- Überarbeitete Config
+- BanSystem kann man nun deaktivieren! Sowie andere Sachen!
+- /burn Command wurde repaiert
+- /regeln wurde repaiert
+- Kleinere Bugfixes
 
-Danke an galaxytweenty für fixes in den Blöcken :D
 # Fehler & Bugs
-Aktuell ist sie Instabiel! Sie befindet sich in der Alpha Phase!
+Aktuell ist sie nicht vollständig und es kann zu fehlern kommen! Sie befindet sich in der Alpha Phase! 
 # Mindestanforderungen 
 - 2 Kern CPU (Bestenfalls hohe Singlecore Performance)
 - 1GB Ram 
@@ -38,10 +34,9 @@ Aktuell ist sie Instabiel! Sie befindet sich in der Alpha Phase!
 - Chest Shop System
 
 # Features
-- [Alle Commands](https://github.com/note3crafter/Core-V5/blob/main/resources/commands.md)
+- [Alle Commands](https://github.com/note3crafter/Core-V6/blob/main/resources/commands.md)
 - Multi Language Support!
 - [Vanilla Redstone](https://github.com/tedo0627/RedstoneCircuit_PMMP-Plugin) (by [tedo0627](https://github.com/tedo0627))
-- Sämtliche Items der 1.16 sind drinne!
 - [AntiXray](https://github.com/HimmelKreis4865/AntiXray) & [HeadSystem](https://github.com/HimmelKreis4865/BetterSkulls) (by HimmelKreis4865)
 - [MCPEtoDiscord](https://github.com/JaxkDev/MCPEToDiscord) (by [JaxkDev](https://github.com/JaxkDev))
 - VoteSystem   
@@ -78,7 +73,6 @@ Und an unseren Forker! Gebt das Plugin nicht als Euers aus! Ich habe eine menge 
 - [TuranicTeam](https://github.com/TuranicTeam) (Für Sämtliche Items/Blöcke etc)
 - [Muqsit](https://github.com/Muqsit) (Für das InvMenü)
 - [jojoe77777](https://github.com/jojoe77777) (Für FormAPI)
-- [jasonwynn10](https://github.com/jasonwynn10) (Beacons)
 - [LookitsAku](https://github.com/Akuroma) & und vielen vielen weiteren Helfern!
 
 2017-2021 ©NoteLand & TheNote/Rudolf2000 
