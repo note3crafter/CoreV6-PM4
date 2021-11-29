@@ -18,7 +18,7 @@
     "afknochat": "§CDu kannst dich nicht bewegen da du im AFK Modus bist!",
     "animationprefix": "§6Benutze eine Animation",
     "burnprefix": "§6Zünde einen anderen Spieler an",
-    "burnusgae": "§eNutze : /burn {spielername} [sekunden]",
+    "burnusage": "§eNutze : /burn {spielername} [sekunden]",
     "burnseconds": "§cBitte gebe die Sekundenzahl ein die ein Spieler Brennen soll!",
     "burnyourself": "§6Du hast dich selbst angezündet für §c{seconds} §6sekunden.",
     "burnmessage": "§6Du hast den Spieler {player}§r§6 für §c{seconds} §6sekunden angezündet.",
