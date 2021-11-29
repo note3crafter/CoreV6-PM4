@@ -25,7 +25,7 @@ class CreditsCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
-        parent::__construct("credits", "§f[§4Core§eV5§f] §6Credits", "/credits");
+        parent::__construct("credits", "§f[§4Core§eV6§f] §6Credits", "/credits");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
@@ -63,7 +63,7 @@ class CreditsCommand extends Command
                     "§e- jojoe77777 #FormAPI\n" .
                     "§e- muqsit #InvMenü\n" .
                     "§e- TheBalkanDev #ecinvsee, invsee\n" .
-                    "§e- jasonwynn10 #Beacons");
+                    "§e- galaxytweenty #Blöcke");
         $form->addButton("§0OK", 0);
         $form->sendToPlayer($sender);
         return true;

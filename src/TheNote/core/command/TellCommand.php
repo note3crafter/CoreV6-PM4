@@ -49,10 +49,10 @@ class TellCommand extends Command
         }
         $cfg = new Config($this->plugin->getDataFolder() . Main::$userfile . $sender->getName() . ".json", Config::JSON);
         $stats = new Config($this->plugin->getDataFolder() . Main::$statsfile . $player->getName() . ".json", Config::JSON);
-        $vote = new Config($this->plugin->getDataFolder() . Main::$setup . "vote.yml", Config::YAML);
-        if ($vote->get("votes") == true) {
+        $vote = new Config($this->plugin->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
+        if ($vote->get("Mindestvotes") === true) {
             if ($stats->get("votes") < 1) {
-                $player->sendMessage($config->get("error") . "§cDu musst mindestens 1x Gevotet haben um auf dem Server Schreiben zu können! §f-> §e" . $config->get("votelink"));
+                $player->sendMessage($config->get("error") . "§cDu musst mindestens 1x Gevotet haben um auf dem Server Schreiben zu können! §f-> §e" . $vote->get("votelink"));
                 return false;
             }
         }
