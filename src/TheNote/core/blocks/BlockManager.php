@@ -19,8 +19,12 @@ use pocketmine\block\BlockIdentifierFlattened;
 use pocketmine\block\BlockLegacyIds as Ids;
 use pocketmine\block\BlockToolType;
 use pocketmine\block\UnknownBlock;
+use pocketmine\data\bedrock\LegacyBlockIdToStringIdMap;
+use pocketmine\inventory\CreativeInventory;
 use pocketmine\item\ItemIds;
+use pocketmine\item\StringToItemParser;
 use pocketmine\item\ToolTier;
+use pocketmine\network\mcpe\convert\ItemTranslator;
 use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
@@ -35,12 +39,14 @@ use const pocketmine\RESOURCE_PATH;
 class BlockManager
 {
 	use SingletonTrait;
+
 	public function __construct()
 	{
 		self::setInstance($this);
 
 		//$this->plugin = $plugin;
 	}
+
 	public function startup(): void
 	{
 		//VBF::getInstance()->register(new Lantern(new BID(ItemIds::LANTERN, 0), new BlockBreakInfo(5, BlockToolType::AXE,  ToolTier::WOOD()->getHarvestLevel())), true);
@@ -115,7 +121,7 @@ class BlockManager
 		VBF::getInstance()->register(new PolishedBlackstoneBrickWall(new BID(533, 0, -278), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
 		VBF::getInstance()->register(new ChiseledPolishedBlackstone(new BID(534, 0, -279), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
 		VBF::getInstance()->register(new CrackedPolishedBlackstoneBricks(new BID(535, 0, -280), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
-		VBF::getInstance()->register(new BlackstoneSlab(new  BID(536,0, -281), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
+		VBF::getInstance()->register(new BlackstoneSlab(new  BID(536, 0, -281), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
 		VBF::getInstance()->register(new GildedBlackstone(new BID(537, 0, -282), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
 		VBF::getInstance()->register(new BlackstoneDoubleSlab(new BID(538, 0, -283), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
 		VBF::getInstance()->register(new PolishedBlackstoneBrickSlab(new BID(539, 0, -284), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
@@ -140,7 +146,7 @@ class BlockManager
 		VBF::getInstance()->register(new CrackedNetherBricks(new BID(558, 0, -303), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
 		VBF::getInstance()->register(new QuartzBricks(new BID(559, 0, -304), new BlockBreakInfo(0.6, BlockToolType::PICKAXE, 0.9)), true);
 
-		VBF::getInstance()->register(new CopperBlock(new BID(595, 0, 595), new BlockBreakInfo(6, BlockToolType::PICKAXE, 3)), true);
+		//VBF::getInstance()->register(new CopperBlock(new BID(595, 0, 595), new BlockBreakInfo(6, BlockToolType::PICKAXE, 3)), true);
 		/*VBF::getInstance()->register(new ExposedCopper	(new BID(596, 0, 596), new BlockBreakInfo(6, BlockToolType::PICKAXE, 3)), true);
 		VBF::getInstance()->register(new WeatheredCopper(new BID(597, 0, 597), new BlockBreakInfo(6, BlockToolType::PICKAXE, 3)), true);
 		VBF::getInstance()->register(new OxidizedCopper(new BID(598, 0, 598), new BlockBreakInfo(6, BlockToolType::PICKAXE, 3)), true);
@@ -157,6 +163,9 @@ class BlockManager
 
 		VBF::getInstance()->register(new WaxedOxidizedCopper(new BID(701, 0, 701), new BlockBreakInfo(6, BlockToolType::PICKAXE, 3)), true);
 		VBF::getInstance()->register(new WaxedOxidizedCutCopper(new BID(702, 0, 702), new BlockBreakInfo(6 BlockToolType::PICKAXE, 3)), true);*/
+		//self::registerBlockGlobally(new CopperBlock(new BID(595, 0, -340), new BlockBreakInfo(3, BlockToolType::PICKAXE, -1)));
+
+		BlockManager::registerBlockInNetworkLayer(-340);
 
 		Server::getInstance()->getAsyncPool()->addWorkerStartHook(function (int $worker): void {
 			Server::getInstance()->getAsyncPool()->submitTaskToWorker(new class() extends AsyncTask {
@@ -164,6 +173,7 @@ class BlockManager
 				public function onRun(): void
 				{
 					BlockManager::getInstance()->initializeRuntimeIds();
+					BlockManager::getInstance()->registerRuntimeIds();
 				}
 			}, $worker);
 		});
@@ -190,122 +200,443 @@ class BlockManager
 			}
 		}
 	}
-
-
-/*Block of Copper	minecraft:copper_block
-Copper Ingot	Copper Ingot	minecraft:copper_ingot
-Copper Ore	Copper Ore	minecraft:copper_ore
-Cut Copper	Cut Copper	minecraft:cut_copper
-Cut Copper Slab	Cut Copper Slab	minecraft:cut_copper_slab
-Cut Copper Stairs	Cut Copper Stairs	minecraft:cut_copper_stairs
-Deepslate Copper Ore	Deepslate Copper Ore	minecraft:deepslate_copper_ore
-Exposed Copper	Exposed Copper	minecraft:exposed_copper
-Exposed Cut Copper	Exposed Cut Copper	minecraft:exposed_cut_copper
-Exposed Cut Copper Slab	Exposed Cut Copper Slab	minecraft:exposed_cut_copper_slab
-Exposed Cut Copper Stairs	Exposed Cut Copper Stairs	minecraft:exposed_cut_copper_stairs
-Oxidized Copper	Oxidized Copper	minecraft:oxidized_copper
-Oxidized Cut Copper	Oxidized Cut Copper	minecraft:oxidized_cut_copper
-Oxidized Cut Copper Slab	Oxidized Cut Copper Slab	minecraft:oxidized_cut_copper_slab
-Oxidized Cut Copper Stairs	Oxidized Cut Copper Stairs	minecraft:oxidized_cut_copper_stairs
-Raw Copper	Raw Copper	minecraft:raw_copper
-Block of Raw Copper	Block of Raw Copper	minecraft:raw_copper_block
-Waxed Block of Copper	Waxed Block of Copper	minecraft:waxed_copper_block
-Waxed Cut Copper	minecraft:waxed_cut_copper
-Waxed Cut Copper Slab	minecraft:waxed_cut_copper_slab
-Waxed Cut Copper Stairs	minecraft:waxed_cut_copper_stairs
-Waxed Exposed Copper	minecraft:waxed_exposed_copper
-Waxed Exposed Cut Copper	minecraft:waxed_exposed_cut_copper
-Waxed Exposed Cut Copper Slab	minecraft:waxed_exposed_cut_copper_slab
-Waxed Exposed Cut Copper Stairs	minecraft:waxed_exposed_cut_copper_stairs
-Waxed Oxidized Copper	minecraft:waxed_oxidized_copper
-Waxed Oxidized Cut Copper	minecraft:waxed_oxidized_cut_copper
-Waxed Oxidized Cut Copper Slab	minecraft:waxed_oxidized_cut_copper_slab
-Waxed Oxidized Cut Copper Stairs	minecraft:waxed_oxidized_cut_copper_stairs
-Waxed Weathered Copper	minecraft:waxed_weathered_copper
-Waxed Weathered Cut Copper	minecraft:waxed_weathered_cut_copper
-Waxed Weathered Cut Copper Slab	minecraft:waxed_weathered_cut_copper_slab
-Waxed Weathered Cut Copper Stairs	minecraft:waxed_weathered_cut_copper_stairs
-Weathered Copper	Weathered Copper	minecraft:weathered_copper
-Weathered Cut Copper	Weathered Cut Copper	minecraft:weathered_cut_copper
-Weathered Cut Copper Slab	Weathered Cut Copper Slab	minecraft:weathered_cut_copper_slab
-Weathered Cut Copper Stairs	Weathered Cut Copper Stairs	minecraft:weathered_cut_copper_stairs*/
-
-
-
-	/*public static function init()
+	##1.17 Blöcke
+	public static function registerRuntimeIds(): void
 	{
+		$blocks = [
+			'minecraft:copper_block' => 595,
+			'minecraft:waxed_exposed_copper' => 600,
+			'minecraft:waxed_weathered_copper' => 601,
+			'minecraft:cut_copper' => 602,
+		];
+		$itemids = [
+			'minecraft:copper_block' => -340,
+			/*'minecraft:waxed_exposed_copper' => -345,
+			'minecraft:waxed_weathered_copper' => 601,
+			'minecraft:cut_copper' => 602,*/
+		];
 
-			//$parent = VanillaBlocks::SPONGE();
-			//$parent_id_info = $parent->getIdInfo();
-			//VBF::getInstance()->register(new Sponge(), true);
-		VBF::getInstance()->register(new HoneyCombBlock(new BID(475, 0,  475), new BlockBreakInfo(0.6, BlockToolType::NONE,0.9)), true);
+		$runtimeBlockMapping = RuntimeBlockMapping::getInstance();
+		$registerMapping = new \ReflectionMethod($runtimeBlockMapping, 'registerMapping');
+		$registerMapping->setAccessible(true);
+		$metaMap = [];
+		foreach ($runtimeBlockMapping->getBedrockKnownStates() as $legacyId => $nbt) {
+			$mcpeName = $nbt->getString("name");
+			$meta = isset($metaMap[$mcpeName]) ? ($metaMap[$mcpeName] + 1) : 0;
+			$id = $blocks[$mcpeName] ?? Ids::AIR;
+			$legacyId = $itemids[$nbt->getString('name')] ?? null;
+			if ($legacyId === null) continue;
 
+			$metaMap[$legacyId] ??= 0;
+			if ($id !== Ids::AIR && $meta <= 15 && !VBF::getInstance()->isRegistered($id, $meta)) {
+				$metaMap[$mcpeName] = $meta;
+				$registerMapping->invoke($runtimeBlockMapping, $legacyId, $id, $meta);
+			}
 
-		/*BlockFactory::register(new EndPortalFrame(), true);
-		BlockFactory::register(new FrostedIce(), true);
-		BlockFactory::register(new Cauldron(), true);
-		//BlockFactory::register(new Sponge(), true);
-		BlockFactory::register(new BrewingStand, true);
-		BlockFactory::register(new EndPortal(), true);
-		BlockFactory::register(new Portal(), true);
-		BlockFactory::register(new Obsidian(), true);
-		BlockFactory::register(new ShulkerBox(), true);
-		BlockFactory::register(new UndyedShulkerBox(), true);
-		BlockFactory::register(new Jukebox(), true);
-		BlockFactory::register(new Beacon(), true);
-		BlockFactory::register(new Anvil(), true);
-		BlockFactory::register(new SkullBlock(), true);
-		//BlockFactory::register(new NoteBlock(), true);
-		BlockFactory::register(new RedstoneWire(), true);
-		BlockFactory::register(new RedstoneRepeaterPowered(), true);
-		BlockFactory::register(new RedstoneRepeaterUnpowered(), true);
-		BlockFactory::register(new RedstoneComparatorPowered(), true);
-		BlockFactory::register(new RedstoneComparatorUnpowered(), true);
-		BlockFactory::register(new RedstoneTorch(), true);
-		BlockFactory::register(new RedstoneTorchUnlit(), true);
-		BlockFactory::register(new Redstone(), true);
-		BlockFactory::register(new Lever(), true);
-		BlockFactory::register(new ButtonStone(), true);
-		BlockFactory::register(new ButtonWooden(), true);
-		BlockFactory::register(new PressurePlateStone(), true);
-		BlockFactory::register(new PressurePlateWooden(), true);
-		BlockFactory::register(new WeightedPressurePlateLight(), true);
-		BlockFactory::register(new WeightedPressurePlateHeavy(), true);
-		BlockFactory::register(new DaylightDetector(), true);
-		BlockFactory::register(new DaylightDetectorInverted(), true);
-		BlockFactory::register(new Observer(), true);
-		BlockFactory::register(new TrappedChest(), true);
-		BlockFactory::register(new TripwireHook(), true);
-		BlockFactory::register(new Tripwire(), true);
-		BlockFactory::register(new RedstoneLamp(), true);
-		BlockFactory::register(new RedstoneLampLit(), true);
-		BlockFactory::register(new NoteBlockR(), true);
-		BlockFactory::register(new Dropper(), true);
-		BlockFactory::register(new Dispenser(), true);
-		BlockFactory::register(new Hopper(), true);
-		BlockFactory::register(new Piston(), true);
-		BlockFactory::register(new Pistonarmcollision(), true);
-		BlockFactory::register(new PistonSticky(), true);
-		BlockFactory::register(new Moving(), true);
-		BlockFactory::register(new CommandBlock(), true);
-		BlockFactory::register(new CommandBlockRepeating(), true);
-		BlockFactory::register(new CommandBlockChain(), true);
-		BlockFactory::register(new TNT(), true);
-		BlockFactory::register(new WoodenDoor(Block::OAK_DOOR_BLOCK, 0, "Oak Door", Item::OAK_DOOR), true);
-		BlockFactory::register(new WoodenDoor(Block::SPRUCE_DOOR_BLOCK, 0, "Spruce Door", Item::SPRUCE_DOOR), true);
-		BlockFactory::register(new WoodenDoor(Block::BIRCH_DOOR_BLOCK, 0, "Birch Door", Item::BIRCH_DOOR), true);
-		BlockFactory::register(new WoodenDoor(Block::JUNGLE_DOOR_BLOCK, 0, "Jungle Door", Item::JUNGLE_DOOR), true);
-		BlockFactory::register(new WoodenDoor(Block::ACACIA_DOOR_BLOCK, 0, "Acacia Door", Item::ACACIA_DOOR), true);
-		BlockFactory::register(new WoodenDoor(Block::DARK_OAK_DOOR_BLOCK, 0, "Dark Oak Door", Item::DARK_OAK_DOOR), true);
-		BlockFactory::register(new Trapdoor(VanillaBlocks::OAK_TRAPDOOR()), true);
-		BlockFactory::register(new IronTrapdoor(), true);
-		BlockFactory::register(new FenceGate(Block::OAK_FENCE_GATE, 0, "Oak Fence Gate"), true);
-		BlockFactory::register(new FenceGate(Block::SPRUCE_FENCE_GATE, 0, "Spruce Fence Gate"), true);
-		BlockFactory::register(new FenceGate(Block::BIRCH_FENCE_GATE, 0, "Birch Fence Gate"), true);
-		BlockFactory::register(new FenceGate(Block::JUNGLE_FENCE_GATE, 0, "Jungle Fence Gate"), true);
-		BlockFactory::register(new FenceGate(Block::DARK_OAK_FENCE_GATE, 0, "Dark Oak Fence Gate"), true);
-		BlockFactory::register(new FenceGate(Block::ACACIA_FENCE_GATE, 0, "Acacia Fence Gate"), true);
-		BlockFactory::registerBlock(new Slime(), true);*/
+		}
+		/*foreach ($runtimeBlockMapping->getBedrockKnownStates() as $runtimeId => $state) {
+			$legacyId = $blocks[$state->getString('name')] ?? null;
+			if ($legacyId === null) continue;
 
+			$metaMap[$legacyId] ??= 0;
 
+			$registerMapping->invoke($runtimeBlockMapping, $runtimeId, $legacyId, $metaMap[$legacyId]++);
+		}*/
+
+		$legacyBlockIdToStringIdMap = LegacyBlockIdToStringIdMap::getInstance();
+		$runtimeBlockMapping = RuntimeBlockMapping::getInstance();
+		$registerMapping = new \ReflectionMethod($runtimeBlockMapping, 'registerMapping');
+		$registerMapping->setAccessible(true);
+		$metaMap = [];
+		foreach ($runtimeBlockMapping->getBedrockKnownStates() as $runtimeId => $state) {
+			$legacyId = $legacyBlockIdToStringIdMap->stringToLegacy($state->getString("name"));
+			if ($legacyId === null or $legacyId <= Ids::LIT_BLAST_FURNACE) {
+				continue;
+			}
+		}
+	}
+	public static function registerBlockInNetworkLayer(int $itemId): void
+	{
+		$itemTranslator = ItemTranslator::getInstance();
+		$prop = new \ReflectionProperty($itemTranslator, 'simpleCoreToNetMapping');
+		$prop->setAccessible(true);
+		$simpleCoreToNetMap = $prop->getValue($itemTranslator);
+		$simpleCoreToNetMap[$itemId] = $itemId;
+		$prop->setValue($itemTranslator, $simpleCoreToNetMap);
+
+		$prop = new \ReflectionProperty($itemTranslator, 'simpleNetToCoreMapping');
+		$prop->setAccessible(true);
+		$simpleNetToCoreMap = $prop->getValue($itemTranslator);
+		$simpleNetToCoreMap[$itemId] = $itemId;
+		$prop->setValue($itemTranslator, $simpleNetToCoreMap);
+	}
+
+	/*public static function registerRuntimeIds(): void
+	{
+		$blocks = [
+			'minecraft:copper_block' => 595,
+			'minecraft:waxed_exposed_copper' => 600,
+			'minecraft:waxed_weathered_copper' => 601,
+			'minecraft:cut_copper' => 602,
+		];
+
+		$runtimeBlockMapping = RuntimeBlockMapping::getInstance();
+		$registerMapping = new \ReflectionMethod($runtimeBlockMapping, 'registerMapping');
+		$registerMapping->setAccessible(true);
+		$metaMap = [];
+		foreach ($runtimeBlockMapping->getBedrockKnownStates() as $runtimeId => $state) {
+			$legacyId = $blocks[$state->getString('name')] ?? null;
+			if ($legacyId === null) continue;
+
+			$metaMap[$legacyId] ??= 0;
+
+			$registerMapping->invoke($runtimeBlockMapping, $runtimeId, $legacyId, $metaMap[$legacyId]++);
+		}
+
+		$legacyBlockIdToStringIdMap = LegacyBlockIdToStringIdMap::getInstance();
+		$runtimeBlockMapping = RuntimeBlockMapping::getInstance();
+		$registerMapping = new \ReflectionMethod($runtimeBlockMapping, 'registerMapping');
+		$registerMapping->setAccessible(true);
+		$metaMap = [];
+		foreach ($runtimeBlockMapping->getBedrockKnownStates() as $runtimeId => $state) {
+			$legacyId = $legacyBlockIdToStringIdMap->stringToLegacy($state->getString("name"));
+			if ($legacyId === null or $legacyId <= Ids::LIT_BLAST_FURNACE) {
+				continue;
+			}
+		}
+	}*/
+
+	public static function registerBlockGlobally(Block $block): void
+	{
+		// API Layer
+		VBF::getInstance()->register($block);
+		CreativeInventory::getInstance()->add($block->asItem());
+		StringToItemParser::getInstance()->registerBlock(strtolower(str_replace(' ', '_', $block->getName())), fn() => $block);
+
+		// Network Layer
+		$itemId = $block->getIdInfo()->getItemId();
+
+		$itemTranslator = ItemTranslator::getInstance();
+		$prop = new \ReflectionProperty($itemTranslator, 'simpleCoreToNetMapping');
+		$prop->setAccessible(true);
+
+		$simpleCoreToNetMap = $prop->getValue($itemTranslator);
+		$simpleCoreToNetMap[$itemId] = $itemId;
+		$prop->setValue($itemTranslator, $simpleCoreToNetMap);
+
+		$prop = new \ReflectionProperty($itemTranslator, 'simpleNetToCoreMapping');
+		$prop->setAccessible(true);
+		$simpleNetToCoreMap = $prop->getValue($itemTranslator);
+		$simpleNetToCoreMap[$itemId] = $itemId;
+		$prop->setValue($itemTranslator, $simpleNetToCoreMap);
+
+	}
 }
+
+
+/*"minecraft:unknown": 560,
+    "minecraft:powder_snow": 561,
+    "minecraft:sculk_sensor": 562,
+    "minecraft:pointed_dripstone": 563,
+    "minecraft:copper_ore": 566,
+    "minecraft:lightning_rod": 567,
+    "minecraft:dripstone_block": 572,
+    "minecraft:dirt_with_roots": 573,
+    "minecraft:hanging_roots": 574,
+    "minecraft:moss_block": 575,
+    "minecraft:spore_blossom": 576,
+    "minecraft:cave_vines": 577,
+    "minecraft:big_dripleaf": 578,
+    "minecraft:azalea_leaves": 579,
+    "minecraft:azalea_leaves_flowered": 580,
+    "minecraft:calcite": 581,
+    "minecraft:amethyst_block": 582,
+    "minecraft:budding_amethyst": 583,
+    "minecraft:amethyst_cluster": 584,
+    "minecraft:large_amethyst_bud": 585,
+    "minecraft:medium_amethyst_bud": 586,
+    "minecraft:small_amethyst_bud": 587,
+    "minecraft:tuff": 588,
+    "minecraft:tinted_glass": 589,
+    "minecraft:moss_carpet": 590,
+    "minecraft:small_dripleaf_block": 591,
+    "minecraft:azalea": 592,
+    "minecraft:flowering_azalea": 593,
+    "minecraft:glow_frame": 594,
+    "minecraft:copper_block": 595,
+    "minecraft:exposed_copper": 596,
+    "minecraft:weathered_copper": 597,
+    "minecraft:oxidized_copper": 598,
+    "minecraft:waxed_copper": 599,
+    "minecraft:waxed_exposed_copper": 600,
+    "minecraft:waxed_weathered_copper": 601,
+    "minecraft:cut_copper": 602,
+    "minecraft:exposed_cut_copper": 603,
+    "minecraft:weathered_cut_copper": 604,
+    "minecraft:oxidized_cut_copper": 605,
+    "minecraft:waxed_cut_copper": 606,
+    "minecraft:waxed_exposed_cut_copper": 607,
+    "minecraft:waxed_weathered_cut_copper": 608,
+    "minecraft:cut_copper_stairs": 609,
+    "minecraft:exposed_cut_copper_stairs": 610,
+    "minecraft:weathered_cut_copper_stairs": 611,
+    "minecraft:oxidized_cut_copper_stairs": 612,
+    "minecraft:waxed_cut_copper_stairs": 613,
+    "minecraft:waxed_exposed_cut_copper_stairs": 614,
+    "minecraft:waxed_weathered_cut_copper_stairs": 615,
+    "minecraft:cut_copper_slab": 616,
+    "minecraft:exposed_cut_copper_slab": 617,
+    "minecraft:weathered_cut_copper_slab": 618,
+    "minecraft:oxidized_cut_copper_slab": 619,
+    "minecraft:waxed_cut_copper_slab": 620,
+    "minecraft:waxed_exposed_cut_copper_slab": 621,
+    "minecraft:waxed_weathered_cut_copper_slab": 622,
+    "minecraft:double_cut_copper_slab": 623,
+    "minecraft:exposed_double_cut_copper_slab": 624,
+    "minecraft:weathered_double_cut_copper_slab": 625,
+    "minecraft:oxidized_double_cut_copper_slab": 626,
+    "minecraft:waxed_double_cut_copper_slab": 627,
+    "minecraft:waxed_exposed_double_cut_copper_slab": 628,
+    "minecraft:waxed_weathered_double_cut_copper_slab": 629,
+    "minecraft:cave_vines_body_with_berries": 630,
+    "minecraft:cave_vines_head_with_berries": 631,
+    "minecraft:smooth_basalt": 632,
+    "minecraft:deepslate": 633,
+    "minecraft:cobbled_deepslate": 634,
+    "minecraft:cobbled_deepslate_slab": 635,
+    "minecraft:cobbled_deepslate_stairs": 636,
+    "minecraft:cobbled_deepslate_wall": 637,
+    "minecraft:polished_deepslate": 638,
+    "minecraft:polished_deepslate_slab": 639,
+    "minecraft:polished_deepslate_stairs": 640,
+    "minecraft:polished_deepslate_wall": 641,
+    "minecraft:deepslate_tiles": 642,
+    "minecraft:deepslate_tile_slab": 643,
+    "minecraft:deepslate_tile_stairs": 644,
+    "minecraft:deepslate_tile_wall": 645,
+    "minecraft:deepslate_bricks": 646,
+    "minecraft:deepslate_brick_slab": 647,
+    "minecraft:deepslate_brick_stairs": 648,
+    "minecraft:deepslate_brick_wall": 649,
+    "minecraft:chiseled_deepslate": 650,
+    "minecraft:cobbled_deepslate_double_slab": 651,
+    "minecraft:polished_deepslate_double_slab": 652,
+    "minecraft:deepslate_tile_double_slab": 653,
+    "minecraft:deepslate_brick_double_slab": 654,
+    "minecraft:deepslate_lapis_ore": 655,
+    "minecraft:deepslate_iron_ore": 656,
+    "minecraft:deepslate_gold_ore": 657,
+    "minecraft:deepslate_redstone_ore": 658,
+    "minecraft:lit_deepslate_redstone_ore": 659,
+    "minecraft:deepslate_diamond_ore": 660,
+    "minecraft:deepslate_coal_ore": 661,
+    "minecraft:deepslate_emerald_ore": 662,
+    "minecraft:deepslate_copper_ore": 663,
+    "minecraft:cracked_deepslate_tiles": 664,
+    "minecraft:cracked_deepslate_bricks": 665,
+    "minecraft:glow_lichen": 666,
+    "minecraft:candle": 667,
+    "minecraft:white_candle": 668,
+    "minecraft:orange_candle": 669,
+    "minecraft:magenta_candle": 670,
+    "minecraft:light_blue_candle": 671,
+    "minecraft:yellow_candle": 672,
+    "minecraft:lime_candle": 673,
+    "minecraft:pink_candle": 674,
+    "minecraft:gray_candle": 675,
+    "minecraft:light_gray_candle": 676,
+    "minecraft:cyan_candle": 677,
+    "minecraft:purple_candle": 678,
+    "minecraft:blue_candle": 679,
+    "minecraft:brown_candle": 680,
+    "minecraft:green_candle": 681,
+    "minecraft:red_candle": 682,
+    "minecraft:black_candle": 683,
+    "minecraft:candle_cake": 684,
+    "minecraft:white_candle_cake": 685,
+    "minecraft:orange_candle_cake": 686,
+    "minecraft:magenta_candle_cake": 687,
+    "minecraft:light_blue_candle_cake": 688,
+    "minecraft:yellow_candle_cake": 689,
+    "minecraft:lime_candle_cake": 690,
+    "minecraft:pink_candle_cake": 691,
+    "minecraft:gray_candle_cake": 692,
+    "minecraft:light_gray_candle_cake": 693,
+    "minecraft:cyan_candle_cake": 694,
+    "minecraft:purple_candle_cake": 695,
+    "minecraft:blue_candle_cake": 696,
+    "minecraft:brown_candle_cake": 697,
+    "minecraft:green_candle_cake": 698,
+    "minecraft:red_candle_cake": 699,
+    "minecraft:black_candle_cake": 700,
+    "minecraft:waxed_oxidized_copper": 701,
+    "minecraft:waxed_oxidized_cut_copper": 702,
+    "minecraft:waxed_oxidized_cut_copper_stairs": 703,
+    "minecraft:waxed_oxidized_cut_copper_slab": 704,
+    "minecraft:waxed_oxidized_double_cut_copper_slab": 705,
+    "minecraft:raw_iron_block": 706,
+    "minecraft:raw_copper_block": 707,
+    "minecraft:raw_gold_block": 708,
+    "minecraft:infested_deepslate": 709,
+    "minecraft:sculk": 713,
+    "minecraft:sculk_vein": 714,
+    "minecraft:sculk_catalyst": 715,
+    "minecraft:sculk_shrieker": 716,
+    "minecraft:client_request_placeholder_block": 720,
+    "minecraft:mysterious_frame": 721,
+    "minecraft:mysterious_frame_slot": 722
+
+IDLIST
+"minecraft:client_request_placeholder_block": -465,
+    "minecraft:infested_deepslate": -454,
+    "minecraft:raw_gold_block": -453,
+    "minecraft:raw_copper_block": -452,
+    "minecraft:raw_iron_block": -451,
+    "minecraft:waxed_oxidized_double_cut_copper_slab": -450,
+    "minecraft:waxed_oxidized_cut_copper_slab": -449,
+    "minecraft:waxed_oxidized_cut_copper_stairs": -448,
+    "minecraft:waxed_oxidized_cut_copper": -447,
+    "minecraft:waxed_oxidized_copper": -446,
+    "minecraft:black_candle_cake": -445,
+    "minecraft:red_candle_cake": -444,
+    "minecraft:green_candle_cake": -443,
+    "minecraft:brown_candle_cake": -442,
+    "minecraft:blue_candle_cake": -441,
+    "minecraft:purple_candle_cake": -440,
+    "minecraft:cyan_candle_cake": -439,
+    "minecraft:light_gray_candle_cake": -438,
+    "minecraft:gray_candle_cake": -437,
+    "minecraft:pink_candle_cake": -436,
+    "minecraft:lime_candle_cake": -435,
+    "minecraft:yellow_candle_cake": -434,
+    "minecraft:light_blue_candle_cake": -433,
+    "minecraft:magenta_candle_cake": -432,
+    "minecraft:orange_candle_cake": -431,
+    "minecraft:white_candle_cake": -430,
+    "minecraft:candle_cake": -429,
+    "minecraft:black_candle": -428,
+    "minecraft:red_candle": -427,
+    "minecraft:green_candle": -426,
+    "minecraft:brown_candle": -425,
+    "minecraft:blue_candle": -424,
+    "minecraft:purple_candle": -423,
+    "minecraft:cyan_candle": -422,
+    "minecraft:light_gray_candle": -421,
+    "minecraft:gray_candle": -420,
+    "minecraft:pink_candle": -419,
+    "minecraft:lime_candle": -418,
+    "minecraft:yellow_candle": -417,
+    "minecraft:light_blue_candle": -416,
+    "minecraft:magenta_candle": -415,
+    "minecraft:orange_candle": -414,
+    "minecraft:white_candle": -413,
+    "minecraft:candle": -412,
+    "minecraft:glow_lichen": -411,
+    "minecraft:cracked_deepslate_bricks": -410,
+    "minecraft:cracked_deepslate_tiles": -409,
+    "minecraft:deepslate_copper_ore": -408,
+    "minecraft:deepslate_emerald_ore": -407,
+    "minecraft:deepslate_coal_ore": -406,
+    "minecraft:deepslate_diamond_ore": -405,
+    "minecraft:lit_deepslate_redstone_ore": -404,
+    "minecraft:deepslate_redstone_ore": -403,
+    "minecraft:deepslate_gold_ore": -402,
+    "minecraft:deepslate_iron_ore": -401,
+    "minecraft:deepslate_lapis_ore": -400,
+    "minecraft:deepslate_brick_double_slab": -399,
+    "minecraft:deepslate_tile_double_slab": -398,
+    "minecraft:polished_deepslate_double_slab": -397,
+    "minecraft:cobbled_deepslate_double_slab": -396,
+    "minecraft:chiseled_deepslate": -395,
+    "minecraft:deepslate_brick_wall": -394,
+    "minecraft:deepslate_brick_stairs": -393,
+    "minecraft:deepslate_brick_slab": -392,
+    "minecraft:deepslate_bricks": -391,
+    "minecraft:deepslate_tile_wall": -390,
+    "minecraft:deepslate_tile_stairs": -389,
+    "minecraft:deepslate_tile_slab": -388,
+    "minecraft:deepslate_tiles": -387,
+    "minecraft:polished_deepslate_wall": -386,
+    "minecraft:polished_deepslate_stairs": -385,
+    "minecraft:polished_deepslate_slab": -384,
+    "minecraft:polished_deepslate": -383,
+    "minecraft:cobbled_deepslate_wall": -382,
+    "minecraft:cobbled_deepslate_stairs": -381,
+    "minecraft:cobbled_deepslate_slab": -380,
+    "minecraft:cobbled_deepslate": -379,
+    "minecraft:deepslate": -378,
+    "minecraft:smooth_basalt": -377,
+    "minecraft:cave_vines_head_with_berries": -376,
+    "minecraft:cave_vines_body_with_berries": -375,
+    "minecraft:waxed_weathered_double_cut_copper_slab": -374,
+    "minecraft:waxed_exposed_double_cut_copper_slab": -373,
+    "minecraft:waxed_double_cut_copper_slab": -372,
+    "minecraft:oxidized_double_cut_copper_slab": -371,
+    "minecraft:weathered_double_cut_copper_slab": -370,
+    "minecraft:exposed_double_cut_copper_slab": -369,
+    "minecraft:double_cut_copper_slab": -368,
+    "minecraft:waxed_weathered_cut_copper_slab": -367,
+    "minecraft:waxed_exposed_cut_copper_slab": -366,
+    "minecraft:waxed_cut_copper_slab": -365,
+    "minecraft:oxidized_cut_copper_slab": -364,
+    "minecraft:weathered_cut_copper_slab": -363,
+    "minecraft:exposed_cut_copper_slab": -362,
+    "minecraft:cut_copper_slab": -361,
+    "minecraft:waxed_weathered_cut_copper_stairs": -360,
+    "minecraft:waxed_exposed_cut_copper_stairs": -359,
+    "minecraft:waxed_cut_copper_stairs": -358,
+    "minecraft:oxidized_cut_copper_stairs": -357,
+    "minecraft:weathered_cut_copper_stairs": -356,
+    "minecraft:exposed_cut_copper_stairs": -355,
+    "minecraft:cut_copper_stairs": -354,
+    "minecraft:waxed_weathered_cut_copper": -353,
+    "minecraft:waxed_exposed_cut_copper": -352,
+    "minecraft:waxed_cut_copper": -351,
+    "minecraft:oxidized_cut_copper": -350,
+    "minecraft:weathered_cut_copper": -349,
+    "minecraft:exposed_cut_copper": -348,
+    "minecraft:cut_copper": -347,
+    "minecraft:waxed_weathered_copper": -346,
+    "minecraft:waxed_exposed_copper": -345,
+    "minecraft:waxed_copper": -344,
+    "minecraft:oxidized_copper": -343,
+    "minecraft:weathered_copper": -342,
+    "minecraft:exposed_copper": -341,
+    "minecraft:copper_block": -340,
+    "minecraft:glow_frame": -339,
+    "minecraft:flowering_azalea": -338,
+    "minecraft:azalea": -337,
+    "minecraft:small_dripleaf_block": -336,
+    "minecraft:moss_carpet": -335,
+    "minecraft:tinted_glass": -334,
+    "minecraft:tuff": -333,
+    "minecraft:small_amethyst_bud": -332,
+    "minecraft:medium_amethyst_bud": -331,
+    "minecraft:large_amethyst_bud": -330,
+    "minecraft:amethyst_cluster": -329,
+    "minecraft:budding_amethyst": -328,
+    "minecraft:amethyst_block": -327,
+    "minecraft:calcite": -326,
+    "minecraft:azalea_leaves_flowered": -325,
+    "minecraft:azalea_leaves": -324,
+    "minecraft:big_dripleaf": -323,
+    "minecraft:cave_vines": -322,
+    "minecraft:spore_blossom": -321,
+    "minecraft:moss_block": -320,
+    "minecraft:hanging_roots": -319,
+    "minecraft:dirt_with_roots": -318,
+    "minecraft:dripstone_block": -317,
+    "minecraft:lightning_rod": -312,
+    "minecraft:copper_ore": -311,
+    "minecraft:pointed_dripstone": -308,
+    "minecraft:sculk_sensor": -307,
+    "minecraft:powder_snow": -306,
+    "minecraft:unknown": -305,
+
+
+*/
+
+
+
+
+

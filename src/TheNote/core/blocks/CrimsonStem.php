@@ -30,4 +30,5 @@ class CrimsonStem extends Opaque
 	protected function getAxisMetaShift() : int{
 		return 0;
 	}
+	//oninteract zu stripped stem
 }

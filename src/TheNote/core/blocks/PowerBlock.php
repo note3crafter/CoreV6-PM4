@@ -33,7 +33,7 @@ class PowerBlock implements Listener
 
     public function onMove(PlayerMoveEvent $event)
     {
-        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "powerblock" . ".yml", Config::YAML);
+        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "Config" . ".yml", Config::YAML);
         $player = $event->getPlayer();
         $x = $player->getLocation()->getX();
         $y = $player->getLocation()->getY();
