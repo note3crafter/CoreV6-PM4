@@ -33,7 +33,7 @@ class ItemManager
 		//ItemFactory::getInstance()->register(new NetheriteHelmet(new ItemIdentifier(ItemIds::, 0), "Trident"));
 		ItemFactory::getInstance()->register(new Armor(new ItemIdentifier(748, 0), "Netherite Helmet", new ArmorTypeInfo(3, 408, ArmorInventory::SLOT_HEAD)), true);
 		ItemFactory::getInstance()->register(new Armor(new ItemIdentifier(749, 0), "Netherite Chestplate", new ArmorTypeInfo(8, 593, ArmorInventory::SLOT_CHEST)), true);
-		ItemFactory::getInstance()->register(new Armor(new ItemIdentifier(748, 0), "Netherite Leggings", new ArmorTypeInfo(6, 556, ArmorInventory::SLOT_LEGS)), true);
+		ItemFactory::getInstance()->register(new Armor(new ItemIdentifier(750, 0), "Netherite Leggings", new ArmorTypeInfo(6, 556, ArmorInventory::SLOT_LEGS)), true);
 		ItemFactory::getInstance()->register(new Armor(new ItemIdentifier(751, 0), "Netherite Boots", new ArmorTypeInfo(3, 482, ArmorInventory::SLOT_FEET)), true);
 		ItemFactory::getInstance()->register(new Axe(new ItemIdentifier(746, 0), "Netherite Axe", ToolTier::DIAMOND()), true);
 		ItemFactory::getInstance()->register(new Hoe(new ItemIdentifier(747, 0), "Netherite Hoe", ToolTier::DIAMOND()), true);
