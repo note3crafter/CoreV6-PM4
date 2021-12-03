@@ -11,12 +11,13 @@
 
 namespace TheNote\core\command;
 
-use pocketmine\crafting\CraftingGrid;
-use pocketmine\item\ItemIds;
-use pocketmine\network\mcpe\protocol\ContainerOpenPacket;
+use pocketmine\block\VanillaBlocks;
 use pocketmine\network\mcpe\protocol\types\inventory\WindowTypes;
 use pocketmine\player\Player;
 use pocketmine\utils\Config;
+use TheNote\core\invmenu\InvMenu;
+use TheNote\core\invmenu\type\InvMenuType;
+use TheNote\core\invmenu\type\util\InvMenuTypeBuilders;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
@@ -46,30 +47,9 @@ class CraftCommand extends Command
 			$sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
 			return false;
 		}
-		$this->sendCraftingTable($sender);
-		$sender->getCraftingGrid();
-		if(!array_key_exists($windowId = Player::HARDCODED_CRAFTING_GRID_WINDOW_ID, $sender->openHardcodedWindows)) {
-			$pk = new ContainerOpenPacket();
-			$pk->windowId = $windowId;
-			$pk->type = WindowTypes::WORKBENCH;
-			$pk->x = $sender->getFloorX();
-			$pk->y = $sender->getFloorY() - 2;
-			$pk->z = $sender->getFloorZ();
-			$sender->sendDataPacket($pk);
-			$sender->openHardcodedWindows[$windowId] = true;
-		}
+		$sender->sendMessage($config->get("error") . "Error 404 Command not found!");
 
 		return true;
 
-	}
-
-	public function sendCraftingTable(Player $player)
-	{
-		$block1 = ItemIds::CRAFTING_TABLE;
-		$block1->x = (int)floor($player->getPosition()->x);
-		$block1->y = (int)floor($player->getPosition()->y) - 2;
-		$block1->z = (int)floor($player->getPosition()->z);
-		$block1->level = $player->getWorld();
-		$block1->level->sendBlocks([$player], [$block1]);
 	}
 }

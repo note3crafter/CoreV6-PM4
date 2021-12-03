@@ -11,7 +11,6 @@
 
 namespace TheNote\core\events;
 
-use pocketmine\entity\Entity;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\Listener;
@@ -21,6 +20,7 @@ use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\Config;
+use pocketmine\world\particle\BlockBreakParticle;
 use TheNote\core\Main;
 
 class DeathMessages implements Listener
@@ -76,28 +76,28 @@ class DeathMessages implements Listener
         }
         return true;
     }
-
-    /*public function Lightning(Player $player): void
-    {
-        $light = new AddActorPacket();
-        $light->type = "minecraft:lightning_bolt";
-        $light->entityRuntimeId = Entity::$entityCount++;
-        $light->metadata = [];
-        $light->motion = null;
-		$light->yaw = $player->getLocation()->yaw;
+	public function Lightning(Player $player): void
+	{
+		$pos = $player->getPosition();
+		$light = new AddActorPacket();
+		$light->type = "minecraft:lightning_bolt";
+		$light->actorRuntimeId = 1;
+		$light->metadata = [];
+		$light->motion = null;
+		$light->yaw = $player->getLocation()->getYaw();
 		$light->pitch = $player->getLocation()->getPitch();
-        $light->position = new Vector3($player->getLocation()->getX(), $player->getLocation()->getY(), $player->getLocation()->getZ());
-        Server::getInstance()->broadcastPackets($player->getWorld()->getPlayers(), [$light]);
-        $block = $player->getLevel()->getBlock($player->getPosition()->floor()->down());
-        //$particle = new DestroyBlockParticle(new Vector3($player->getLocation()->getX(), $player->getLocation()->getY(), $player->getLocation()->getZ()), $block);
-        //$player->getWorld()->addParticle([$particle]);
-        $sound = new PlaySoundPacket();
-        $sound->soundName = "ambient.weather.thunder";
-        $sound->x = $player->getLocation()->getX();
-        $sound->y = $player->getLocation()->getY();
-        $sound->z = $player->getLocation()->getZ();
-        $sound->volume = 1;
-        $sound->pitch = 1;
-        Server::getInstance()->broadcastPackets($player->getWorld()->getPlayers(), [$sound]);
-    }*/
+		$light->position = new Vector3($pos->getX(), $pos->getY(), $pos->getZ());
+		$block = $player->getWorld()->getBlock($player->getPosition()->floor()->down());
+		$particle = new BlockBreakParticle($block);
+		$player->getWorld()->addParticle($pos->asVector3(), $particle, $player->getWorld()->getPlayers());
+
+		$sound = new PlaySoundPacket();
+		$sound->soundName = "ambient.weather.thunder";
+		$sound->x = $pos->getX();
+		$sound->y = $pos->getY();
+		$sound->z = $pos->getZ();
+		$sound->volume = 1;
+		$sound->pitch = 1;
+		Server::getInstance()->broadcastPackets($player->getWorld()->getPlayers(), [$light, $sound]);
+	}
 }

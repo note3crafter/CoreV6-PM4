@@ -1,22 +1,19 @@
 <h1>CoreV6 ALPHA<img src="https://github.com/note3crafter/Core-V5/blob/main/resources/icon.png" height="64" width="64" align="left"></img></h1>
 <br />
-Für Pocketmine API 4.0
-Kompatibel mit 1.18.0 
+Für Pocketmine API 4.0.0 
 
 Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/427472879072968714.svg?style=flat-square&label=discord&colorB=7289da)](https://discord.gg/Pebq8Wu) <br>
 # Download und Wichtig 
 
 - [Hier downloaden](https://poggit.pmmp.io/ci/note3crafter/Core-V6/Core-V6)!
   Das Core Plugin wurde speziell für CityBuild Server entwickelt!
-# Neues! v6.0.6 ALPHA
-- Überarbeitete Config
-- BanSystem kann man nun deaktivieren! Sowie andere Sachen!
-- /burn Command wurde repaiert
-- /regeln wurde repaiert
-- Kleinere Bugfixes
-
-# Fehler & Bugs
-Aktuell ist sie nicht vollständig und es kann zu fehlern kommen! Sie befindet sich in der Alpha Phase! 
+# Neues & Bekannte Fehler v6.0.7 ALPHA
+- DiscordSystem Repaiert!
+- WorldSystem macht noch ein fehler beim Teleportieren!
+- Support für MultiWorld! 
+- /ec, /craft ,/vanish aktuell nicht funktional!
+- Unnötigen Kram entfernt!
+ 
 # Mindestanforderungen 
 - 2 Kern CPU (Bestenfalls hohe Singlecore Performance)
 - 1GB Ram 
@@ -36,8 +33,7 @@ Aktuell ist sie nicht vollständig und es kann zu fehlern kommen! Sie befindet s
 
 # Features
 - [Alle Commands](https://github.com/note3crafter/Core-V6/blob/main/resources/commands.md)
-- Multi Language Support!
-- [Vanilla Redstone](https://github.com/tedo0627/RedstoneCircuit_PMMP-Plugin) (by [tedo0627](https://github.com/tedo0627))
+- Multi Language Support! (Aktuell noch nicht vollständig)
 - [AntiXray](https://github.com/HimmelKreis4865/AntiXray) & [HeadSystem](https://github.com/HimmelKreis4865/BetterSkulls) (by HimmelKreis4865)
 - [MCPEtoDiscord](https://github.com/JaxkDev/MCPEToDiscord) (by [JaxkDev](https://github.com/JaxkDev))
 - VoteSystem   
@@ -46,7 +42,6 @@ Aktuell ist sie nicht vollständig und es kann zu fehlern kommen! Sie befindet s
 - FreundeSystem
 - Perks, Booster und vieles Weiteres
 - Intregriertes ScoreBoard (Kann derzeit nicht Selbst Bearbeitet werden)  
-- Funktionierender [Braustand](https://github.com/CortexPE/TeaSpoon), [Jukebox](https://github.com/JaxkDev/JukeBox-pmmp), [Beacon](https://github.com/jasonwynn10/PM-Beacons) & [Kessel](https://github.com/CortexPE/TeaSpoon)
 - NetheriteRüstung, Barren, Schrott sowie Werkzeuge
 - Viele Weitere Kleinigkeiten
 - Gruppensystem (Inkompatible zu PurePerms!!!)

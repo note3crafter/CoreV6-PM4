@@ -1,6 +1,6 @@
 name: CoreV6
 main: TheNote\core\Main
-version: 6.0.6
+version: 6.0.7
 api:
   - 4.0.0
 author: TheNote/Rudolf2000
@@ -15,15 +15,12 @@ authors:
   - Hagnbrain #homesystem
   - EnderDirt #füraltecodes
   - Crasher508 #Fixxer
-  - CortexPE #Braustand und mehr
   - HimmelKreis4865 #AntiXray & BetterSkulls
   - MDevPmmP #GroupSystem/EconomySystem
-  - TuranicTeam #Paar Items/Blöcke von Altay
   - jojoe77777 #FormAPI
   - muqsit #InvMenü
   - TheBalkanDev #ecinvsee, invsee
-  - jasonwynn10 #Beacons
-description: Core v6.0.6 ALPHA
+description: Core v6.0.7 ALPHA
 
 permissions:
   core.command.adventure:

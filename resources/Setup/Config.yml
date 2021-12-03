@@ -1,6 +1,6 @@
 ---
 #Allgemeine Einstellungen
-ConfigVersion: 6.0.6 #FingerWeg! Dont touch this!
+ConfigVersion: 6.0.7 #FingerWeg! Dont touch this!
 
 #Commands & Funktionen
 BoosterCommand: false #Muss Überarbeitet werden jedoch aktuell keine Zeit dafür...
@@ -9,6 +9,7 @@ Emotes: true #Aktiviere\Deaktiviere die Emotes
 Kits: true #Aktiviere\Deaktiviere das KitSystem
 VoteSystem: true #Aktiviere\Deaktiviere das VoteSystem
 BanSystem: true #Aktiviere\Deaktiviere das BanSystem
+WorldSytem: true #Aktiviere\Deaktiviere das WorldSystem
 
 #ItemDisplay
 inames: true #aktiviere/deaktiviere die ItemNamen

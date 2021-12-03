@@ -14,16 +14,10 @@ namespace TheNote\core;
 use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\block\DaylightSensor;
-use pocketmine\block\Sapling;
-use pocketmine\block\VanillaBlocks;
 use pocketmine\color\Color;
 use pocketmine\command\CommandSender;
 use pocketmine\console\ConsoleCommandSender;
-use pocketmine\data\bedrock\EntityLegacyIds;
 use pocketmine\data\bedrock\LegacyBlockIdToStringIdMap;
-use pocketmine\entity\Entity;
-use pocketmine\entity\EntityDataHelper;
-use pocketmine\entity\EntityFactory;
 use pocketmine\event\entity\ItemSpawnEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
@@ -34,58 +28,30 @@ use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\QueryRegenerateEvent;
-use pocketmine\item\Armor;
-use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIds;
-use pocketmine\item\Tool;
-use pocketmine\item\VanillaItems;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\BigEndianNbtSerializer;
-use pocketmine\nbt\LittleEndianNbtSerializer;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\network\mcpe\convert\ItemTranslator;
 use pocketmine\network\mcpe\protocol\AddActorPacket;
-use pocketmine\network\mcpe\protocol\LevelEventPacket;
-use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
-use pocketmine\network\mcpe\protocol\LevelSoundEventPacketV1;
-use pocketmine\network\mcpe\protocol\LoginPacket;
-use pocketmine\network\mcpe\protocol\OnScreenTextureAnimationPacket;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
-use pocketmine\network\mcpe\protocol\ScriptCustomEventPacket;
 use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\network\mcpe\protocol\serializer\PacketBatch;
-use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
-use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
-use pocketmine\utils\Binary;
 use pocketmine\utils\BinaryStream;
 use pocketmine\utils\Config;
-use pocketmine\utils\Random;
 
-use pocketmine\world\ChunkManager;
 use pocketmine\world\generator\GeneratorManager;
-use pocketmine\world\generator\object\BirchTree;
-use pocketmine\world\generator\object\JungleTree;
-use pocketmine\world\generator\object\OakTree;
-use pocketmine\world\generator\object\SpruceTree;
+use pocketmine\world\particle\BlockBreakParticle;
 use pocketmine\world\particle\DustParticle;
-use pocketmine\world\World;
-use ReflectionClass;
 use TheNote\core\blocks\BlockManager;
-use TheNote\core\command\CraftingTableInvMenuType;
 use TheNote\core\command\CreditsCommand;
-use TheNote\core\command\HeadCommand;
 use TheNote\core\command\SetstatstextCommand;
 use TheNote\core\command\WorldCommand;
-use TheNote\core\entity\FireworksRocket;
 use TheNote\core\events\BlocketRecipes;
-use TheNote\core\events\Eventsettings;
-use TheNote\core\events\EventsListener;
-use TheNote\core\listener\EventListener;
+use TheNote\core\invmenu\InvMenu;
+use TheNote\core\invmenu\type\CraftingTableInvMenuType;
 use TheNote\core\server\FFAArena;
 use TheNote\core\server\generators\ender\EnderGenerator;
 use TheNote\core\server\generators\nether\NetherGenerator;
@@ -222,16 +188,12 @@ use TheNote\core\server\Rezept;
 
 //Anderes
 use TheNote\core\item\ItemManager;
-use TheNote\core\entity\EntityManager;
 use TheNote\core\blocks\PowerBlock;
 use TheNote\core\server\LiftSystem\BlockBreakListener;
 use TheNote\core\server\LiftSystem\BlockPlaceListener;
 use TheNote\core\server\LiftSystem\PlayerInteractListener;
 use TheNote\core\server\LiftSystem\PlayerJumpListener;
 use TheNote\core\server\LiftSystem\PlayerToggleSneakListener;
-use TheNote\core\inventory\BrauManager;
-use TheNote\core\tile\Tiles;
-use TheNote\core\server\packet\InventoryTransactionPacketV2;
 
 //Task
 use TheNote\core\task\ScoreboardTask;
@@ -248,12 +210,12 @@ class Main extends PluginBase implements Listener
 {
 
     //PluginVersion
-    public static $version = "6.0.6 ALPHA";
-    public static $protokoll = "440";
-    public static $mcpeversion = "1.17.41";
-    public static $dateversion = "28.11.2021";
+    public static $version = "6.0.7 ALPHA";
+    public static $protokoll = "475";
+    public static $mcpeversion = "1.18.0";
+    public static $dateversion = "03.12.2021";
     public static $plname = "CoreV6";
-    public static $configversion = "6.0.6";
+    public static $configversion = "6.0.7";
 
     private $clicks;
     private $message = "";
@@ -424,7 +386,6 @@ class Main extends PluginBase implements Listener
             $this->configgenerate();
             $this->sessionManager = new SessionManager();
             ItemManager::init();
-            //EntityManager::init();
 			$this->blockManager = new BlockManager();
 			if (!file_exists($this->getDataFolder() . "Setup/Config.yml")) {
                 rename("Setup/Config.yml", "Setup/ConfigOLD.yml");
@@ -447,11 +408,7 @@ class Main extends PluginBase implements Listener
 
     public function onEnable() : void
     {
-        /*foreach (scandir($this->getServer()->getDataPath()."worlds") as $file) {
-            if(Server::getInstance()->getWorldManager()->isWorldGenerated($file)) {
-                $this->getServer()->getWorldManager()->loadWorld($file);
-            }
-        }*/
+
 		$this->blockManager->startup();
         if (!$this->isSpoon()) {
             $this->default = "";
@@ -484,7 +441,7 @@ class Main extends PluginBase implements Listener
                 rename($this->getDataFolder() . Main::$setup . "Config.yml", $this->getDataFolder() . Main::$setup . "ConfigOLD.yml");
                 $this->saveResource("Setup/Config.yml", true);
             }
-            //$this->buildBlockIdTable();
+			//$this->buildBlockIdTable();
             $this->sellSign = new Config($this->getDataFolder() . Main::$lang . "SellSign.yml", Config::YAML, array(
                 "sell" => array(
                     "§f[§cVerkaufen§f]",
@@ -505,6 +462,9 @@ class Main extends PluginBase implements Listener
             $this->shopSign->save();
 			$this->myplot = $this->getServer()->getPluginManager()->getPlugin("MyPlot");
 			$this->economyapi = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI");
+			$this->multiworld = $this->getServer()->getPluginManager()->getPlugin("MultiWorld");
+			$this->starterkit = $this->getServer()->getPluginManager()->getPlugin("StarterKit");
+
 			$this->config = new Config($this->getDataFolder() . Main::$cloud . "Count.json", Config::JSON);
 
 
@@ -537,7 +497,7 @@ class Main extends PluginBase implements Listener
             $this->getServer()->getCommandMap()->register("clan", new ClanCommand($this));
             $this->getServer()->getCommandMap()->register("clear", new ClearCommand($this));
             $this->getServer()->getCommandMap()->register("clearlagg", new ClearlaggCommand($this));
-            //$this->getServer()->getCommandMap()->register("craft", new CraftCommand($this));
+            $this->getServer()->getCommandMap()->register("craft", new CraftCommand($this));
             $this->getServer()->getCommandMap()->register("day", new DayCommand($this));
             $this->getServer()->getCommandMap()->register("delhome", new DelHomeCommand($this));
             //$this->getServer()->getCommandMap()->register("ec", new EnderChestCommand($this));
@@ -599,7 +559,6 @@ class Main extends PluginBase implements Listener
             //$this->getServer()->getCommandMap()->register("enderinvsee", new EnderInvSeeCommand($this));
             //$this->getServer()->getCommandMap()->register("invsee", new InvSeeCommand($this));
             //$this->getServer()->getCommandMap()->register("head", new HeadCommand($this));
-            $this->getServer()->getCommandMap()->register("world", new WorldCommand($this));
             $this->getServer()->getCommandMap()->register("credits", new CreditsCommand($this));
             $this->getServer()->getCommandMap()->register("setstatstext", new SetstatstextCommand($this));
 			if ($configs->get("PowerBlock") == true) {
@@ -626,6 +585,19 @@ class Main extends PluginBase implements Listener
             if ($configs->get("RankShopCommand") == true) {
                 $this->getServer()->getCommandMap()->register("rankshop", new RankShopCommand($this));
             }
+			if ($this->multiworld === null) {
+				if ($configs->get("WorldSystem") == true) {
+					$this->getServer()->getCommandMap()->register("world", new WorldCommand($this));
+					foreach (scandir($this->getServer()->getDataPath() . "worlds") as $file) {
+						if (Server::getInstance()->getWorldManager()->isWorldGenerated($file)) {
+							$this->getServer()->getWorldManager()->loadWorld($file);
+
+						}
+					}
+				}
+			} else {
+				$this->getLogger()->info("Da MultiWorld bereits Installiert wurde ist das Interne WorldSystem Deaktiviert");
+			}
             if ($this->economyapi === null) {
                 $this->getServer()->getCommandMap()->register("mymoney", new MyMoneyCommand($this));
                 $this->getServer()->getCommandMap()->register("pay", new PayMoneyCommand($this));
@@ -638,18 +610,19 @@ class Main extends PluginBase implements Listener
 				$this->getServer()->getPluginManager()->registerEvents(new EconomyShop($this), $this);
                 $this->getLogger()->info("EconomyAPI ist nicht installiert daher wird das Interne Economysystem genutzt");
             }
+
+			//LiftSystem
 			if ($this->myplot === null) {
 				$this->getLogger()->info("MyPlot ist nicht installiert daher wurde das Liftsystem Deaktiviert!");
 			} else {
-				//LiftSystem
 				$this->getServer()->getPluginManager()->registerEvents(new BlockBreakListener($this), $this);
 				$this->getServer()->getPluginManager()->registerEvents(new BlockPlaceListener($this), $this);
 				$this->getServer()->getPluginManager()->registerEvents(new PlayerInteractListener($this), $this);
 				$this->getServer()->getPluginManager()->registerEvents(new PlayerJumpListener($this), $this);
 				$this->getServer()->getPluginManager()->registerEvents(new PlayerToggleSneakListener($this), $this);
 			}
+			//Emotes
 			if($configs->get("Emotes") === true){
-				//Emotes
 				$this->getServer()->getCommandMap()->register("burb", new burb($this));
 				$this->getServer()->getCommandMap()->register("geil", new geil($this));
 				$this->getServer()->getCommandMap()->register("happy", new happy($this));
@@ -659,7 +632,7 @@ class Main extends PluginBase implements Listener
 			}
 
             //Events
-            //$this->getServer()->getPluginManager()->registerEvents(new BanEventListener($this), $this);
+            //$this->getServer()->getPluginManager()->registerEvents(new BanEventListener($this), $this); #spieler muss gekickt werden was noch nicht klappt
             $this->getServer()->getPluginManager()->registerEvents(new ColorChat($this), $this);
             $this->getServer()->getPluginManager()->registerEvents(new DeathMessages($this), $this);
             $this->getServer()->getPluginManager()->registerEvents(new Particle($this), $this);
@@ -670,8 +643,6 @@ class Main extends PluginBase implements Listener
             //$this->getServer()->getPluginManager()->registerEvents(new Eventsettings($this), $this);
             //$this->getServer()->getPluginManager()->registerEvents(new FFAArena(), $this);
 			$this->getServer()->getPluginManager()->registerEvents(new BlocketRecipes($this), $this);
-
-
 
             if ($configs->get("AntiXray") == true) {
             	$this->getLogger()->alert("AntiXray ist momentan nicht verfügbar");
@@ -687,8 +658,6 @@ class Main extends PluginBase implements Listener
             $this->getServer()->getPluginManager()->registerEvents(new HeiratsListener($this), $this);
             $this->getServer()->getPluginManager()->registerEvents(new UserdataListener($this), $this);
 
-
-
             //Server
             //$this->getServer()->getPluginManager()->registerEvents(new PlotBewertung($this), $this);
             //$this->getServer()->getCommandMap()->register("restart", new RestartServer($this));
@@ -702,11 +671,9 @@ class Main extends PluginBase implements Listener
 
             //Task
 			$this->getScheduler()->scheduleRepeatingTask(new StatstextTask($this), 60);
-
 			//$this->getScheduler()->scheduleRepeatingTask(new CallbackTask([$this, "particle"]), 10);
             $this->getScheduler()->scheduleDelayedTask(new RTask($this), (20 * 60 * 10));
-            //$this->getScheduler()->scheduleRepeatingTask(new StatstextTask($this), 60);
-            //$this->getScheduler()->scheduleRepeatingTask(new PingTask($this), 20);
+            $this->getScheduler()->scheduleRepeatingTask(new PingTask($this), 20);
 
             $this->getLogger()->info($config->get("prefix") . "§6Die Commands wurden Erfolgreich Regestriert");
             $this->getLogger()->info($config->get("prefix") . "§6Die Core ist nun Einsatzbereit!");
@@ -1061,35 +1028,34 @@ class Main extends PluginBase implements Listener
             $player->sendData((array)$pk);
             $player->getInventory()->setItemInHand($original);
         }
-    }
-
-    public function addStrike(Player $player)
-    {
-        $config = new Config($this->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
-        if ($config->get("blitze") == true) {
-            $level = $player->getWorld();
-            $light = new AddActorPacket();
-            $light->type = "minecraft:lightning_bolt";
-            $light->entityRuntimeId = Entity::nextRuntimeId();
-            $light->metadata = array();
-			$light->position = $player->getLocation()->asVector3()->add(0, $height = 0);
-			//$light->position = $player->getLocation()->asVector3()->addVector();
-			$light->yaw = $player->getLocation()->yaw;
-            $light->pitch = $player->getLocation()->getPitch();
-            $player->getServer()->broadcastPackets($level->getPlayers(), (array)$light);
-            if ($config->get("sound") == true) {
-                $sound = new PlaySoundPacket();
-                $sound->soundName = "ambient.weather.thunder";
-                $sound->x = $player->getLocation()->getX();
-                $sound->y = $player->getLocation()->getY();
-                $sound->z = $player->getLocation()->getZ();
-                $sound->volume = 1;
-                $sound->pitch = 1;
-                Server::getInstance()->broadcastPackets($player->getLocation()->getWorld()->getPlayers(), (array)$sound);
-            }
-        }
     }*/
 
+    public function addStrike(Player $player)
+	{
+		$config = new Config($this->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
+		if ($config->get("blitze") == true) {
+			$pos = $player->getPosition();
+			$light = new AddActorPacket();
+			$light->type = "minecraft:lightning_bolt";
+			$light->actorRuntimeId = 1;
+			$light->metadata = [];
+			$light->motion = null;
+			$light->yaw = $player->getLocation()->getYaw();
+			$light->pitch = $player->getLocation()->getPitch();
+			$light->position = new Vector3($pos->getX(), $pos->getY(), $pos->getZ());
+			$block = $player->getWorld()->getBlock($player->getPosition()->floor()->down());
+			$particle = new BlockBreakParticle($block);
+			$player->getWorld()->addParticle($pos->asVector3(), $particle, $player->getWorld()->getPlayers());
+			$sound = new PlaySoundPacket();
+			$sound->soundName = "ambient.weather.thunder";
+			$sound->x = $pos->getX();
+			$sound->y = $pos->getY();
+			$sound->z = $pos->getZ();
+			$sound->volume = 1;
+			$sound->pitch = 1;
+			Server::getInstance()->broadcastPackets($player->getWorld()->getPlayers(), [$light, $sound]);
+		}
+	}
     public function particle()
     {
 
@@ -1097,7 +1063,7 @@ class Main extends PluginBase implements Listener
         $pos = $level->getSafeSpawn();
         $count = 100;
 		$particle = new DustParticle(Color::mix(Color::fromARGB("§6")));
-        //$particle = new DustParticle($pos, mt_rand(), mt_rand(), mt_rand(), mt_rand());
+        //$particle = new DustParticle($pos); //, mt_rand(), mt_rand(), mt_rand(), mt_rand());
         for ($yaw = 0, $y = $pos->y; $y < $pos->y + 4; $yaw += (M_PI * 2) / 20, $y += 1 / 20) {
             $x = -sin($yaw) + $pos->x;
             $z = cos($yaw) + $pos->z;
@@ -1359,7 +1325,7 @@ class Main extends PluginBase implements Listener
         return $this->lastSent[$name] ?? "";
     }
 
-    /*public function sendMessage(string $player = "nolog", string $msg):bool
+    public function sendMessage($player, string $msg):bool
     {
         $dcsettings = new Config($this->getDataFolder() . Main::$setup . "discordsettings" . ".yml", Config::YAML);
         $name = $dcsettings->get("chatname");
@@ -1372,7 +1338,7 @@ class Main extends PluginBase implements Listener
             $this->getServer()->getAsyncPool()->submitTask(new task\SendAsyncTask($player, $webhook, serialize($curlopts)));
         }
         return true;
-    }*/
+    }
 
     public function getClicks(Player $player)
     {
@@ -1574,10 +1540,6 @@ class Main extends PluginBase implements Listener
     }
 
     //Redstone
-    private function initCreativeItem(): void
-    {
-        ItemManagerNewItems::init();
-    }
 
     public function getScheduledBlockUpdateLoader(): ScheduledBlockUpdateLoader
     {
@@ -1611,31 +1573,6 @@ class Main extends PluginBase implements Listener
     public function getInviteControl(string $name): bool
     {
         return isset($this->invite[$name]);
-    }
-
-    public function handleLogin(LoginPacket $packet)
-    {
-        $this->deviceId = $packet->clientData["DeviceId"] ?? null;
-        $this->deviceModel = $packet->clientData["DeviceModel"] ?? null;
-        $this->deviceOS = $packet->clientData["DeviceOS"] ?? null;
-        if (count($this->getServer()->getOnlinePlayers()) >= $this->getServer()->getMaxPlayers() and $this->getSessionById()->kick("Server ist Voll", false)) {
-            return true;
-        }
-    }
-
-    public function getDeviceModel(): ?string
-    {
-        return $this->deviceModel;
-    }
-
-    public function getDeviceOS(): ?int
-    {
-        return $this->deviceOS;
-    }
-
-    public function getDeviceId(): ?string
-    {
-        return $this->deviceId;
     }
 
     //Configs
@@ -1685,14 +1622,5 @@ class Main extends PluginBase implements Listener
             $money->setNested("money.CoreV6.", 1000);
             $money->save();
         }
-    }
-    //World
-    public function buildBlockIdTable() {
-        $stream = new LittleEndianNbtSerializer();
-        $values = $stream->read(file_get_contents(RESOURCE_PATH . "/vanilla/canonical_block_states.nbt"));
-
-        $outputStream = new BigEndianNbtSerializer();
-        $compound = new CompoundTag("Data", [$values]);
-        file_put_contents("states.dat", $outputStream->write($compound));
     }
 }

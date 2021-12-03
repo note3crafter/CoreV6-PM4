@@ -27,7 +27,7 @@ class CallbackTask extends Task {
 	public function getCallable(){
 		return $this->callable;
 	}
-	public function onRun($currentTicks){
+	public function onRun() :void{
 		call_user_func_array($this->callable, $this->args);
 	}
 }

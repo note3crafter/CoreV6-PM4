@@ -59,9 +59,9 @@ class SendAsyncTask extends AsyncTask
         $this->setResult($result, true);
     }
 
-    public function onCompletion(Server $server) :void
+    public function onCompletion() :void
     {
-        $plugin = $server->getPluginManager()->getPlugin('Core');
+        $plugin = Server::getInstance()->getPluginManager()->getPlugin('CoreV6');
         if(!$plugin instanceof Main){
             return;
         }

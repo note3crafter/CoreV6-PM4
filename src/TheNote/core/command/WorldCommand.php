@@ -13,6 +13,7 @@ namespace TheNote\core\command;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\world\generator\Flat;
@@ -66,6 +67,10 @@ class WorldCommand extends Command
             $sender->sendMessage("§e/world list");
         }
         if ($args[0] == "teleport" and "tp") {
+			if (!$sender instanceof Player) {
+				$sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+				return false;
+			}
             if (!isset($args[1])) {
                 $sender->sendMessage($config->get("info") . "Nutze : /world teleport [worldname]");
                 return false;
@@ -81,7 +86,7 @@ class WorldCommand extends Command
             }
 
             $level = $this->plugin->getServer()->getWorldManager()->getWorldByName($args[1]);
-            $sender->teleport($level->getSafeSpawn());
+			$sender->teleport($level->getSafeSpawn());
             $sender->sendMessage($config->get("world") . "§6Du wurdest erfolgreich in die Welt §f: §e" . $level->getFolderName() . " §6teleportiert!");
         }
         if ($args[0] == "delete") {

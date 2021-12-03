@@ -51,15 +51,13 @@ class CreditsCommand extends Command
                     "§e- xxflow #Heiraten,Payall\n" .
                     "§e- Aneoxic #Grundgerüst\n" .
                     "§e- FleekRush #Booster\n" .
-                    "§e- JackMD #Discord\n" .
+                    "§e- JackMD #Discord, FormAPI\n" .
                     "§e- LookItsAku #Hilfe\n" .
                     "§e- Hagnbrain #homesystem\n" .
                     "§e- EnderDirt #füraltecodes\n" .
                     "§e- Crasher508 #Fixxer\n" .
-                    "§e- CortexPE #Braustand und mehr\n" .
                     "§e- HimmelKreis4865 #AntiXray & BetterSkulls\n" .
                     "§e- MDevPmmP #GroupSystem/EconomySystem\n" .
-                    "§e- TuranicTeam #Paar Items/Blöcke von Altay\n" .
                     "§e- jojoe77777 #FormAPI\n" .
                     "§e- muqsit #InvMenü\n" .
                     "§e- TheBalkanDev #ecinvsee, invsee\n" .
