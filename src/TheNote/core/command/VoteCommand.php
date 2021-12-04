@@ -17,7 +17,7 @@ use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
-use TheNote\core\server\ServerListQuery;
+use TheNote\core\server\ServerList;
 use TheNote\core\task\RequestThread;
 
 class VoteCommand extends Command
@@ -40,7 +40,7 @@ class VoteCommand extends Command
         $requests = [];
         foreach ($this->plugin->lists as $list) {
             if (isset($list["check"]) && isset($list["claim"])) {
-                $requests[] = new ServerListQuery($list["check"], $list["claim"]);
+                $requests[] = new ServerList($list["check"], $list["claim"]);
             }
         }
         $query = new RequestThread(strtolower($sender->getName()), $requests);

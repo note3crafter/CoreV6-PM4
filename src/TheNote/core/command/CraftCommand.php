@@ -24,32 +24,34 @@ use pocketmine\command\CommandSender;
 
 class CraftCommand extends Command
 {
-
 	private $plugin;
 
 	public function __construct(Main $plugin)
 	{
 		$this->plugin = $plugin;
 		$config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-		parent::__construct("craft", $config->get("prefix") . "Benutze die CraftingTable Unterwegs", "/craft", ["crafting"]);
+		$langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+		$l = $langsettings->get("Lang");
+		$lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
+		parent::__construct("craft", $config->get("prefix") . $lang->get("craftprefix"), "/craft", ["crafting"]);
 		$this->setPermission("core.command.craft");
 
 	}
-
 	public function execute(CommandSender $sender, string $commandLabel, array $args): bool
 	{
 		$config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
+		$langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+		$l = $langsettings->get("Lang");
+		$lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
 		if (!$sender instanceof Player) {
-			$sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+			$sender->sendMessage($config->get("error") . $lang->get("commandingame"));
 			return false;
 		}
 		if (!$this->testPermission($sender)) {
-			$sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+			$sender->sendMessage($config->get("error") . $lang->get("nopermission"));
 			return false;
 		}
 		$sender->sendMessage($config->get("error") . "Error 404 Command not found!");
-
 		return true;
-
 	}
 }

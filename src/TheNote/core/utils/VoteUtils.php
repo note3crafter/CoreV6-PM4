@@ -46,7 +46,6 @@ class VoteUtils {
         curl_setopt($query, CURLOPT_TIMEOUT, 5);
         $return = curl_exec($query);
         curl_close($query);
-        //$return = file_get_contents($url);
         return $return;
     }
 

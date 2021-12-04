@@ -24,7 +24,7 @@ class WarpCommand extends Command
     {
         $this->plugin = $plugin;
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("warp", $config->get("prefix") . "§aTeleportiere dich zu einem Warp", "/warp", ["world"]);
+        parent::__construct("warp", $config->get("prefix") . "§aTeleportiere dich zu einem Warp", "/warp");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool

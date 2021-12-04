@@ -1,6 +1,6 @@
 name: CoreV6
 main: TheNote\core\Main
-version: 6.0.7
+version: 6.0.8
 api:
   - 4.0.0
 author: TheNote/Rudolf2000
@@ -20,7 +20,7 @@ authors:
   - jojoe77777 #FormAPI
   - muqsit #InvMenü
   - TheBalkanDev #ecinvsee, invsee
-description: Core v6.0.7 ALPHA
+description: Core v6.0.8 ALPHA
 
 permissions:
   core.command.adventure:

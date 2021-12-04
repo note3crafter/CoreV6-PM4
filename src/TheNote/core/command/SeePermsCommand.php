@@ -13,6 +13,7 @@ namespace TheNote\core\command;
 
 use pocketmine\console\ConsoleCommandSender;
 use pocketmine\permission\DefaultPermissions;
+use pocketmine\permission\PermissionManager;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
@@ -52,7 +53,7 @@ class SeePermsCommand extends Command
 
             return true;
         }
-        $permissions = ($plugin instanceof PluginBase) ? $plugin->getDescription()->getPermissions() : $this->getPocketMinePerms();
+		$permissions = ($plugin instanceof PluginBase) ? $plugin->getDescription()->getPermissions() : $this->getPocketMinePerms();
         if (empty($permissions)) {
             $sender->sendMessage($config->get("error") . "§cDas Plugin §e" . $args[0] . " §chat keine Berechtigung!");
 
@@ -71,10 +72,12 @@ class SeePermsCommand extends Command
         if (($plugin instanceof PluginBase) ? $plugin->getName() : 'PocketMine-MP') {
             $sender->sendMessage($config->get("group") . "§6Seite §f: §e" . $pageNumber . "§f/§e" . $maxPageNumber);
         }
-        foreach ($chunkedPermissions[$pageNumber - 1] as $permission) {
-            $sender->sendMessage("§e" . $permission->getPluginName());
+
+		foreach ($chunkedPermissions[$pageNumber - 1] as $permission) {
+            $sender->sendMessage("§e" . $permission->getName());
         }
         return true;
+
     }
     public function getPlugin(): Plugin
     {
@@ -83,7 +86,7 @@ class SeePermsCommand extends Command
     public function getPocketMinePerms()
     {
         if ($this->pmDefaultPerms === []) {
-            foreach ($this->plugin->getServer()->getPluginManager()->getPermission() as $permission) {
+            foreach (PermissionManager::getInstance()->getPermissions() as $permission) {
                 if (strpos($permission->getName(), DefaultPermissions::ROOT) !== false)
                     $this->pmDefaultPerms[] = $permission;
             }

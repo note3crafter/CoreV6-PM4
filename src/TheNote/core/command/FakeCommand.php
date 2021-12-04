@@ -25,7 +25,7 @@ class FakeCommand extends Command {
     {
         $this->plugin = $plugin;
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("fake", $config->get("prefix") . "Setzt die Zeit auf §bTag", "/fake", ["f"]);
+        parent::__construct("fake", $config->get("prefix") . "§6Mache ein FakeLeave/Join", "/fake", ["f"]);
         $this->setPermission("core.command.fake");
     }
 

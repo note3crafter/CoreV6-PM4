@@ -19,7 +19,7 @@ class RequestThread extends AsyncTask {
         $this->queries = $queries;
     }
 
-    public function onRun() {
+    public function onRun() :void {
         foreach($this->queries as $query) {
             if(($return = VoteUtils::getURL(str_replace("{USERNAME}", urlencode($this->id), $query->getCheckURL()))) != false && is_array(($return = json_decode($return, true))) && isset($return["voted"]) && is_bool($return["voted"]) && isset($return["claimed"]) && is_bool($return["claimed"])) {
                 $query->setVoted($return["voted"] ? 1 : -1);
@@ -45,11 +45,12 @@ class RequestThread extends AsyncTask {
         }
     }
 
-    public function onCompletion(Server $server) {
+    public function onCompletion() :void{
+		$server = Server::getInstance();
         if(isset($this->error)) {
-            $server->getPluginManager()->getPlugin(Main::$plname)->getLogger()->error($this->error);
+			Server::getInstance()->getPluginManager()->getPlugin(Main::$plname)->getLogger()->error($this->error);
         }
-        $server->getPluginManager()->getPlugin(Main::$plname)->rewardPlayer($server->getPlayerExact($this->id), $this->rewards);
+		Server::getInstance()->getPluginManager()->getPlugin(Main::$plname)->rewardPlayer($server->getPlayerExact($this->id), $this->rewards);
         array_splice($server->getPluginManager()->getPlugin(Main::$plname)->queue, array_search($this->id, $server->getPluginManager()->getPlugin(Main::$plname)->queue, true), 1);
     }
 

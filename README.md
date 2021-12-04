@@ -7,16 +7,21 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 
 - [Hier downloaden](https://poggit.pmmp.io/ci/note3crafter/Core-V6/Core-V6)!
   Das Core Plugin wurde speziell für CityBuild Server entwickelt!
-# Neues & Bekannte Fehler v6.0.7 ALPHA
-- DiscordSystem Repaiert!
-- WorldSystem macht noch ein fehler beim Teleportieren!
-- Support für MultiWorld! 
+# Neues & Bekannte Fehler v6.0.8 ALPHA
+- WorldSystem repaiert funktioniert nun wieder!
+- Das Scoreboard Aktualiesiert sich nun wieder.
+- Erweiterung für das LanguageSystem 
+- ClanCommand Protection eingebaut so das man wenn man bereits in einem Clan drinne ist nicht ein weiteren erstellen kann! (vermeidet unnötige daten)
+- VoteSystem Funktioniert wieder! 
+- WarpCommand den eintrag "/world" entfernt
+- FakeCommand CommandPrefix berichtigt
+- Weitere kleine Bugfixes
 - /ec, /craft ,/vanish aktuell nicht funktional!
 - Unnötigen Kram entfernt!
  
 # Mindestanforderungen 
 - 2 Kern CPU (Bestenfalls hohe Singlecore Performance)
-- 1GB Ram 
+- 2GB Ram 
 - 1GB Festplatte -
 
 # Für die Zukunft Geplant :

@@ -12,7 +12,6 @@
 namespace TheNote\core\command;
 
 use pocketmine\command\CommandSender;
-
 use pocketmine\entity\Entity;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\utils\Config;
@@ -21,23 +20,27 @@ use pocketmine\command\Command;
 
 class ClearlaggCommand extends Command
 {
-
     private $plugin;
 
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("clearlagg", $config->get("prefix") . "Löscht alle Items die auf dem Boden Liegen", "/clearlagg", ["cl", "clagg"]);
+		$langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+		$l = $langsettings->get("Lang");
+		$lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
+        parent::__construct("clearlagg", $config->get("prefix") . $lang->get("clearlaggprefix"), "/clearlagg", ["cl", "clagg"]);
         $this->setPermission("core.command.clearlagg");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args):bool
     {
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-
+		$langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+		$l = $langsettings->get("Lang");
+		$lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
             return false;
         }
         $this->plugin->clearItems = (bool)(true);
@@ -46,13 +49,12 @@ class ClearlaggCommand extends Command
                 if ($this->plugin->clearItems && $entity instanceof ItemEntity) {
                     $entity->flagForDespawn();
                 }
-                //ClearLagg will now clear Monsters an Animals too
                 if ($this->plugin->clearItems && ($entity instanceof Entity)) {
                     $entity->flagForDespawn();
                 }
             }
         }
-        $sender->sendMessage($config->get("prefix") . "Du hast soeben alle Items die auf dem Boden gelegen haben Gelöscht!");
+        $sender->sendMessage($config->get("prefix") . $lang->get("clearlaggconfirm"));
         return true;
     }
 }

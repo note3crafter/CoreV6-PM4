@@ -80,14 +80,16 @@ class WorldCommand extends Command
                 $sender->sendMessage($config->get("error") . "§cDie Welt mit dem Namen §f:§e " . $args[1] . " §cexistiert nicht!");
                 return false;
             }
-
-            if (!$this->plugin->getServer()->getWorldManager()->isWorldLoaded($args[1])) {
-                $this->plugin->getServer()->getWorldManager()->loadWorld($args[1]);
-            }
-
-            $level = $this->plugin->getServer()->getWorldManager()->getWorldByName($args[1]);
+			$level = $this->plugin->getServer()->getWorldManager()->getWorldByName($args[1]);
+			if (!$this->plugin->getServer()->getWorldManager()->isWorldLoaded($args[1])) {
+				$this->plugin->getServer()->getWorldManager()->loadWorld($args[1]);
+			}
+			if (!$sender->teleport($level->getSafeSpawn())) {
+				$sender->sendMessage($config->get("error") . "§cDer Teleportvorgang wurde abgebrochen!");
+				return true;
+			}
 			$sender->teleport($level->getSafeSpawn());
-            $sender->sendMessage($config->get("world") . "§6Du wurdest erfolgreich in die Welt §f: §e" . $level->getFolderName() . " §6teleportiert!");
+            $sender->sendMessage($config->get("world") . "§6Du wurdest erfolgreich in die Welt §f: §e" . $args[1] . " §6teleportiert!");
         }
         if ($args[0] == "delete") {
             if (empty($args[1])) {

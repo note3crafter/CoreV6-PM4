@@ -210,12 +210,12 @@ class Main extends PluginBase implements Listener
 {
 
     //PluginVersion
-    public static $version = "6.0.7 ALPHA";
+    public static $version = "6.0.8 ALPHA";
     public static $protokoll = "475";
     public static $mcpeversion = "1.18.0";
-    public static $dateversion = "03.12.2021";
+    public static $dateversion = "04.12.2021";
     public static $plname = "CoreV6";
-    public static $configversion = "6.0.7";
+    public static $configversion = "6.0.8";
 
     private $clicks;
     private $message = "";
@@ -270,9 +270,6 @@ class Main extends PluginBase implements Listener
     private $sessions = [];
     public $lists = [];
     public $clearItems;
-    protected $deviceModel;
-    protected $deviceOS;
-    protected $deviceId;
     public $sellSign;
     public $shopSign;
     private $sessionManager;
@@ -288,11 +285,6 @@ class Main extends PluginBase implements Listener
 			yield $stream->getString();
 		}
 	}
-    function onJoin(PlayerJoinEvent $event)
-    {
-    	//$this->getScheduler()->scheduleDelayedTask(new ScoreboardTask($this, $event->getPlayer()), 20);
-        $this->economyAPI = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI");
-    }
 
     public static function getInstance()
     {
@@ -464,6 +456,7 @@ class Main extends PluginBase implements Listener
 			$this->economyapi = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI");
 			$this->multiworld = $this->getServer()->getPluginManager()->getPlugin("MultiWorld");
 			$this->starterkit = $this->getServer()->getPluginManager()->getPlugin("StarterKit");
+			$this->world = $this->getServer()->getPluginManager()->getPlugin("Worlds");
 
 			$this->config = new Config($this->getDataFolder() . Main::$cloud . "Count.json", Config::JSON);
 
@@ -585,16 +578,14 @@ class Main extends PluginBase implements Listener
             if ($configs->get("RankShopCommand") == true) {
                 $this->getServer()->getCommandMap()->register("rankshop", new RankShopCommand($this));
             }
-			if ($this->multiworld === null) {
-				if ($configs->get("WorldSystem") == true) {
-					$this->getServer()->getCommandMap()->register("world", new WorldCommand($this));
-					foreach (scandir($this->getServer()->getDataPath() . "worlds") as $file) {
-						if (Server::getInstance()->getWorldManager()->isWorldGenerated($file)) {
-							$this->getServer()->getWorldManager()->loadWorld($file);
+			if ($this->multiworld or $this->world === null) {
+				foreach (scandir($this->getServer()->getDataPath() . "worlds") as $file) {
+					if (Server::getInstance()->getWorldManager()->isWorldGenerated($file)) {
+						$this->getServer()->getWorldManager()->loadWorld($file);
 
-						}
 					}
 				}
+				$this->getServer()->getCommandMap()->register("world", new WorldCommand($this));
 			} else {
 				$this->getLogger()->info("Da MultiWorld bereits Installiert wurde ist das Interne WorldSystem Deaktiviert");
 			}
@@ -707,13 +698,11 @@ class Main extends PluginBase implements Listener
     }
 	public function onPreLogin(PlayerPreLoginEvent $event): void
 	{
-		$this->correctName($event->getEventName());
+		$this->correctName($event->getPlayerInfo()->getUsername());
 	}
     public function onPlayerJoin(PlayerJoinEvent $event): void
     {
-
-		$this->getScheduler()->scheduleDelayedTask(new ScoreboardTask($this, $event->getPlayer()), 20);
-
+		$this->getScheduler()->scheduleRepeatingTask(new ScoreboardTask($this, $event->getPlayer()), 20);
 		//Allgemeines
         $player = $event->getPlayer();
         $fj = date('d.m.Y H:I') . date_default_timezone_set("Europe/Berlin");
@@ -1055,6 +1044,14 @@ class Main extends PluginBase implements Listener
 			$sound->pitch = 1;
 			Server::getInstance()->broadcastPackets($player->getWorld()->getPlayers(), [$light, $sound]);
 		}
+		$packet = new PlaySoundPacket();
+		$packet->soundName = "ambient.weather.thunder";
+		$packet->x = $player->getPosition()->getX();
+		$packet->y = $player->getPosition()->getY();
+		$packet->z = $player->getPosition()->getZ();
+		$packet->volume = 1;
+		$packet->pitch = 1;
+		$player->getNetworkSession()->sendDataPacket($packet);
 	}
     public function particle()
     {
@@ -1102,21 +1099,33 @@ class Main extends PluginBase implements Listener
     public function rewardPlayer($player, $multiplier)
     {
         $settings = new Config($this->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-		$vote = new Config($this->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
+		$config = new Config($this->getDataFolder() . Main::$setup . "Config" . ".yml", Config::YAML);
+		$dcsettings = new Config($this->getDataFolder() . Main::$setup . "discordsettings" . ".yml", Config::YAML);
+		$chatprefix = $dcsettings->get("chatprefix");
+		$ar = getdate();
+
 		$prefix = $settings->get("voten");
         if (!$player instanceof Player) {
             return;
         }
         if ($multiplier < 1) {
-            $player->sendMessage($prefix . "§6Vote hier -> " . $vote->get("votelink"));
+            $player->sendMessage($prefix . "§6Vote hier -> " . $config->get("VoteLink"));
             return;
         }
         $clones = [];
         $player->sendMessage($prefix . "§6Danke das du für uns abgestimmt hast :D " . ($multiplier == 1 ? "" : "s") . "!");
-        $this->getServer()->broadcastMessage($prefix->get("voten") . $player->getNameTag() . " §r§dhat für uns abgestimmt! Danke :D");
+        $this->getServer()->broadcastMessage($prefix . $player->getNameTag() . " §r§dhat für uns abgestimmt! Danke :D");
         $configs = new Config($this->getDataFolder() . Main::$statsfile . $player->getPlayerInfo()->getUsername() . ".json", Config::JSON);
         $configs->set("votes", $configs->get("votes") + 1);
         $configs->save();
+		if ($dcsettings->get("DC") == true) {
+			$ar = getdate();
+			$time = $ar['hours'] . ":" . $ar['minutes'];
+			$format = str_replace("{dcprefix}", $chatprefix, $dcsettings->get("Votemsg"));
+			$msg = str_replace("{time}", $time, str_replace("{player}", $player->getName(), $format));
+			$this->sendMessage($format, $msg);
+
+		}
     }
 
     public function onQuery(QueryRegenerateEvent $event)
@@ -1162,10 +1171,6 @@ class Main extends PluginBase implements Listener
         return $name;
     }
 
-    public static function num_addOrdinal($num)
-    {
-        return $num . self::num_getOrdinal($num);
-    }
 
     public static function num_getOrdinal($num)
     {

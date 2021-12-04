@@ -49,35 +49,40 @@ class ClanCommand extends Command
         if (isset($args[0])) {
             if (strtolower($args[0]) === "make") {
                 if (isset($args[1])) {
-                    if (file_exists($this->plugin->getDataFolder() . Main::$clanfile . $args[1] . ".json")) {
-                        $sender->sendMessage($config->get("error") . str_replace("{clan}", $args[1], $lang->get("clanalreadyexist")));
-                    } else {
-                        $clan = new Config($this->plugin->getDataFolder() . Main::$clanfile . $args[1] . ".json", Config::JSON);
-                        $clan->set("Owner1", $sender->getName());
-                        $clan->set("Owner2", "");
-                        $clan->set("Owner3", "");
-                        $clan->set("player1", $sender->getName());
-                        $clan->set("player2", "");
-                        $clan->set("player3", "");
-                        $clan->set("player4", "");
-                        $clan->set("player5", "");
-                        $clan->set("player6", "");
-                        $clan->set("player7", "");
-                        $clan->set("player8", "");
-                        $clan->set("player9", "");
-                        $clan->set("player10", "");
-                        $clan->set("player11", "");
-                        $clan->set("player12", "");
-                        $clan->set("player13", "");
-                        $clan->set("player14", "");
-                        $clan->set("player15", "");
-                        $clan->set("Member", 1);
-                        $clan->save();
-                        $pf->set("Clan", $args[1]);
-                        $pf->set("ClanStatus", true);
-                        $pf->save();
-                        $sender->sendMessage($config->get("clans") . str_replace("{clan}", $pf->get("Clan"), $lang->get("clancreatet")));
-                    }
+					if($pf->get("ClanStatus") === true){
+						$sender->sendMessage($config->get("error") . "§cDu bist bereits in einem Clan daher kannst du keinen neuen erstellen! Lösche deinen clan erst bevor du ein neuen erstellst!");
+						return true;
+					} else {
+						if (file_exists($this->plugin->getDataFolder() . Main::$clanfile . $args[1] . ".json")) {
+							$sender->sendMessage($config->get("error") . str_replace("{clan}", $args[1], $lang->get("clanalreadyexist")));
+						} else {
+							$clan = new Config($this->plugin->getDataFolder() . Main::$clanfile . $args[1] . ".json", Config::JSON);
+							$clan->set("Owner1", $sender->getName());
+							$clan->set("Owner2", "");
+							$clan->set("Owner3", "");
+							$clan->set("player1", $sender->getName());
+							$clan->set("player2", "");
+							$clan->set("player3", "");
+							$clan->set("player4", "");
+							$clan->set("player5", "");
+							$clan->set("player6", "");
+							$clan->set("player7", "");
+							$clan->set("player8", "");
+							$clan->set("player9", "");
+							$clan->set("player10", "");
+							$clan->set("player11", "");
+							$clan->set("player12", "");
+							$clan->set("player13", "");
+							$clan->set("player14", "");
+							$clan->set("player15", "");
+							$clan->set("Member", 1);
+							$clan->save();
+							$pf->set("Clan", $args[1]);
+							$pf->set("ClanStatus", true);
+							$pf->save();
+							$sender->sendMessage($config->get("clans") . str_replace("{clan}", $pf->get("Clan"), $lang->get("clancreatet")));
+						}
+					}
                 }
             } else if (strtolower($args[0]) === "list") {
                 if ($pf->get("ClanStatus") === false) {

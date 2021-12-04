@@ -21,5 +21,6 @@ Kickmsg: "** {dcprefix} : {time} : {gruppe} {player} wurde vom Server gekickt!**
 Deathmsg: "** {dcprefix} : {time} : {gruppe} {player} starb an irgendwas!**"
 #ChatNachrricht
 Chatmsg: "```{dcprefix} : {time} : {gruppe} {player} : {msg}```"
-
+#VoteNachrricht
+Votemsg: "```{dcprefix} : {time} : {player} : hat für uns abgestimmt! Danke :D```"
 ...
