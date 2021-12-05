@@ -213,7 +213,7 @@ class Main extends PluginBase implements Listener
     public static $version = "6.0.8 ALPHA";
     public static $protokoll = "475";
     public static $mcpeversion = "1.18.0";
-    public static $dateversion = "04.12.2021";
+    public static $dateversion = "05.12.2021";
     public static $plname = "CoreV6";
     public static $configversion = "6.0.8";
 
@@ -285,7 +285,6 @@ class Main extends PluginBase implements Listener
 			yield $stream->getString();
 		}
 	}
-
     public static function getInstance()
     {
         return self::$instance;
@@ -665,11 +664,14 @@ class Main extends PluginBase implements Listener
 			//$this->getScheduler()->scheduleRepeatingTask(new CallbackTask([$this, "particle"]), 10);
             $this->getScheduler()->scheduleDelayedTask(new RTask($this), (20 * 60 * 10));
             $this->getScheduler()->scheduleRepeatingTask(new PingTask($this), 20);
+			$this->getScheduler()->scheduleRepeatingTask(new ScoreboardTask($this), 20);
 
-            $this->getLogger()->info($config->get("prefix") . "§6Die Commands wurden Erfolgreich Regestriert");
+
+			$this->getLogger()->info($config->get("prefix") . "§6Die Commands wurden Erfolgreich Regestriert");
             $this->getLogger()->info($config->get("prefix") . "§6Die Core ist nun Einsatzbereit!");
             $this->Banner();
-        }
+
+		}
     }
 
     public function isSpoon()
@@ -699,10 +701,11 @@ class Main extends PluginBase implements Listener
 	public function onPreLogin(PlayerPreLoginEvent $event): void
 	{
 		$this->correctName($event->getPlayerInfo()->getUsername());
+
 	}
     public function onPlayerJoin(PlayerJoinEvent $event): void
     {
-		$this->getScheduler()->scheduleRepeatingTask(new ScoreboardTask($this, $event->getPlayer()), 20);
+
 		//Allgemeines
         $player = $event->getPlayer();
         $fj = date('d.m.Y H:I') . date_default_timezone_set("Europe/Berlin");
@@ -966,7 +969,8 @@ class Main extends PluginBase implements Listener
 
     public function onPlayerQuit(PlayerQuitEvent $event)
     {
-        $player = $event->getPlayer();
+
+		$player = $event->getPlayer();
         //Configs
         $dcsettings = new Config($this->getDataFolder() . Main::$setup . "discordsettings" . ".yml", Config::YAML);
         $gruppe = new Config($this->getDataFolder() . Main::$gruppefile . $player->getName() . ".json", Config::JSON);
@@ -1137,7 +1141,9 @@ class Main extends PluginBase implements Listener
         $countdata->save();
         $online = new Config($this->getDataFolder() . Main::$cloud . "Count.json", Config::JSON);
         $event->getQueryInfo()->setPlayerCount($online->get("players"));
-    }
+
+
+	}
 
     public function onPlayerLogin(PlayerLoginEvent $event)
     {
@@ -1145,7 +1151,9 @@ class Main extends PluginBase implements Listener
         if ($config->get("defaultspawn") == true) {
             $event->getPlayer()->teleport($this->getServer()->getWorldManager()->getDefaultWorld()->getSafeSpawn());
         }
-    }
+		$this->getScheduler()->scheduleRepeatingTask(new ScoreboardTask($this, $event->getPlayer()), 20);
+
+	}
 
     public function correctName($name): bool|string
 	{

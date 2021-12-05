@@ -22,12 +22,10 @@ use TheNote\core\Main;
 class ScoreboardTask extends Task
 {
 	private $plugin;
-	private $player;
 
-	function __construct(Main $plugin, Player $player)
+	function __construct(Main $plugin)
 	{
 		$this->plugin = $plugin;
-		$this->player = $player;
 	}
 
 	function numberPacket(Player $player, $score = 1, $msg = ""): void
@@ -50,51 +48,53 @@ class ScoreboardTask extends Task
 
 	public function onRun(): void
 	{
-		$user = new Config($this->plugin->getDataFolder() . Main::$userfile . $this->player->getName() . ".json", Config::JSON);
-		$gruppe = new Config($this->plugin->getDataFolder() . Main::$gruppefile . $this->player->getName() . ".json", Config::JSON);
-		$online = new Config($this->plugin->getDataFolder() . Main::$cloud . "Count.json", Config::JSON);
-		$stats = new Config($this->plugin->getDataFolder() . Main::$statsfile . $this->player->getName() . ".json", Config::JSON);
-		$hei = new Config($this->plugin->getDataFolder() . Main::$heifile . $this->player->getName() . ".json", Config::JSON);
-		$settings = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-		$playerdata = new Config($this->plugin->getDataFolder() . Main::$cloud . "players.yml", Config::YAML);
-		$money = new Config($this->plugin->getDataFolder() . Main::$cloud . "Money.yml", Config::YAML);
+		foreach ($this->plugin->getServer()->getOnlinePlayers() as $player) {
+			$user = new Config($this->plugin->getDataFolder() . Main::$userfile . $player->getName() . ".json", Config::JSON);
+			$gruppe = new Config($this->plugin->getDataFolder() . Main::$gruppefile . $player->getName() . ".json", Config::JSON);
+			$online = new Config($this->plugin->getDataFolder() . Main::$cloud . "Count.json", Config::JSON);
+			$stats = new Config($this->plugin->getDataFolder() . Main::$statsfile . $player->getName() . ".json", Config::JSON);
+			$hei = new Config($this->plugin->getDataFolder() . Main::$heifile . $player->getName() . ".json", Config::JSON);
+			$settings = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
+			$playerdata = new Config($this->plugin->getDataFolder() . Main::$cloud . "players.yml", Config::YAML);
+			$money = new Config($this->plugin->getDataFolder() . Main::$cloud . "Money.yml", Config::YAML);
 
-		$mymoney = $money->getNested("money." . $this->player->getName());
-		$votes = $stats->get("votes");
-		$joins = $stats->get("joins");
-		$break = $stats->get("break");
-		$this->player->setScoreTag("§eVotes §f: §6$votes\n §eJoins §f: §6$joins\n§eAbgebaut §f: §6$break");
+			$mymoney = $money->getNested("money." . $player->getName());
+			$votes = $stats->get("votes");
+			$joins = $stats->get("joins");
+			$break = $stats->get("break");
+			$player->setScoreTag("§eVotes §f: §6$votes\n §eJoins §f: §6$joins\n§eAbgebaut §f: §6$break");
+			$pk = new SetDisplayObjectivePacket();
+			$pk->displaySlot = "sidebar";
+			$pk->objectiveName = "test";
+			$pk->displayName = $settings->get("ueberschrift");
+			$pk->criteriaName = "dummy";
+			$pk->sortOrder = 0;
+			$player->getNetworkSession()->sendDataPacket($pk);
+			$this->numberPacket($player, 1, "§eDein Rang");
+			$this->numberPacket($player, 2, "§f➥ " . $playerdata->getNested($player->getName() . ".groupprefix"));
+			$this->numberPacket($player, 3, "§eDein Geldstand");
+			if ($this->plugin->economyapi === null) {
+				$this->numberPacket($player, 4, "§f➥ §e" . $mymoney . "§e$");
+			} else {
+				$this->numberPacket($player, 4, "§f➥ §e" . $this->plugin->economyapi->myMoney($player) . "§e$");
+			}
+			$this->numberPacket($player, 5, "§eDeine Coins");
+			$this->numberPacket($player, 6, "§f➥ §e" . $user->get("coins"));
+			$this->numberPacket($player, 7, "§aDein Partner§f/§ain");
+			if ($user->get("heistatus") === false) {
+				$this->numberPacket($player, 8, "§f➥ §aKein Partner");
+			} else {
+				$this->numberPacket($player, 8, "§f➥ §a" . $hei->get("heiraten"));
+			}
+			$this->numberPacket($player, 9, "§dDein Clan");
+			if ($gruppe->get("ClanStatus") === false) {
+				$this->numberPacket($player, 10, "§f➥ §dKein Clan");
+			} else {
+				$this->numberPacket($player, 10, "§f➥ §d" . $gruppe->get("Clan"));
+			}
+			$this->numberPacket($player, 11, "§eOnline");
+			$this->numberPacket($player, 12, "§f➥ §e" . $online->get("players") . "§f/§e" . $settings->get("slots") . "§f");
 
-		$pk = new SetDisplayObjectivePacket();
-		$pk->displaySlot = "sidebar";
-		$pk->objectiveName = "test";
-		$pk->displayName = $settings->get("ueberschrift");
-		$pk->criteriaName = "dummy";
-		$pk->sortOrder = 0;
-		$this->player->getNetworkSession()->sendDataPacket($pk);
-		$this->numberPacket($this->player, 1, "§eDein Rang");
-		$this->numberPacket($this->player, 2, "§f➥ " . $playerdata->getNested($this->player->getName() . ".groupprefix"));
-		$this->numberPacket($this->player, 3, "§eDein Geldstand");
-		if ($this->plugin->economyapi === null) {
-			$this->numberPacket($this->player, 4, "§f➥ §e" . $mymoney . "§e$");
-		} else {
-			$this->numberPacket($this->player, 4, "§f➥ §e" . $this->plugin->economyapi->myMoney($this->player) . "§e$");
 		}
-		$this->numberPacket($this->player, 5, "§eDeine Coins");
-		$this->numberPacket($this->player, 6, "§f➥ §e" . $user->get("coins"));
-		$this->numberPacket($this->player, 7, "§aDein Partner§f/§ain");
-		if ($user->get("heistatus") === false) {
-			$this->numberPacket($this->player, 8, "§f➥ §aKein Partner");
-		} else {
-			$this->numberPacket($this->player, 8, "§f➥ §a" . $hei->get("heiraten"));
-		}
-		$this->numberPacket($this->player, 9, "§dDein Clan");
-		if ($gruppe->get("ClanStatus") === false) {
-			$this->numberPacket($this->player, 10, "§f➥ §dKein Clan");
-		} else {
-			$this->numberPacket($this->player, 10, "§f➥ §d" . $gruppe->get("Clan"));
-		}
-		$this->numberPacket($this->player, 11, "§eOnline");
-		$this->numberPacket($this->player, 12, "§f➥ §e" . $online->get("players") . "§f/§e" . $settings->get("slots") . "§f");
 	}
 }
