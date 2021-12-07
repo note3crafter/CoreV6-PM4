@@ -26,63 +26,77 @@ use onebone\economyapi\EconomyAPI;
 class EconomyShop implements Listener
 {
 
-    private $shop;
-    private $placeQueue;
-    private $shopSign;
-    private $plugin;
-    private $tap;
+	private $shop;
+	private $placeQueue;
+	private $plugin;
+	private $tap;
 
-    public function __construct(Main $plugin)
-    {
-        $this->plugin = $plugin;
-        $this->placeQueue = [];
-        $this->shop = (new Config($this->plugin->getDataFolder(). Main::$cloud . "Shop.yml", Config::YAML))->getAll();
-    }
-
-    public function onSignChange(SignChangeEvent $event)
+	public function __construct(Main $plugin)
 	{
-        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        $result = $this->tagExists($event->getOldText()->getLine(0));
-        if($result !== false){
-            $player = $event->getPlayer();
-            if(!$player->hasPermission("core.economy.shop.create")){
-                $player->sendMessage($config->get("error") . "§cDu hast keine Berechtigung um einen Shop zu erstellen!");
-                return;
-            }
-            if(!is_numeric($event->getOldText()->getLine(1)) or !is_numeric($event->getOldText()->getLine(3))){
-                return;
-            }
-            $item = ItemFactory::getInstance()->get($event->getOldText()->getLine(2));
-            if($item === false){
-                $player->sendMessage($config->get("error") . "§cDas Item wird nicht Unterstützt! §e" . array($event->getOldText()->getLine(2), "", ""));
-                return;
-            }
+		$this->plugin = $plugin;
+		$this->placeQueue = [];
+		$this->shop = (new Config($this->plugin->getDataFolder() . Main::$cloud . "Shop.yml", Config::YAML))->getAll();
+	}
 
-            $block = $event->getBlock();
-            $this->shop[$block->getPosition()->getX().":".$block->getPosition()->getY().":".$block->getPosition()->getZ().":".$block->getPosition()->getWorld()->getFolderName()] = array(
-                "x" => $block->getPosition()->getX(),
-                "y" => $block->getPosition()->getY(),
-                "z" => $block->getPosition()->getZ(),
-                "level" => $block->getPosition()->getWorld()->getFolderName(),
-                "price" => (int) $event->getOldText()->getLine(1),
-                "item" => (int) $item->getID(),
-                "itemName" => $item->getName(),
-                "meta" => (int) $item->getMeta(),
-                "amount" => (int) $event->getOldText()->getLine(3)
-            );
-            $cfg = new Config($this->plugin->getDataFolder(). Main::$cloud . "Shop.yml", Config::YAML);
-            $cfg->setAll($this->shop);
-            $cfg->save();
-            $player->sendMessage($config->get("money") . "§6Du hast den Shop erfolgreich erstellt!"/* . $a*/);
+	public function onSignChange(SignChangeEvent $event): void
+	{
+		$config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
+		$result = $this->tagExists($event->getOldText()->getLine(0));
+		if ($result !== false) {
+			$player = $event->getPlayer();
+			if (!$player->hasPermission("core.economy.shop.create")) {
+				$player->sendMessage($config->get("error") . "§cDu hast keine Berechtigung um einen Shop zu erstellen!");
+				return;
+			}
+			$signText = $event->getNewText();
+			$count = (int)$signText->getLine(3);
+			$price = (int)$signText->getLine(1);
+			$productData = explode(":", $signText->getLine(2));
+			$pID = $this->isItem($id = (int) array_shift($productData)) ? $id : false;
+			$pMeta = ($meta = array_shift($productData)) ? (int)$meta : 0;
+			$item = ItemFactory::getInstance()->get($pID, $pMeta)->getName();
 
-            $event->setNewText(new SignText([
+			if (!is_numeric($count) or $count <= 0) {
+				$player->sendMessage($config->get("error") . "§cDie Menge muss in Zahlen angegeben werden");
+				return;
+			}
+			if (!is_numeric($price) or $price < 0) {
+				$player->sendMessage($config->get("error") . "§cDer Preis muss in Zahlen angegeben werden");
+				return;
+			}
+			if ($pID === false){
+				$player->sendMessage($config->get("error") . "§cDas Item wird nicht Unterstützt! §e");
+				return;
+			}
+			if($item === false){
+				$player->sendMessage($config->get("error") . "§cDas Item wird nicht Unterstützt! §e");
+				return;
+			}
+			$block = $event->getBlock();
+			$this->shop[$block->getPosition()->getX() . ":" . $block->getPosition()->getY() . ":" . $block->getPosition()->getZ() . ":" . $block->getPosition()->getWorld()->getFolderName()] = array(
+				"x" => $block->getPosition()->getX(),
+				"y" => $block->getPosition()->getY(),
+				"z" => $block->getPosition()->getZ(),
+				"level" => $block->getPosition()->getWorld()->getFolderName(),
+				"price" => (int)$event->getOldText()->getLine(1),
+				"item" => (int)$id,
+				"itemName" => $item,
+				"meta" => (int)$pMeta,
+				"amount" => (int)$event->getOldText()->getLine(3)
+			);
+			$cfg = new Config($this->plugin->getDataFolder() . Main::$cloud . "Shop.yml", Config::YAML);
+			$cfg->setAll($this->shop);
+			$cfg->save();
+			$player->sendMessage($config->get("money") . "§6Du hast den Shop erfolgreich erstellt!");
+			$event->setNewText(new SignText([
 				"§f[§aKaufen§f]",
-				str_replace("{price}",$event->getOldText()->getLine(1),  $result[1]),
-				str_replace("{item}", $item->getName(), $result[2]),
-				str_replace("{amount}", $event->getOldText()->getLine(3), $result[3])
+				str_replace("{price}", $price, $result[1]),
+				str_replace("{item}", $item, $result[2]),
+				str_replace("{amount}", $count, $result[3])
 			]));
-        }
-    }
+		}
+	}
+
 
     public function onTouch(PlayerInteractEvent $event)
     {
@@ -185,4 +199,8 @@ class EconomyShop implements Listener
         }
         return false;
     }
+	private function isItem(int $id) : bool
+	{
+		return ItemFactory::getInstance()->isRegistered($id);
+	}
 }

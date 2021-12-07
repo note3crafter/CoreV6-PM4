@@ -15,8 +15,8 @@ namespace TheNote\core\invmenu\session;
 
 use Closure;
 use TheNote\core\invmenu\InvMenu;
-use muqsit\invmenu\session\network\PlayerNetwork;
 use pocketmine\player\Player;
+use TheNote\core\invmenu\session\network\PlayerNetwork;
 
 final class PlayerSession{
 
@@ -29,9 +29,6 @@ final class PlayerSession{
 		$this->network = $network;
 	}
 
-	/**
-	 * @internal
-	 */
 	public function finalize() : void{
 		if($this->current !== null){
 			$this->current->graphic->remove($this->player);
@@ -44,14 +41,6 @@ final class PlayerSession{
 		return $this->current;
 	}
 
-	/**
-	 * @internal use InvMenu::send() instead.
-	 *
-	 * @param InvMenuInfo|null $current
-	 * @param Closure|null $callback
-	 *
-	 * @phpstan-param Closure(bool) : void $callback
-	 */
 	public function setCurrentMenu(?InvMenuInfo $current, ?Closure $callback = null) : void{
 		$this->current = $current;
 
@@ -80,10 +69,6 @@ final class PlayerSession{
 		return $this->network;
 	}
 
-	/**
-	 * @internal use Player::removeCurrentWindow() instead
-	 * @return bool
-	 */
 	public function removeCurrentMenu() : bool{
 		if($this->current !== null){
 			$this->current->graphic->remove($this->player);

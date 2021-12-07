@@ -11,8 +11,8 @@
 
 namespace TheNote\core\server;
 
-use pocketmine\network\mcpe\protocol\BatchPacket;
+use pocketmine\network\mcpe\protocol\serializer\PacketBatch;
 
-class ModifiedChunk extends BatchPacket {
+class ModifiedChunk extends PacketBatch {
 
 }

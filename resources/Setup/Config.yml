@@ -1,6 +1,6 @@
 ---
 #Allgemeine Einstellungen
-ConfigVersion: 6.0.7 #FingerWeg! Dont touch this!
+ConfigVersion: 6.0.9 #FingerWeg! Dont touch this!
 
 #Commands & Funktionen
 BoosterCommand: false #Muss Überarbeitet werden jedoch aktuell keine Zeit dafür...
@@ -42,7 +42,7 @@ DefaultMoney: 1000
 #Weitere Einstellungen
 defaultspawn: true
 rejoinallowed: true #möchtest du das die Spieler automatich rejoinen?
-rejoinserverip: noteland.de
+rejoinserverip: noteland.citybuild.one
 rejoinserverport: 19132
 maxhomes: 10 #Setze ein Limit für Homes
 collision: true #aktiviere/deaktiviere collision/schubsen
@@ -52,6 +52,10 @@ ExplodeEgg: true #Setzt auf True um Explodierende Eier ohne Damage zu erhalten!
 
 #Regelwerk
 Regeln: true #Entscheide selber ob du die Regeln nutzten willst oder nicht...
+
+#FFA
+FFA: true #Aktiviere/Deaktiviere FFA
+FFA_Map: FFA #Setze hier deine Welt ein wo du FFA Nutzen willst
 
 #HubCommand
 Defaultworld: world #Setze hier die Defaultwelt
@@ -123,6 +127,18 @@ Rankprice3: 0
 Rank4: false
 Rankname4: normal
 Rankprice4: 0
+
+Rank5: false
+Rankname5: normal
+Rankprice5: 0
+
+Rank6: false
+Rankname6: normal
+Rankprice6: 0
+
+Rank7: false
+Rankname7: normal
+Rankprice7: 0
 
 
 ##PowerBlock Einstellungen

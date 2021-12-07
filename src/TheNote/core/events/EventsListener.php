@@ -15,17 +15,26 @@ use pocketmine\block\Block;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\block\BlockSpreadEvent;
+use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
 use pocketmine\item\Item;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\protocol\ChangeDimensionPacket;
+use pocketmine\player\Player;
 use TheNote\core\entity\SkullEntity;
 use TheNote\core\Main;
 
 class EventsListener implements Listener
 {
-
-    public function onBreak(BlockBreakEvent $event)
+	public function remove(EntityDamageEvent $event){
+		$entity = $event->getEntity();
+		if($entity instanceof Player && isset(Main::$godmod[$entity->getName()])){
+			if(Main::$godmod[$entity->getName()]){
+				$event->cancel();
+			}
+		}
+	}
+    /*public function onBreak(BlockBreakEvent $event)
     {
         if ($event->isCancelled()) return;
         if ($event->getBlock()->getId() === Block::SKULL_BLOCK) {
@@ -51,116 +60,6 @@ class EventsListener implements Listener
                 $event->getBlock()->getLevelNonNull()->dropItem($event->getBlock()->add(0, 0.5), Main::constructPlayerHeadItem($name, $skull->getSkin()));
 
                 $skull->flagForDespawn();
-            }
-        }
-    }
-
-    public function onPlace(BlockPlaceEvent $event)
-    {
-        $player = $event->getPlayer();
-        $inv = $player->getInventory()->getItemInHand();
-        if ($player->getLevelNonNull()->getProvider()->getGenerator() === "myplot") {
-            if ($inv->getId() === Item::COMPARATOR) {
-                $event->setCancelled(true);
-                $player->sendTip("§cThis item is banned here!");
-                return false;
-            }
-            return true;
-        }
-        if ($inv->getId() === Item::COMPARATOR) {
-            if ($player->hasPermission("core.redstone.comparator")) {
-                $event->setCancelled(false);
-            } else {
-                $event->setCancelled(true);
-                $player->sendTip("§cNo Permission to use that item!");
-            }
-        }
-        if ($inv->getId() === Item::REPEATER) {
-            if ($player->hasPermission("core.redstone.repeater")) {
-                $event->setCancelled(false);
-            } else {
-                $event->setCancelled(true);
-                $player->sendTip("§cNo Permission to use that item!");
-            }
-        }
-        if ($inv->getId() === Item::REDSTONE_LAMP) {
-            if ($player->hasPermission("core.redstone.lamp")) {
-                $event->setCancelled(false);
-            } else {
-                $event->setCancelled(true);
-                $player->sendTip("§cNo Permission to use that item!");
-            }
-        }
-        if ($inv->getId() === Item::PISTON) {
-            if ($player->hasPermission("core.redstone.piston")) {
-                $event->setCancelled(false);
-            } else {
-                $event->setCancelled(true);
-                $player->sendTip("§cNo Permission to use that item!");
-            }
-        }
-        if ($inv->getId() === Item::STICKY_PISTON) {
-            if ($player->hasPermission("core.redstone.stickypiston")) {
-                $event->setCancelled(false);
-            } else {
-                $event->setCancelled(true);
-                $player->sendTip("§cNo Permission to use that item!");
-            }
-        }
-        if ($inv->getId() === Item::OBSERVER) {
-            if ($player->hasPermission("core.redstone.observer")) {
-                $event->setCancelled(false);
-            } else {
-                $event->setCancelled(true);
-                $player->sendTip("§cNo Permission to use that item!");
-            }
-        }
-        if ($inv->getId() === Item::REDSTONE_TORCH) {
-            if ($player->hasPermission("core.redstone.torch")) {
-                $event->setCancelled(false);
-            } else {
-                $event->setCancelled(true);
-                $player->sendTip("§cNo Permission to use that item!");
-            }
-        }
-        if ($inv->getId() === Item::REDSTONE_WIRE) {
-            if ($player->hasPermission("core.redstone.wire")) {
-                $event->setCancelled(false);
-            } else {
-                $event->setCancelled(true);
-                $player->sendTip("§cNo Permission to use that item!");
-            }
-        }
-        if ($inv->getId() === Item::DROPPER) {
-            if ($player->hasPermission("core.redstone.dropper")) {
-                $event->setCancelled(false);
-            } else {
-                $event->setCancelled(true);
-                $player->sendTip("§cNo Permission to use that item!");
-            }
-        }
-        if ($inv->getId() === Item::DISPENSER) {
-            if ($player->hasPermission("core.redstone.dispenser")) {
-                $event->setCancelled(false);
-            } else {
-                $event->setCancelled(true);
-                $player->sendTip("§cNo Permission to use that item!");
-            }
-        }
-        if ($inv->getId() === Item::HOPPER) {
-            if ($player->hasPermission("core.redstone.hopper")) {
-                $event->setCancelled(false);
-            } else {
-                $event->setCancelled(true);
-                $player->sendTip("§cNo Permission to use that item!");
-            }
-        }
-        if ($inv->getId() === Item::COMMAND_BLOCK) {
-            if ($player->hasPermission("core.redstone.commandblock")) {
-                $event->setCancelled(false);
-            } else {
-                $event->setCancelled(true);
-                $player->sendTip("§cNo Permission to use that item!");
             }
         }
     }
@@ -194,5 +93,5 @@ class EventsListener implements Listener
             $pk->position = $event->getTarget()->getSpawnLocation();
             $entity->dataPacket($pk);
         }
-    }
+    }*/
 }

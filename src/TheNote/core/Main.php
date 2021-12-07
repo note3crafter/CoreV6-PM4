@@ -32,9 +32,13 @@ use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIds;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\AddActorPacket;
+use pocketmine\network\mcpe\protocol\BlockEventPacket;
+use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
+use pocketmine\network\mcpe\protocol\LevelSoundEventPacketV1;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\network\mcpe\protocol\serializer\PacketBatch;
+use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\AsyncTask;
@@ -45,11 +49,16 @@ use pocketmine\utils\Config;
 use pocketmine\world\generator\GeneratorManager;
 use pocketmine\world\particle\BlockBreakParticle;
 use pocketmine\world\particle\DustParticle;
+use pocketmine\world\sound\NoteSound;
+use pocketmine\world\sound\Sound;
 use TheNote\core\blocks\BlockManager;
 use TheNote\core\command\CreditsCommand;
+use TheNote\core\command\GodModeCommand;
+use TheNote\core\command\MusicCommand;
 use TheNote\core\command\SetstatstextCommand;
 use TheNote\core\command\WorldCommand;
 use TheNote\core\events\BlocketRecipes;
+use TheNote\core\events\EventsListener;
 use TheNote\core\invmenu\InvMenu;
 use TheNote\core\invmenu\type\CraftingTableInvMenuType;
 use TheNote\core\server\FFAArena;
@@ -57,6 +66,7 @@ use TheNote\core\server\generators\ender\EnderGenerator;
 use TheNote\core\server\generators\nether\NetherGenerator;
 use TheNote\core\server\generators\normal\NormalGenerator;
 use TheNote\core\server\generators\void\VoidGenerator;
+use TheNote\core\server\Music;
 use TheNote\core\server\structure\StructureManager;
 use TheNote\core\session\SessionManager;
 use TheNote\core\command\EnderInvSeeCommand;
@@ -196,6 +206,7 @@ use TheNote\core\server\LiftSystem\PlayerJumpListener;
 use TheNote\core\server\LiftSystem\PlayerToggleSneakListener;
 
 //Task
+use TheNote\core\task\MusicTask;
 use TheNote\core\task\ScoreboardTask;
 use TheNote\core\task\StatstextTask;
 use TheNote\core\task\CallbackTask;
@@ -210,12 +221,12 @@ class Main extends PluginBase implements Listener
 {
 
     //PluginVersion
-    public static $version = "6.0.8 ALPHA";
+    public static $version = "6.0.9 ALPHA";
     public static $protokoll = "475";
     public static $mcpeversion = "1.18.0";
-    public static $dateversion = "05.12.2021";
+    public static $dateversion = "07.12.2021";
     public static $plname = "CoreV6";
-    public static $configversion = "6.0.8";
+    public static $configversion = "6.0.9";
 
     private $clicks;
     private $message = "";
@@ -238,10 +249,6 @@ class Main extends PluginBase implements Listener
     public $ores = [14, 15, 21, 22, 41, 42, 56, 57, 73, 129, 133, 152];
     public $cooldown = [];
     public $interactCooldown = [];
-
-    public static $netherLevel;
-    public static $overworldLevel;
-    public static $endLevel;
 
 
     //Configs
@@ -269,22 +276,17 @@ class Main extends PluginBase implements Listener
     private $lastSent;
     private $sessions = [];
     public $lists = [];
-    public $clearItems;
+	public static $godmod = [];
+	public $clearItems;
     public $sellSign;
     public $shopSign;
     private $sessionManager;
     private $scheduledBlockUpdateLoader;
     private $palette;
-    public const GEOMETRY = '{"format_version": "1.12.0", "minecraft:geometry": [{"description": {"identifier": "geometry.skull", "texture_width": 64, "texture_height": 64, "visible_bounds_width": 2, "visible_bounds_height": 4, "visible_bounds_offset": [0, 0, 0]}, "bones": [{"name": "Head", "pivot": [0, 24, 0], "cubes": [{"origin": [-4, 0, -4], "size": [8, 8, 8], "uv": [0, 0]}, {"origin": [-4, 0, -4], "size": [8, 8, 8], "inflate": 0.5, "uv": [32, 0]}]}]}]}';
+	public const INV_MENU_TYPE_WORKBENCH = "portablecrafting:workbench";
+	public const GEOMETRY = '{"format_version": "1.12.0", "minecraft:geometry": [{"description": {"identifier": "geometry.skull", "texture_width": 64, "texture_height": 64, "visible_bounds_width": 2, "visible_bounds_height": 4, "visible_bounds_offset": [0, 0, 0]}, "bones": [{"name": "Head", "pivot": [0, 24, 0], "cubes": [{"origin": [-4, 0, -4], "size": [8, 8, 8], "uv": [0, 0]}, {"origin": [-4, 0, -4], "size": [8, 8, 8], "inflate": 0.5, "uv": [32, 0]}]}]}]}';
 	private BlockManager $blockManager;
 
-	final public static function getPacketsFromBatch(PacketBatch $packet)
-	{
-		$stream = new BinaryStream($packet->pay);
-		while (!$stream->feof()) {
-			yield $stream->getString();
-		}
-	}
     public static function getInstance()
     {
         return self::$instance;
@@ -402,7 +404,10 @@ class Main extends PluginBase implements Listener
 
 		$this->blockManager->startup();
         if (!$this->isSpoon()) {
-            $this->default = "";
+			if (!InvMenuHandler::isRegistered()) {
+				InvMenuHandler::register($this);
+			}
+			$this->default = "";
             $this->reload();
             if (strlen($this->default) > 1) {
                 $this->getLogger()->warning("The \"normal\" property in config.yml has an error - the value is too long! Assuming as \"_\".");
@@ -458,8 +463,6 @@ class Main extends PluginBase implements Listener
 			$this->world = $this->getServer()->getPluginManager()->getPlugin("Worlds");
 
 			$this->config = new Config($this->getDataFolder() . Main::$cloud . "Count.json", Config::JSON);
-
-
             $serverstats = new Config($this->getDataFolder() . Main::$cloud . "stats.json", Config::JSON);
             $serverstats->set("aktiviert", $serverstats->get("aktivieret") + 1);
             $serverstats->save();
@@ -492,7 +495,7 @@ class Main extends PluginBase implements Listener
             $this->getServer()->getCommandMap()->register("craft", new CraftCommand($this));
             $this->getServer()->getCommandMap()->register("day", new DayCommand($this));
             $this->getServer()->getCommandMap()->register("delhome", new DelHomeCommand($this));
-            //$this->getServer()->getCommandMap()->register("ec", new EnderChestCommand($this));
+            $this->getServer()->getCommandMap()->register("ec", new EnderChestCommand($this));
             $this->getServer()->getCommandMap()->register("erfolg", new ErfolgCommand($this));
             $this->getServer()->getCommandMap()->register("fake", new FakeCommand($this));
             $this->getServer()->getCommandMap()->register("feed", new FeedCommand($this));
@@ -553,6 +556,8 @@ class Main extends PluginBase implements Listener
             //$this->getServer()->getCommandMap()->register("head", new HeadCommand($this));
             $this->getServer()->getCommandMap()->register("credits", new CreditsCommand($this));
             $this->getServer()->getCommandMap()->register("setstatstext", new SetstatstextCommand($this));
+			$this->getServer()->getCommandMap()->register("music", new MusicCommand($this));
+			$this->getServer()->getCommandMap()->register("godmode", new GodModeCommand($this));
 			if ($configs->get("PowerBlock") == true) {
 				$this->getServer()->getPluginManager()->registerEvents(new PowerBlock($this), $this);
 			}
@@ -625,11 +630,13 @@ class Main extends PluginBase implements Listener
             //$this->getServer()->getPluginManager()->registerEvents(new BanEventListener($this), $this); #spieler muss gekickt werden was noch nicht klappt
             $this->getServer()->getPluginManager()->registerEvents(new ColorChat($this), $this);
             $this->getServer()->getPluginManager()->registerEvents(new DeathMessages($this), $this);
-            $this->getServer()->getPluginManager()->registerEvents(new Particle($this), $this);
-            //$this->getServer()->getPluginManager()->registerEvents(new AdminItemsEvents($this), $this);
+			$this->getServer()->getPluginManager()->registerEvents(new Particle($this), $this);
+			$this->getServer()->getPluginManager()->registerEvents(new FFAArena($this), $this);
+
+			//$this->getServer()->getPluginManager()->registerEvents(new AdminItemsEvents($this), $this);
 
             //$this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
-            //$this->getServer()->getPluginManager()->registerEvents(new EventsListener(), $this);
+            $this->getServer()->getPluginManager()->registerEvents(new EventsListener(), $this);
             //$this->getServer()->getPluginManager()->registerEvents(new Eventsettings($this), $this);
             //$this->getServer()->getPluginManager()->registerEvents(new FFAArena(), $this);
 			$this->getServer()->getPluginManager()->registerEvents(new BlocketRecipes($this), $this);
@@ -1636,4 +1643,153 @@ class Main extends PluginBase implements Listener
             $money->save();
         }
     }
+	//Music Start
+	public function Play($sound, $type = 0, $blo = 0)
+	{
+		if (is_numeric($sound) and $sound > 0) {
+			foreach ($this->getServer()->getOnlinePlayers() as $p) {
+				$noteblock = $this->getNearbyNoteBlock($p->getLocation()->x, $p->getLocation()->y, $p->getLocation()->z, $p->getWorld());
+				$noteblock1 = $noteblock;
+				if (!empty($noteblock)) {
+					if ($this->song->name != "") {
+						$p->sendPopup("§6Spielt: §a" . $this->song->name);
+					} else {
+						$p->sendPopup("§6Spielt: §a" . $this->name);
+					}
+					$i = 0;
+					while ($i < $blo) {
+						if (current($noteblock)) {
+							next($noteblock);
+							$i++;
+						} else {
+							$noteblock = $noteblock1;
+							$i++;
+						}
+					}
+					$block = current($noteblock);
+					if ($block) {
+						//$pk = new BlockEventPacket();
+						$pk = $block;
+						$pk->eventType = $type;
+						$pk->eventData = $sound;
+						$pk = new LevelSoundEventPacket();
+						$pk->sound = LevelSoundEvent::NOTE;
+						/*$pk->x = $block->x;
+						$pk->y = $block->y;
+						$pk->z = $block->z;*/
+						$pk->position = new Vector3($p->getLocation()->x, $p->getLocation()->y, $p->getLocation()->z);
+						//$pk->volume = $type; //old
+						//$pk->pitch = $sound; //old
+						$pk->extraData = $sound; //**new changes**
+						//$pk->unknownBool = true; //old
+						//$pk->unknownBool2 = true; //old
+						$p->getNetworkSession()->sendDataPacket($pk);
+					}
+				}
+			}
+		}
+	}
+	public function CheckMusic()
+	{
+		if ($this->getDirCount($this->getPluginDir()) > 0 and $this->RandomFile($this->getPluginDir(), "nbs")) {
+			return true;
+		}
+		return false;
+	}
+
+	public function getDirCount($PATH)
+	{
+		$num = sizeof(scandir($PATH));
+		$num = ($num > 2) ? $num - 2 : 0;
+		return $num;
+	}
+
+	public function getPluginDir()
+	{
+		return $this->getServer()->getDataPath() . "plugins/songs/";
+	}
+
+	public function getRandomMusic()
+	{
+		$dir = $this->RandomFile($this->getPluginDir(), "nbs");
+		if ($dir) {
+			$api = new Music($this, $dir);
+			return $api;
+		}
+		return false;
+	}
+
+	public function RandomFile($folder = '', $extensions = '.*')
+	{
+		$folder = trim($folder);
+		$folder = ($folder == '') ? './' : $folder;
+		if (!is_dir($folder)) {
+			return false;
+		}
+		$files = array();
+		if ($dir = @opendir($folder)) {
+			while ($file = readdir($dir)) {
+				if (!preg_match('/^\.+$/', $file) and
+					preg_match('/\.(' . $extensions . ')$/', $file)) {
+					$files[] = $file;
+				}
+			}
+			closedir($dir);
+		} else {
+			return false;
+		}
+		if (count($files) == 0) {
+			return false;
+		}
+		mt_srand((double)microtime() * 1000000);
+		$rand = mt_rand(0, count($files) - 1);
+		if (!isset($files[$rand])) {
+			return false;
+		}
+		if (function_exists("icon")) {
+			$rname = icon('gbk', 'UTF-8', $files[$rand]);
+		} else {
+			$rname = $files[$rand];
+		}
+		$this->name = str_replace('.nbs', '', $rname);
+		return $folder . $files[$rand];
+	}
+
+	public function getNearbyNoteBlock($x, $y, $z, $world)
+	{
+		$nearby = [];
+		$minX = $x - 5;
+		$maxX = $x + 5;
+		$minY = $y - 5;
+		$maxY = $y + 5;
+		$minZ = $z - 2;
+		$maxZ = $z + 2;
+
+		for ($x = $minX; $x <= $maxX; ++$x) {
+			for ($y = $minY; $y <= $maxY; ++$y) {
+				for ($z = $minZ; $z <= $maxZ; ++$z) {
+					$v3 = new Vector3($x, $y, $z);
+					$block = $world->getBlock($v3);
+					if ($block->getID() == 25) {
+						$nearby[] = $block;
+					}
+				}
+			}
+		}
+		return $nearby;
+	}
+
+	public function getFullBlock($x, $y, $z, $level)
+	{
+		return $level->getChunk($x >> 4, $z >> 4, false)->getFullBlock($x & 0x0f, $y & 0x7f, $z & 0x0f);
+	}
+
+	public function StartNewTask()
+	{
+		$this->song = $this->getRandomMusic();
+		$this->getScheduler()->cancelAllTasks($this);
+		$this->MusicPlayer = new MusicTask($this);
+		$this->getScheduler()->scheduleRepeatingTask($this->MusicPlayer, 2990 / $this->song->speed);
+	}
+	//Music end
 }

@@ -44,7 +44,6 @@ class PowerBlock implements Listener
 			$direction = $player->getDirectionVector();
 			$dx = $direction->getX();
 			$dz = $direction->getZ();
-			//$level->addParticle(new ExplodeParticle($player));
 			$level->addParticle(new Vector3($x - 0.3, $y, $z), new ExplodeParticle);
 			$level->addParticle(new Vector3($x, $y, $z - 0.3), new ExplodeParticle);
 			$level->addParticle(new Vector3($x + 0.3, $y, $z), new ExplodeParticle);
@@ -66,7 +65,6 @@ class PowerBlock implements Listener
             $direction = $player->getDirectionVector();
             $dx = $direction->getX();
             $dz = $direction->getZ();
-            //$level->addParticle( new FlameParticle() ,$player);
             $level->addParticle(new Vector3($x - 0.3, $y, $z), new FlameParticle);
             $level->addParticle(new Vector3($x, $y, $z - 0.3), new FlameParticle);
             $level->addParticle(new Vector3($x + 0.3, $y, $z), new FlameParticle);

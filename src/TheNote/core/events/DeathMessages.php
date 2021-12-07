@@ -46,37 +46,37 @@ class DeathMessages implements Listener
                 $event->setDeathMessage($name . $config->get("zuhoch"));
             } elseif ($cause->getCause() == EntityDamageEvent::CAUSE_ENTITY_ATTACK) {
                 $event->setDeathMessage($name . $config->get("entityattacke"));
-                $this->plugin->addStrike($player);
+                //$this->plugin->addStrike($player);
             } elseif ($cause->getCause() == EntityDamageEvent::CAUSE_PROJECTILE) {
                 $event->setDeathMessage($name . $config->get("abgeschossen"));
-                $this->plugin->addStrike($player);
+                //$this->plugin->addStrike($player);
             } elseif ($cause->getCause() == EntityDamageEvent::CAUSE_SUFFOCATION) {
                 $event->setDeathMessage($name . $config->get("erstickte"));
             } elseif ($cause->getCause() == EntityDamageEvent::CAUSE_FIRE) {
                 $event->setDeathMessage($name . $config->get("verbrannteimstehen"));
-                $this->plugin->addStrike($player);
+                //$this->plugin->addStrike($player);
             } elseif ($cause->getCause() == EntityDamageEvent::CAUSE_FIRE_TICK) {
                 $event->setDeathMessage($name . $config->get("verbrannte"));
-                $this->plugin->addStrike($player);
+                //$this->plugin->addStrike($player);
             } elseif ($cause->getCause() == EntityDamageEvent::CAUSE_LAVA) {
                 $event->setDeathMessage($name . $config->get("lava"));
             } elseif ($cause->getCause() == EntityDamageEvent::CAUSE_DROWNING) {
                 $event->setDeathMessage($name . $config->get("ertrinken"));
             } elseif ($cause->getCause() == EntityDamageEvent::CAUSE_ENTITY_EXPLOSION || $cause->getCause() == EntityDamageEvent::CAUSE_BLOCK_EXPLOSION) {
                 $event->setDeathMessage($name . $config->get("hochgejagt"));
-                $this->plugin->addStrike($player);
+                //$this->plugin->addStrike($player);
             } elseif ($cause->getCause() == EntityDamageEvent::CAUSE_VOID) {
                 $event->setDeathMessage($name . $config->get("void"));
             } elseif ($cause->getCause() == EntityDamageEvent::CAUSE_SUICIDE) {
                 $event->setDeathMessage($name . $config->get("selbstmord"));
-                $this->plugin->addStrike($player);
+                //$this->plugin->addStrike($player);
             } elseif ($cause->getCause() == EntityDamageEvent::CAUSE_MAGIC) {
                 $event->setDeathMessage($name . $config->get("magic"));
             }
         }
         return true;
     }
-	public function Lightning(Player $player): void
+	/*public function Lightning(Player $player): void
 	{
 		$pos = $player->getPosition();
 		$light = new AddActorPacket();
@@ -99,5 +99,5 @@ class DeathMessages implements Listener
 		$sound->volume = 1;
 		$sound->pitch = 1;
 		Server::getInstance()->broadcastPackets($player->getWorld()->getPlayers(), [$light, $sound]);
-	}
+	}*/
 }

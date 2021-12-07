@@ -63,5 +63,13 @@
 	"delhomeprefix": "§6Löscht das angegebene Home aus deiner Liste",
 	"delhomeusage": "§cBenutze : /delhome [Homename]",
 	"delhomeconfirm": "§6Dein Home wurde erfolgreich gelöscht.",
-	"delhomenotfound": "§cDas Home mit dem Namen {home} konnte nicht gefunden werden"
+	"delhomenotfound": "§cDas Home mit dem Namen {home} konnte nicht gefunden werden",
+	"godmodeprefix": "§6Werde Unsterblich!",
+	"godmodeenabled": "§6GodMode wurde aktiviert",
+	"godmodedisabled": "§6GodMode wurde deaktiviert",
+	"musicprefix": "§6Spiele Musik ab",
+	"musicplay": "§6Das Lied wird nun abgespielt",
+	"musicstop": "§6Das Lied wurde gestoppt",
+	"musicskip": "§6Das nächste Lied wird nun abgespielt",
+	"musicusage": "§eBenutze:/music <start|stop|next>"
 }

@@ -27,7 +27,7 @@ class HeiratsListener implements Listener {
 
     public function setScheidung($a)
     {
-        $player = $a->getLowerCaseName();
+        $player = $a->getName();
         $x = new Config($this->plugin->getDataFolder() . Main::$heifile . strtolower($player) . ".json", Config::JSON);
         $hochzeit = $x->get("heiraten");
 

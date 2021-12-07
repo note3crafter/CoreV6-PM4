@@ -11,12 +11,29 @@
 
 declare(strict_types=1);
 
-namespace TheNote\core\invmenu\type;
+namespace TheNote\core\invmenu\inventory;
 
-interface InvMenuTypeIds{
+use pocketmine\inventory\Inventory;
+use pocketmine\inventory\InventoryListener;
+use pocketmine\item\Item;
 
-	public const TYPE_WORKBENCH = "portablecrafting:workbench";
-	public const TYPE_CHEST = "invmenu:chest";
-	public const TYPE_DOUBLE_CHEST = "invmenu:double_chest";
-	public const TYPE_HOPPER = "invmenu:hopper";
+final class SharedInventorySynchronizer implements InventoryListener{
+
+	protected Inventory $inventory;
+
+	public function __construct(Inventory $inventory){
+		$this->inventory = $inventory;
+	}
+
+	public function getSynchronizingInventory() : Inventory{
+		return $this->inventory;
+	}
+
+	public function onContentChange(Inventory $inventory, array $old_contents) : void{
+		$this->inventory->setContents($inventory->getContents());
+	}
+
+	public function onSlotChange(Inventory $inventory, int $slot, Item $old_item) : void{
+		$this->inventory->setItem($slot, $inventory->getItem($slot));
+	}
 }

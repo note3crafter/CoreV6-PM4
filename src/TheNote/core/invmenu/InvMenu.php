@@ -31,21 +31,10 @@ use pocketmine\player\Player;
 
 class InvMenu implements InvMenuTypeIds{
 
-	/**
-	 * @param string $identifier
-	 * @param mixed ...$args
-	 * @return InvMenu
-	 */
 	public static function create(string $identifier, ...$args) : InvMenu{
 		return new InvMenu(InvMenuHandler::getTypeRegistry()->get($identifier), ...$args);
 	}
 
-	/**
-	 * @param Closure|null $listener
-	 * @return Closure
-	 *
-	 * @phpstan-param Closure(DeterministicInvMenuTransaction) : void $listener
-	 */
 	public static function readonly(?Closure $listener = null) : Closure{
 		return static function(InvMenuTransaction $transaction) use($listener) : InvMenuTransactionResult{
 			$result = $transaction->discard();
@@ -85,35 +74,16 @@ class InvMenu implements InvMenuTypeIds{
 		return $this;
 	}
 
-	/**
-	 * @param Closure|null $listener
-	 * @return self
-	 *
-	 * @phpstan-param Closure(InvMenuTransaction) : InvMenuTransactionResult $listener
-	 */
 	public function setListener(?Closure $listener) : self{
 		$this->listener = $listener;
 		return $this;
 	}
 
-	/**
-	 * @param Closure|null $listener
-	 * @return self
-	 *
-	 * @phpstan-param Closure(Player, Inventory) : void $listener
-	 */
 	public function setInventoryCloseListener(?Closure $listener) : self{
 		$this->inventory_close_listener = $listener;
 		return $this;
 	}
 
-	/**
-	 * @param Player $player
-	 * @param string|null $name
-	 * @param Closure|null $callback
-	 *
-	 * @phpstan-param Closure(bool) : void $callback
-	 */
 	final public function send(Player $player, ?string $name = null, ?Closure $callback = null) : void{
 		$session = InvMenuHandler::getPlayerManager()->get($player);
 		$network = $session->getNetwork();
@@ -154,12 +124,6 @@ class InvMenu implements InvMenuTypeIds{
 		}
 	}
 
-	/**
-	 * @internal use InvMenu::send() instead.
-	 *
-	 * @param Player $player
-	 * @return bool
-	 */
 	public function sendInventory(Player $player) : bool{
 		return $player->setCurrentWindow($this->getInventory());
 	}

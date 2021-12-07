@@ -7,17 +7,24 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 
 - [Hier downloaden](https://poggit.pmmp.io/ci/note3crafter/Core-V6/Core-V6)!
   Das Core Plugin wurde speziell für CityBuild Server entwickelt!
-# Neues & Bekannte Fehler v6.0.8 ALPHA
-- WorldSystem repaiert funktioniert nun wieder!
-- Das Scoreboard Aktualiesiert sich nun wieder.
+# Neues v6.0.9 ALPHA
+- /ec ist wieder Funktionsfähig
+- /craft ist wieder Funktional
 - Erweiterung für das LanguageSystem 
-- ClanCommand Protection eingebaut so das man wenn man bereits in einem Clan drinne ist nicht ein weiteren erstellen kann! (vermeidet unnötige daten)
-- VoteSystem Funktioniert wieder! 
-- WarpCommand den eintrag "/world" entfernt
-- FakeCommand CommandPrefix berichtigt
+- Bugfix im Heiratslistener
+- Neues Musiksystem (Befindet sich in der ALPHA und leider derzeit nur 1 Ton) 
+- /godmode Hinzugefügt
 - Weitere kleine Bugfixes
-- /ec, /craft ,/vanish aktuell nicht funktional!
-- Unnötigen Kram entfernt!
+- EconomyShop/Sell Bugfix mit ItemMeta (1:5)
+
+# Bekannte Fehler
+- Statsboard funktioniert jedoch tretet nach einer zeit ein fehler im statsboard auf (verdoppelt sich)
+- MusicSystem Spielt nur 1 Ton ab
+- AdminItems aktuell nicht funktional
+- /invsee - /ecinvsee nicht funktional
+- /head nicht funktional
+- /vanish nicht funktional -> lösungsvorschlag?
+- AntiXray nicht funktional?
  
 # Mindestanforderungen 
 - 2 Kern CPU (Bestenfalls hohe Singlecore Performance)

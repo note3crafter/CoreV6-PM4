@@ -12,10 +12,10 @@
 namespace TheNote\core\utils;
 
 use pocketmine\Server;
-use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Config;
 
+use pocketmine\world\World;
 use TheNote\core\Main;
 use TheNote\core\listener\ScheduledBlockUpdateListener;
 
@@ -41,11 +41,11 @@ class ScheduledBlockUpdateLoader {
         return $this->isActivate;
     }
 
-    public function loadLevel(Level $level) : void {
-        if (!$this->config->exists($level->getName())) {
+    public function loadLevel(World $level) : void {
+        if (!$this->config->exists($level->getFolderName())) {
             return;
         }
-        $levelDatas = $this->config->get($level->getName());
+        $levelDatas = $this->config->get($level->getFolderName());
         for ($i = 0; $i < count($levelDatas); ++$i) {
             $sp = explode(":", $levelDatas[$i]);
             $position = new Vector3((int) $sp[0], (int) $sp[1], (int) $sp[2]);
@@ -56,7 +56,7 @@ class ScheduledBlockUpdateLoader {
         }
     }
 
-    public function saveLevel(Level $level) {
+    public function saveLevel(World $level) {
         $levelDatas = [];
         $tick = Server::getInstance()->getTick();
 
@@ -72,7 +72,7 @@ class ScheduledBlockUpdateLoader {
             $levelDatas[] = $pos->getX() . ":" . $pos->getY() . ":" . $pos->getZ() . ":" . $delay;
         }
 
-        $this->config->set($level->getName(), $levelDatas);
+        $this->config->set($level->getFolderName(), $levelDatas);
         $this->config->save();
     }
 }

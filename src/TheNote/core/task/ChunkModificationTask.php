@@ -19,6 +19,7 @@ use pocketmine\item\ItemIds;
 use pocketmine\network\mcpe\protocol\BatchPacket;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\LevelChunkPacket;
+use pocketmine\network\mcpe\protocol\serializer\PacketBatch;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\scheduler\AsyncTask;
@@ -57,7 +58,7 @@ class ChunkModificationTask extends AsyncTask {
     }
 
 
-    public function onRun() {
+    public function onRun():void {
         $chunk = Chunk::fastDeserialize($this->chunk);
 
         $ores = [14, 15, 21, 22, 41, 42, 56, 57, 73, 129, 133, 152];
@@ -85,8 +86,8 @@ class ChunkModificationTask extends AsyncTask {
         $this->setResult($chunk);
     }
 
-    public function onCompletion(Server $server) {
-        $player = $server->getPlayerExact($this->player);
+    public function onCompletion() :void{
+        $player = Server::getInstance()->getPlayerExact($this->player);
 
         if ($player instanceof Player && $player->getWorld()->getId() === $this->level && $this->hasResult()) {
             $chunk = $this->getResult();

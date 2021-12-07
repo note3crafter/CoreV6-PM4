@@ -52,11 +52,12 @@ class StatstextTask extends Task
             }
             if ($config->get("statstext") == true) {
                 if (!isset($this->floattext[$player->getName()])) {
+
                     # existiert noch nicht
                     $this->floattext[$player->getName()] = new FloatingTextParticle($text);
                     $particle = $this->floattext[$player->getName()];
                     #$packet = $particle->encode()
-                    $particle->setInvisible(false);
+                    $particle->setInvisible(true);
                     $level->addParticle(new Vector3($x, $y, $z),$particle, $all);
 
 				} else {
@@ -68,8 +69,6 @@ class StatstextTask extends Task
                     $newparticle = $this->floattext[$player->getName()];
                     $newparticle->setInvisible(false);
 					$level->addParticle(new Vector3($x, $y, $z), $newparticle, $all);
-
-
 				}
             }
         }
