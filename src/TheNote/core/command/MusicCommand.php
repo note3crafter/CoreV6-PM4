@@ -11,24 +11,24 @@
 
 namespace TheNote\core\command;
 
-use pocketmine\block\VanillaBlocks;
-use pocketmine\network\mcpe\protocol\types\inventory\WindowTypes;
-use pocketmine\player\Player;
-use pocketmine\utils\Config;
-use TheNote\core\invmenu\InvMenu;
-use TheNote\core\invmenu\type\InvMenuType;
-use TheNote\core\invmenu\type\util\InvMenuTypeBuilders;
-use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\math\Vector3;
+use pocketmine\network\mcpe\protocol\BlockEventPacket;
+use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
+use pocketmine\player\Player;
+use pocketmine\Server;
+use pocketmine\utils\Config;
+use pocketmine\utils\TextFormat;
+use pocketmine\world\sound\NoteSound;
+use TheNote\core\Main;
+use TheNote\core\server\Music;
+use TheNote\core\task\MusicTask;
 
-class CraftCommand extends Command
+class MusicCommand extends Command
 {
 	private $plugin;
 
-	public static function WORKBENCH() : InvMenu{
-		return InvMenu::create(Main::INV_MENU_TYPE_WORKBENCH);
-	}
 	public function __construct(Main $plugin)
 	{
 		$this->plugin = $plugin;
@@ -36,10 +36,10 @@ class CraftCommand extends Command
 		$langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
 		$l = $langsettings->get("Lang");
 		$lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
-		parent::__construct("craft", $config->get("prefix") . $lang->get("craftprefix"), "/craft", ["crafting"]);
-		$this->setPermission("core.command.craft");
-
+		parent::__construct("music", $config->get("prefix") . $lang->get("musicprefix"), "/music");
+		$this->setPermission("core.command.music");
 	}
+
 	public function execute(CommandSender $sender, string $commandLabel, array $args): bool
 	{
 		$config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
@@ -54,8 +54,32 @@ class CraftCommand extends Command
 			$sender->sendMessage($config->get("error") . $lang->get("nopermission"));
 			return false;
 		}
-		if($sender instanceof Player){
-			self::WORKBENCH()->send($sender);
+		if (isset($args[0])) {
+			switch ($args[0]) {
+				case "next":
+				case "skip":
+					$this->plugin->StartNewTask();
+					$sender->sendMessage($config->get("prefix") . $lang->get("musicskip"));
+					return true;
+					break;
+				case "stop":
+				case "pause":
+
+					$this->plugin->getScheduler()->cancelAllTasks();
+					$sender->sendMessage($config->get("prefix") . $lang->get("musicplay"));
+					return true;
+					break;
+				case "start":
+				case "play":
+				case "resume":
+
+					$this->plugin->StartNewTask();
+					$sender->sendMessage($config->get("prefix") . $lang->get("musicplay"));
+					return true;
+			}
+		} else {
+			$sender->sendMessage($config->get("prefix") . $lang->get("musicusage"));
+			return true;
 		}
 		return true;
 	}

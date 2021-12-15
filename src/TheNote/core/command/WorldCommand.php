@@ -84,11 +84,11 @@ class WorldCommand extends Command
 			if (!$this->plugin->getServer()->getWorldManager()->isWorldLoaded($args[1])) {
 				$this->plugin->getServer()->getWorldManager()->loadWorld($args[1]);
 			}
-			if (!$sender->teleport($level->getSafeSpawn())) {
+			/*if (!$sender->teleport($level->getSafeSpawn())) {
 				$sender->sendMessage($config->get("error") . "§cDer Teleportvorgang wurde abgebrochen!");
 				return true;
-			}
-			$sender->teleport($level->getSafeSpawn());
+			}*/
+			$sender->teleport($level->getSpawnLocation());
             $sender->sendMessage($config->get("world") . "§6Du wurdest erfolgreich in die Welt §f: §e" . $args[1] . " §6teleportiert!");
         }
         if ($args[0] == "delete") {

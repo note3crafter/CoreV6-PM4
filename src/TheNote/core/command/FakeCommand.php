@@ -71,7 +71,7 @@ class FakeCommand extends Command {
                     $stp2 = str_replace("{count}", count($all), $stp1);
                     $stp3 = str_replace("{slots}", $slots , $stp2);
                     $quitmsg = str_replace("{prefix}", $prefix, $stp3);
-                    $this->plugin->getServer()->broadcastMessage("§f[§c-§f] " . $sender->getNameTag() . " §chat den Server verlassen! §f[§a" . count($all) . "§f/§a" . $config->get("slots") . "§f]");
+                    $this->plugin->getServer()->broadcastMessage($quitmsg);
                 }
             }
         }

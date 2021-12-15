@@ -23,7 +23,7 @@ use pocketmine\command\CommandSender;
 class SuperVanishCommand extends Command
 {
     public static $vanished = [];
-    private static $instance;
+    private static SuperVanishCommand $instance;
     private $plugin;
 
     public function __construct(Main $plugin)
@@ -73,7 +73,7 @@ class SuperVanishCommand extends Command
                 foreach (Server::getInstance()->getOnlinePlayers() as $player) {
                     assert(true);
 
-                    if (!$player->hasPermission("core.command.supervanish.see")  or $sender->isOp()) {
+                    if (!$player->hasPermission("core.command.supervanish.see")) {
                         $player->hidePlayer($sender);
                     }
                 }

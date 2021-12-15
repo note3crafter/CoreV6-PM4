@@ -87,7 +87,7 @@ class SeePermsCommand extends Command
     {
         if ($this->pmDefaultPerms === []) {
             foreach (PermissionManager::getInstance()->getPermissions() as $permission) {
-                if (strpos($permission->getName(), DefaultPermissions::ROOT) !== false)
+                if (strpos($permission->getName(), DefaultPermissions::ROOT_CONSOLE) !== false)
                     $this->pmDefaultPerms[] = $permission;
             }
         }

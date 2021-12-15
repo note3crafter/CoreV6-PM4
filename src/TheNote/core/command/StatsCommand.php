@@ -35,6 +35,16 @@ class StatsCommand extends Command {
             $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
             return false;
         }
+
+		$kills = $this->getPlayerKillPoints($player);
+		$deaths = $this->getPlayerDeathPoints($player);
+		if($deaths !== 0){
+			$ratio = $kills / $deaths;
+			if($ratio !== 0){
+				return number_format($ratio, 1);
+			}
+		}
+		return "0.0";
         $stats = new Config($this->plugin->getDataFolder() . Main::$statsfile . $sender->getName() . ".json", Config::JSON);
         $form = new SimpleForm(function (Player $sender, $data) {
             $result = $data;

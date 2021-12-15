@@ -11,24 +11,17 @@
 
 namespace TheNote\core\command;
 
-use pocketmine\block\VanillaBlocks;
-use pocketmine\network\mcpe\protocol\types\inventory\WindowTypes;
-use pocketmine\player\Player;
-use pocketmine\utils\Config;
-use TheNote\core\invmenu\InvMenu;
-use TheNote\core\invmenu\type\InvMenuType;
-use TheNote\core\invmenu\type\util\InvMenuTypeBuilders;
-use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\player\Player;
+use pocketmine\Server;
+use pocketmine\utils\Config;
+use TheNote\core\Main;
 
-class CraftCommand extends Command
+class GodModeCommand extends Command
 {
 	private $plugin;
 
-	public static function WORKBENCH() : InvMenu{
-		return InvMenu::create(Main::INV_MENU_TYPE_WORKBENCH);
-	}
 	public function __construct(Main $plugin)
 	{
 		$this->plugin = $plugin;
@@ -36,10 +29,10 @@ class CraftCommand extends Command
 		$langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
 		$l = $langsettings->get("Lang");
 		$lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
-		parent::__construct("craft", $config->get("prefix") . $lang->get("craftprefix"), "/craft", ["crafting"]);
-		$this->setPermission("core.command.craft");
-
+		parent::__construct("godmode", $config->get("prefix") . $lang->get("godmodeprefix"), "/godmode", ["god", "gmode"]);
+		$this->setPermission("core.command.godmode");
 	}
+
 	public function execute(CommandSender $sender, string $commandLabel, array $args): bool
 	{
 		$config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
@@ -54,8 +47,13 @@ class CraftCommand extends Command
 			$sender->sendMessage($config->get("error") . $lang->get("nopermission"));
 			return false;
 		}
-		if($sender instanceof Player){
-			self::WORKBENCH()->send($sender);
+
+		if (!isset(Main::$godmod[$sender->getName()])) {
+			Main::$godmod[$sender->getName()] = $sender->getName();
+			$sender->sendMessage($config->get("prefix") . $lang->get("godmodeenabled"));
+		} else {
+			unset(Main::$godmod[$sender->getName()]);
+			$sender->sendMessage($config->get("prefix") . $lang->get("godmodedisabled"));
 		}
 		return true;
 	}

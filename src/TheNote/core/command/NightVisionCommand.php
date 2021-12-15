@@ -11,6 +11,8 @@
 
 namespace TheNote\core\command;
 
+use pocketmine\entity\effect\Effect;
+use pocketmine\entity\effect\EffectInstance;
 use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
@@ -40,7 +42,7 @@ class NightVisionCommand extends Command
             return false;
         }
         $sender->sendMessage($config->get("info") . "Du hast nun Nachtsicht für §c10 §6Minuten!");
-        $sender->addEffect(new EffectInstance(Effect::getEffect(16), (12000), (1), (false)));
+        $sender->get(new EffectInstance(Effect::apply(16), (12000), (1), (false)));
         return false;
     }
 }

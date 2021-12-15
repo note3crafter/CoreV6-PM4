@@ -42,12 +42,12 @@ class VanishCommand extends Command
             $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
             return false;
         }
-        if ($sender->hasPermission("core.command.vanish") || $sender->isOp()) {
+        if ($sender->hasPermission("core.command.vanish")) {
             if(!isset($this->vanish[$sender->getName()])){
                 $this->vanish[$sender->getName()] = true;
                 $sender->setNameTagVisible(false);
-                $sender->sendData(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
-                $sender->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
+                $sender->sendData(Entity::DATA, true);
+                $sender->getNetworkSession()->sendDataPacket(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
                 $sender->sendMessage($config->get("prefix") . "Dein §eVanish §6wurde §aAktiviert§6.");
             }else{
                 unset($this->vanish[$sender->getName()]);

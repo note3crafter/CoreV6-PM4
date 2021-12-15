@@ -50,9 +50,13 @@ class RankShopCommand extends Command
         $g2 = $groups->getNested("Groups." . $config->get("Rankname2") . ".groupprefix");
         $g3 = $groups->getNested("Groups." . $config->get("Rankname3") . ".groupprefix");
         $g4 = $groups->getNested("Groups." . $config->get("Rankname4") . ".groupprefix");
+		$g5 = $groups->getNested("Groups." . $config->get("Rankname4") . ".groupprefix");
+		$g6 = $groups->getNested("Groups." . $config->get("Rankname4") . ".groupprefix");
+		$g7 = $groups->getNested("Groups." . $config->get("Rankname4") . ".groupprefix");
 
 
-        $form = new SimpleForm(function (Player $player, int $data = null) {
+
+		$form = new SimpleForm(function (Player $player, int $data = null) {
             $settings = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
             $result = $data;
             if ($result === null) {
@@ -73,6 +77,16 @@ class RankShopCommand extends Command
                     break;
                 case 4:
                     $this->Rank4($player);
+					break;
+				case 5:
+					$this->Rank5($player);
+					break;
+				case 6:
+					$this->Rank6($player);
+					break;
+				case 7:
+					$this->Rank7($player);
+					break;
             }
         });
         $form->setTitle("§0======§f[§cRangShop§f]§0======");
@@ -87,6 +101,15 @@ class RankShopCommand extends Command
         if ($config->get("Rank4") == true){
             $form->addButton("Rang :" . $g4 . "\n" . "§0Kostet: " . $config->get("Rankprice4"));
         }
+		if ($config->get("Rank4") == true){
+			$form->addButton("Rang :" . $g5 . "\n" . "§0Kostet: " . $config->get("Rankprice5"));
+		}
+		if ($config->get("Rank5") == true){
+			$form->addButton("Rang :" . $g6 . "\n" . "§0Kostet: " . $config->get("Rankprice6"));
+		}
+		if ($config->get("Rank6") == true){
+			$form->addButton("Rang :" . $g7 . "\n" . "§0Kostet: " . $config->get("Rankprice7"));
+		}
         $form->sendToPlayer($player);
     }
     public function Rank1($player)
@@ -218,7 +241,7 @@ class RankShopCommand extends Command
         }
         if ($m >= $config->get("Rankprice4")){
             if($this->plugin->economy == null){
-                $money->setNested("money." . $player->getName(), $money->getNested("money." . $player->getName()) - $config->get("Rankprice3"));
+                $money->setNested("money." . $player->getName(), $money->getNested("money." . $player->getName()) - $config->get("Rankprice4"));
                 $money->save();
             } else {
                 EconomyAPI::getInstance()->reduceMoney($player, $config->get("Rankprice4"));
@@ -241,5 +264,118 @@ class RankShopCommand extends Command
             $player->sendMessage($settings->get("error") . "§cDu hast zu wenig Geld um diesen Rang zu kaufen!");
         }
     }
-
+	public function Rank5($player)
+	{
+		$settings = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
+		$name = $player->getName();
+		$money = new Config($this->plugin->getDataFolder() . Main::$cloud . "Money.yml", Config::YAML);
+		$config = new Config($this->plugin->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
+		$groups = new Config($this->plugin->getDataFolder() . Main::$cloud . "groups.yml", Config::YAML);
+		$playerdata = new Config($this->plugin->getDataFolder() . Main::$cloud . "players.yml", Config::YAML);
+		if($this->plugin->economy == null){
+			$m = $money->getNested("money.$name");
+		} else {
+			$m = EconomyAPI::getInstance()->myMoney($player);
+		}
+		if ($m >= $config->get("Rankprice5")){
+			if($this->plugin->economy == null){
+				$money->setNested("money." . $player->getName(), $money->getNested("money." . $player->getName()) - $config->get("Rankprice5"));
+				$money->save();
+			} else {
+				EconomyAPI::getInstance()->reduceMoney($player, $config->get("Rankprice5"));
+			}
+			$groupprefix = $groups->getNested("Groups." . $config->get("Rankname5") .".groupprefix");
+			$playerdata->setNested($name . ".groupprefix", $groupprefix );
+			$playerdata->setNested($name . ".group", $config->get("Rankname4"));
+			$playerdata->save();
+			$playergroup = $playerdata->getNested($name.".group");
+			$nametag = str_replace("{name}", $player->getName(), $groups->getNested("Groups.{$playergroup}.nametag"));
+			$displayname = str_replace("{name}", $player->getName(), $groups->getNested("Groups.{$playerdata->getNested($name.".group")}.displayname"));
+			$permissionlist = (array)$groups->getNested("Groups.".$playergroup.".permissions", []);
+			foreach($permissionlist as $name => $data) {
+				$player->addAttachment($this->plugin)->setPermission($data, true);
+			}
+			$player->setNameTag($nametag);
+			$player->setDisplayName($displayname);
+			$player->sendMessage($settings->get("shop") . "§6Du hast soeben denn Rang §f:§e " . $config->get("Rankname4") ." §6Rang gekauft!");
+		} else {
+			$player->sendMessage($settings->get("error") . "§cDu hast zu wenig Geld um diesen Rang zu kaufen!");
+		}
+	}
+	public function Rank6($player)
+	{
+		$settings = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
+		$name = $player->getName();
+		$money = new Config($this->plugin->getDataFolder() . Main::$cloud . "Money.yml", Config::YAML);
+		$config = new Config($this->plugin->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
+		$groups = new Config($this->plugin->getDataFolder() . Main::$cloud . "groups.yml", Config::YAML);
+		$playerdata = new Config($this->plugin->getDataFolder() . Main::$cloud . "players.yml", Config::YAML);
+		if($this->plugin->economy == null){
+			$m = $money->getNested("money.$name");
+		} else {
+			$m = EconomyAPI::getInstance()->myMoney($player);
+		}
+		if ($m >= $config->get("Rankprice6")){
+			if($this->plugin->economy == null){
+				$money->setNested("money." . $player->getName(), $money->getNested("money." . $player->getName()) - $config->get("Rankprice6"));
+				$money->save();
+			} else {
+				EconomyAPI::getInstance()->reduceMoney($player, $config->get("Rankprice6"));
+			}
+			$groupprefix = $groups->getNested("Groups." . $config->get("Rankname6") .".groupprefix");
+			$playerdata->setNested($name . ".groupprefix", $groupprefix );
+			$playerdata->setNested($name . ".group", $config->get("Rankname6"));
+			$playerdata->save();
+			$playergroup = $playerdata->getNested($name.".group");
+			$nametag = str_replace("{name}", $player->getName(), $groups->getNested("Groups.{$playergroup}.nametag"));
+			$displayname = str_replace("{name}", $player->getName(), $groups->getNested("Groups.{$playerdata->getNested($name.".group")}.displayname"));
+			$permissionlist = (array)$groups->getNested("Groups.".$playergroup.".permissions", []);
+			foreach($permissionlist as $name => $data) {
+				$player->addAttachment($this->plugin)->setPermission($data, true);
+			}
+			$player->setNameTag($nametag);
+			$player->setDisplayName($displayname);
+			$player->sendMessage($settings->get("shop") . "§6Du hast soeben denn Rang §f:§e " . $config->get("Rankname4") ." §6Rang gekauft!");
+		} else {
+			$player->sendMessage($settings->get("error") . "§cDu hast zu wenig Geld um diesen Rang zu kaufen!");
+		}
+	}
+	public function Rank7($player)
+	{
+		$settings = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
+		$name = $player->getName();
+		$money = new Config($this->plugin->getDataFolder() . Main::$cloud . "Money.yml", Config::YAML);
+		$config = new Config($this->plugin->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
+		$groups = new Config($this->plugin->getDataFolder() . Main::$cloud . "groups.yml", Config::YAML);
+		$playerdata = new Config($this->plugin->getDataFolder() . Main::$cloud . "players.yml", Config::YAML);
+		if($this->plugin->economy == null){
+			$m = $money->getNested("money.$name");
+		} else {
+			$m = EconomyAPI::getInstance()->myMoney($player);
+		}
+		if ($m >= $config->get("Rankprice7")){
+			if($this->plugin->economy == null){
+				$money->setNested("money." . $player->getName(), $money->getNested("money." . $player->getName()) - $config->get("Rankprice7"));
+				$money->save();
+			} else {
+				EconomyAPI::getInstance()->reduceMoney($player, $config->get("Rankprice7"));
+			}
+			$groupprefix = $groups->getNested("Groups." . $config->get("Rankname7") .".groupprefix");
+			$playerdata->setNested($name . ".groupprefix", $groupprefix );
+			$playerdata->setNested($name . ".group", $config->get("Rankname7"));
+			$playerdata->save();
+			$playergroup = $playerdata->getNested($name.".group");
+			$nametag = str_replace("{name}", $player->getName(), $groups->getNested("Groups.{$playergroup}.nametag"));
+			$displayname = str_replace("{name}", $player->getName(), $groups->getNested("Groups.{$playerdata->getNested($name.".group")}.displayname"));
+			$permissionlist = (array)$groups->getNested("Groups.".$playergroup.".permissions", []);
+			foreach($permissionlist as $name => $data) {
+				$player->addAttachment($this->plugin)->setPermission($data, true);
+			}
+			$player->setNameTag($nametag);
+			$player->setDisplayName($displayname);
+			$player->sendMessage($settings->get("shop") . "§6Du hast soeben denn Rang §f:§e " . $config->get("Rankname4") ." §6Rang gekauft!");
+		} else {
+			$player->sendMessage($settings->get("error") . "§cDu hast zu wenig Geld um diesen Rang zu kaufen!");
+		}
+	}
 }

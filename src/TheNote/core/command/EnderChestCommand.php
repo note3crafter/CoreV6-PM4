@@ -68,7 +68,7 @@ class EnderChestCommand extends Command
 		return true;
 	}
 		public function send($sender){
-		$menu = InvMenu::create(VanillaBlocks::ENDER_CHEST());
+		$menu = InvMenu::create(InvMenu::TYPE_CHEST);
 		$inv = $menu->getInventory();
 		$menu->setName( $this->tName . "'s Enderchest");
 		$target = $this->plugin->getServer()->getPlayerExact($this->tName);
@@ -82,7 +82,7 @@ class EnderChestCommand extends Command
 				return $transaction->discard();
 			} else {
 				$nContents = $inv->getContents();
-				$sender->getEnderChestInventory()->setContents($nContents);
+				$sender->getEnderInventory()->setContents($nContents);
 				return $transaction->continue();
 			}
 		});
@@ -94,16 +94,4 @@ class EnderChestCommand extends Command
 		});
 		$menu->send($sender);
 	}
-        /*$nbt = new CompoundTag();
-        //$nbt = new CompoundTag("", [new StringTag("id", Tile::CHEST), new StringTag("CustomName", "EnderChest"), new IntTag("x", (int)floor($sender->x)), new IntTag("y", (int)floor($sender->y) - 4), new IntTag("z", (int)floor($sender->z))]);
-        $tile = (new \pocketmine\block\tile\TileFactory)->createFromData($sender->getWorld(), $nbt);
-        $block = VanillaBlocks::ENDER_CHEST();
-        $block->x = (int)$tile->getPosition()->x;
-        $block->y = (int)$tile->getPosition()->y;
-        $block->z = (int)$tile->getPosition()->z;
-        $block->level = $tile->getPosition();
-        $block->level->getWorld()->setBlockAt([$sender], [$block]);
-        $sender->getEnderInventory()->setContents((array)$tile);
-        return true;*/
-
 }
