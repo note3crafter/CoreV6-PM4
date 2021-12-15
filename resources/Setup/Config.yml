@@ -1,6 +1,6 @@
 ---
 #Allgemeine Einstellungen
-ConfigVersion: 6.0.9 #FingerWeg! Dont touch this!
+ConfigVersion: 6.0.10 #FingerWeg! Dont touch this!
 
 #Commands & Funktionen
 BoosterCommand: false #Muss Überarbeitet werden jedoch aktuell keine Zeit dafür...
@@ -8,7 +8,7 @@ StarterKit: true #Aktiviere\Deaktiviere das StarterKit
 Emotes: true #Aktiviere\Deaktiviere die Emotes
 Kits: true #Aktiviere\Deaktiviere das KitSystem
 VoteSystem: true #Aktiviere\Deaktiviere das VoteSystem
-BanSystem: true #Aktiviere\Deaktiviere das BanSystem
+BanSystem: false #Aktiviere\Deaktiviere das BanSystem
 WorldSytem: true #Aktiviere\Deaktiviere das WorldSystem
 
 #ItemDisplay
@@ -33,6 +33,12 @@ blitze: true #aktiviere/deaktiviere Blitze beim Joinen des Servers
 totem: true #aktiviere/deaktivere den TotenEffect
 sound: true #aktiviere/deaktiviere den Donner
 
+#Rejoin
+#Stelle hier ein ob du willst das die Spieler automatich mit dem Server nach einem Neustart verbunden werden
+Rejoin: false
+IP: noteland.citybuild.one
+Port: 19132
+
 #NetzwerkName
 networkname: "§f[§eCore§4V6§f] §eALPHA" #schreibe hier dein servername oder was frag mich rein...
 
@@ -41,9 +47,6 @@ DefaultMoney: 1000
 
 #Weitere Einstellungen
 defaultspawn: true
-rejoinallowed: true #möchtest du das die Spieler automatich rejoinen?
-rejoinserverip: noteland.citybuild.one
-rejoinserverport: 19132
 maxhomes: 10 #Setze ein Limit für Homes
 collision: true #aktiviere/deaktiviere collision/schubsen
 keepinventory: true #setze auf true um dein Inventar zu Behalten
@@ -115,7 +118,7 @@ RankShopCommand: true #<- Setze es auf false um dem Command zu deaktivieren!
 
 Rankname1: premium #<- Setze hier die Gruppe rein (Muss genauso heißen wie die Gruppe!
 Rankprice1: 125000 #<- Setze hier den Betrag fest!
-#Hier kannst du 3 Weitere Ränge einstellen!
+#Hier kannst du 6 Weitere Ränge einstellen!
 Rank2: false
 Rankname2: normal
 Rankprice2: 0

@@ -1,6 +1,6 @@
 name: CoreV6
 main: TheNote\core\Main
-version: 6.0.9
+version: 6.0.10
 api:
   - 4.0.0
 author: TheNote/Rudolf2000
@@ -12,6 +12,9 @@ authors:
   - FleekRush #Booster
   - JackMD #Discord
   - LookItsAku #Hilfe
+  - Philip #Für Hilfe
+  - galaxytwenty #Hilfe bei den Blöcken
+  - ipad54 #iNether & Composter
   - Hagnbrain #homesystem
   - EnderDirt #füraltecodes
   - Crasher508 #Fixxer
@@ -20,7 +23,7 @@ authors:
   - jojoe77777 #FormAPI
   - muqsit #InvMenü
   - TheBalkanDev #ecinvsee, invsee
-description: Core v6.0.9 ALPHA
+description: Core v6.0.10 ALPHA
 
 permissions:
   core.command.adventure:
@@ -234,6 +237,9 @@ permissions:
     default: op
   core.command.music:
     description: "Spiele Musik"
+    default: op
+  core.command.sethub:
+    description: "Setze den Hub"
     default: op
   core.economy.shop.create:
     default: op

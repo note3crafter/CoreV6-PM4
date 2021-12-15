@@ -6,18 +6,23 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 # Download und Wichtig 
 
 - [Hier downloaden](https://poggit.pmmp.io/ci/note3crafter/Core-V6/Core-V6)!
-  Das Core Plugin wurde speziell für CityBuild Server entwickelt!
-# Neues v6.0.9 ALPHA
-- /ec ist wieder Funktionsfähig
-- /craft ist wieder Funktional
-- Erweiterung für das LanguageSystem 
-- Bugfix im Heiratslistener
-- Neues Musiksystem (Befindet sich in der ALPHA und leider derzeit nur 1 Ton) 
-- /godmode Hinzugefügt
+  Das Core Plugin wurde speziell für CityBuild Server entwickelt! Ist jedoch auch nutzbar für anderes!
+# Neues v6.0.10 ALPHA
+- /world teleport Fix das der Server Crasht!
+- Composter sowie weitere netheritems und erweiterungen hinugefügt danke an [ipad54](https://github.com/ipad54) für benutzen
+- Events sind wieder in welten einstellbar also man kann einstellen das man nicht bauen kann in der Lobby z.b.
+- EconomySell den eintrag const dursch price ersetzt
+- Blocksystem Überarbeitet
+- HubCommand repaiert
+- Shield, Chainmall, Composter, 1.16 Blöcke, Lectern und viele weitere sachen hizugefügt!
+- 
+- sethub hinzugefügt obs funktioniert? keine zeit dafür :(
+- 
+- Erweiterung für das LanguageSystem
 - Weitere kleine Bugfixes
-- EconomyShop/Sell Bugfix mit ItemMeta (1:5)
 
 # Bekannte Fehler
+- EconomyShop/Sell  lässt sich nicht korrekt entfernen!
 - Statsboard funktioniert jedoch tretet nach einer zeit ein fehler im statsboard auf (verdoppelt sich)
 - MusicSystem Spielt nur 1 Ton ab
 - AdminItems aktuell nicht funktional
@@ -67,7 +72,7 @@ Beachtet die Configs etc und stellt dort eure sachen ein...
 Und an unseren Forker! Gebt das Plugin nicht als Euers aus! Ich habe eine menge arbeit reingsteckt über Jahre!
 
 # Großes Dankeschön geht an :
-
+- [ipad54](https://github.com/ipad54) (INether & Composter)
 - [tim03we](https://github.com/tim03we) (Ban & MSG System)
 - xxflow (Heiratsystem & Payall)
 - Aneoxic (Für das Grundgerüst und den Einstig)
@@ -81,6 +86,7 @@ Und an unseren Forker! Gebt das Plugin nicht als Euers aus! Ich habe eine menge 
 - [TuranicTeam](https://github.com/TuranicTeam) (Für Sämtliche Items/Blöcke etc)
 - [Muqsit](https://github.com/Muqsit) (Für das InvMenü)
 - [jojoe77777](https://github.com/jojoe77777) (Für FormAPI)
+- [ipad54](https://github.com/ipad54/INether) (Für Composter und Netherstuff)
 - [LookitsAku](https://github.com/Akuroma) & und vielen vielen weiteren Helfern!
 
 2017-2021 ©NoteLand & TheNote/Rudolf2000 
