@@ -12,7 +12,9 @@
 namespace TheNote\core;
 
 use pocketmine\block\Block;
+use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockLegacyIds;
+use pocketmine\block\BlockLegacyIds as Ids;
 use pocketmine\block\DaylightSensor;
 use pocketmine\color\Color;
 use pocketmine\command\CommandSender;
@@ -35,6 +37,7 @@ use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\network\mcpe\protocol\BlockEventPacket;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacketV1;
+use pocketmine\network\mcpe\protocol\OnScreenTextureAnimationPacket;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\network\mcpe\protocol\serializer\PacketBatch;
@@ -51,16 +54,19 @@ use pocketmine\world\particle\BlockBreakParticle;
 use pocketmine\world\particle\DustParticle;
 use pocketmine\world\sound\NoteSound;
 use pocketmine\world\sound\Sound;
+use ReflectionMethod;
 use TheNote\core\blocks\BlockManager;
 use TheNote\core\command\CreditsCommand;
 use TheNote\core\command\GodModeCommand;
 use TheNote\core\command\MusicCommand;
+use TheNote\core\command\SetHubCommand;
 use TheNote\core\command\SetstatstextCommand;
 use TheNote\core\command\WorldCommand;
+use TheNote\core\entity\EntityManager;
 use TheNote\core\events\BlocketRecipes;
+use TheNote\core\events\Eventsettings;
 use TheNote\core\events\EventsListener;
 use TheNote\core\invmenu\InvMenu;
-use TheNote\core\invmenu\type\CraftingTableInvMenuType;
 use TheNote\core\server\FFAArena;
 use TheNote\core\server\generators\ender\EnderGenerator;
 use TheNote\core\server\generators\nether\NetherGenerator;
@@ -68,14 +74,12 @@ use TheNote\core\server\generators\normal\NormalGenerator;
 use TheNote\core\server\generators\void\VoidGenerator;
 use TheNote\core\server\Music;
 use TheNote\core\server\structure\StructureManager;
-use TheNote\core\session\SessionManager;
 use TheNote\core\command\EnderInvSeeCommand;
 use TheNote\core\command\InvSeeCommand;
 use TheNote\core\command\ItemIDCommand;
 use TheNote\core\command\RankShopCommand;
 use TheNote\core\command\SeePermsCommand;
 
-use TheNote\core\inventory\BeaconInventory;
 use TheNote\core\invmenu\InvMenuHandler;
 use TheNote\core\task\ChunkModificationTask;
 
@@ -212,26 +216,25 @@ use TheNote\core\task\StatstextTask;
 use TheNote\core\task\CallbackTask;
 use TheNote\core\task\RTask;
 use TheNote\core\task\PingTask;
+use TheNote\core\tile\Tiles;
 use TheNote\core\utils\GlobalBlockPalette;
 use TheNote\core\utils\ScheduledBlockUpdateLoader;
 
+use const pocketmine\BEDROCK_DATA_PATH;
 use const pocketmine\RESOURCE_PATH;
 
 class Main extends PluginBase implements Listener
 {
 
     //PluginVersion
-    public static $version = "6.0.9 ALPHA";
+    public static $version = "6.0.10 ALPHA";
     public static $protokoll = "475";
-    public static $mcpeversion = "1.18.0";
-    public static $dateversion = "07.12.2021";
+    public static $mcpeversion = "1.18.2";
+    public static $dateversion = "15.12.2021";
     public static $plname = "CoreV6";
-    public static $configversion = "6.0.9";
+    public static $configversion = "6.0.10";
 
     private $clicks;
-    private $message = "";
-    private $items = [];
-    private $debug = false;
     private $default;
     private $padding;
     private $universalMute = false;
@@ -274,18 +277,13 @@ class Main extends PluginBase implements Listener
     public $price = null;
     public $economy;
     private $lastSent;
-    private $sessions = [];
     public $lists = [];
 	public static $godmod = [];
 	public $clearItems;
     public $sellSign;
     public $shopSign;
-    private $sessionManager;
-    private $scheduledBlockUpdateLoader;
-    private $palette;
 	public const INV_MENU_TYPE_WORKBENCH = "portablecrafting:workbench";
 	public const GEOMETRY = '{"format_version": "1.12.0", "minecraft:geometry": [{"description": {"identifier": "geometry.skull", "texture_width": 64, "texture_height": 64, "visible_bounds_width": 2, "visible_bounds_height": 4, "visible_bounds_offset": [0, 0, 0]}, "bones": [{"name": "Head", "pivot": [0, 24, 0], "cubes": [{"origin": [-4, 0, -4], "size": [8, 8, 8], "uv": [0, 0]}, {"origin": [-4, 0, -4], "size": [8, 8, 8], "inflate": 0.5, "uv": [32, 0]}]}]}]}';
-	private BlockManager $blockManager;
 
     public static function getInstance()
     {
@@ -296,45 +294,30 @@ class Main extends PluginBase implements Listener
     {
         return self::$instance;
     }
-	public static function registerRuntimeIds(): void{
-		$legacyBlockIdToStringIdMap = LegacyBlockIdToStringIdMap::getInstance();
-		$runtimeBlockMapping = RuntimeBlockMapping::getInstance();
-		$registerMapping = new \ReflectionMethod($runtimeBlockMapping, 'registerMapping');
-		$registerMapping->setAccessible(true);
+    public static function initializeRuntimeIds(): void{ #Blöcke und items
+        $instance = RuntimeBlockMapping::getInstance();
+        $method = new ReflectionMethod(RuntimeBlockMapping::class, "registerMapping");
+        $method->setAccessible(true);
 
-		$metaMap = [];
-		foreach($runtimeBlockMapping->getBedrockKnownStates() as $runtimeId => $state){
-			$legacyId = $legacyBlockIdToStringIdMap->stringToLegacy($state->getString("name"));
-			if($legacyId === null or $legacyId <= BlockLegacyIds::LIT_BLAST_FURNACE){
-				continue;
-			}
+        $blockIdMap = json_decode(file_get_contents(BEDROCK_DATA_PATH . 'block_id_map.json'), true);
+        $metaMap = [];
 
-			$metaMap[$legacyId] ??= 0;
+        foreach($instance->getBedrockKnownStates() as $runtimeId => $nbt){
+            $mcpeName = $nbt->getString("name");
+            $meta = isset($metaMap[$mcpeName]) ? ($metaMap[$mcpeName] + 1) : 0;
+            $id = $blockIdMap[$mcpeName] ?? Ids::AIR;
 
-			$meta = $metaMap[$legacyId]++;
-			if($meta > 15){
-				continue;
-			}
-
-			$registerMapping->invoke($runtimeBlockMapping, $runtimeId, $legacyId, $meta);
-		}
-	}
+            if($id !== Ids::AIR && $meta <= 15 && !BlockFactory::getInstance()->isRegistered($id, $meta)){
+                $metaMap[$mcpeName] = $meta;
+                $method->invoke($instance, $runtimeId, $id, $meta);
+            }
+        }
+    }
 
     public function onLoad() : void
     {
-		self::registerRuntimeIds();
-
-		$asyncPool = $this->getServer()->getAsyncPool();
-		$asyncPool->addWorkerStartHook(static function(int $worker) use($asyncPool): void{
-			$asyncPool->submitTaskToWorker(new class extends AsyncTask{
-				public function onRun(): void{
-					Main::registerRuntimeIds();
-				}
-			}, $worker);
-		});
-        $start = (bool) !(self::$instance instanceof $this);
+        self::initializeRuntimeIds();
         self::$instance = $this;
-
 		$start = !isset(Main::$instance);
 		Main::$instance = $this;
 
@@ -377,9 +360,10 @@ class Main extends PluginBase implements Listener
             $this->saveResource("Language/Lang_deu.json", true);
             $this->groupsgenerate();
             $this->configgenerate();
-            $this->sessionManager = new SessionManager();
             ItemManager::init();
-			$this->blockManager = new BlockManager();
+            BlockManager::init();
+            Tiles::init();
+            //EntityManager::init();
 			if (!file_exists($this->getDataFolder() . "Setup/Config.yml")) {
                 rename("Setup/Config.yml", "Setup/ConfigOLD.yml");
                 $this->getLogger()->alert("§cDie Config.yml ist nicht vorhanden! Der Server wird automatisch neugestartet!");
@@ -401,12 +385,21 @@ class Main extends PluginBase implements Listener
 
     public function onEnable() : void
     {
-
-		$this->blockManager->startup();
         if (!$this->isSpoon()) {
 			if (!InvMenuHandler::isRegistered()) {
 				InvMenuHandler::register($this);
 			}
+            //Blöcke und Items
+            Server::getInstance()->getAsyncPool()->addWorkerStartHook(function (int $worker): void {
+                Server::getInstance()->getAsyncPool()->submitTaskToWorker(new class() extends AsyncTask {
+
+                    public function onRun(): void
+                    {
+                        Main::initializeRuntimeIds();
+                    }
+                }, $worker);
+            });
+            #Ende
 			$this->default = "";
             $this->reload();
             if (strlen($this->default) > 1) {
@@ -558,6 +551,7 @@ class Main extends PluginBase implements Listener
             $this->getServer()->getCommandMap()->register("setstatstext", new SetstatstextCommand($this));
 			$this->getServer()->getCommandMap()->register("music", new MusicCommand($this));
 			$this->getServer()->getCommandMap()->register("godmode", new GodModeCommand($this));
+            $this->getServer()->getCommandMap()->register("sethub", new SetHubCommand($this));
 			if ($configs->get("PowerBlock") == true) {
 				$this->getServer()->getPluginManager()->registerEvents(new PowerBlock($this), $this);
 			}
@@ -635,9 +629,8 @@ class Main extends PluginBase implements Listener
 
 			//$this->getServer()->getPluginManager()->registerEvents(new AdminItemsEvents($this), $this);
 
-            //$this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
             $this->getServer()->getPluginManager()->registerEvents(new EventsListener(), $this);
-            //$this->getServer()->getPluginManager()->registerEvents(new Eventsettings($this), $this);
+            $this->getServer()->getPluginManager()->registerEvents(new Eventsettings($this), $this);
             //$this->getServer()->getPluginManager()->registerEvents(new FFAArena(), $this);
 			$this->getServer()->getPluginManager()->registerEvents(new BlocketRecipes($this), $this);
 
@@ -677,8 +670,34 @@ class Main extends PluginBase implements Listener
 			$this->getLogger()->info($config->get("prefix") . "§6Die Commands wurden Erfolgreich Regestriert");
             $this->getLogger()->info($config->get("prefix") . "§6Die Core ist nun Einsatzbereit!");
             $this->Banner();
-
+            //Discord
+            $dcsettings = new Config($this->getDataFolder() . Main::$setup . "discordsettings" . ".yml", Config::YAML);
+            $stats = new Config($this->getDataFolder() . Main::$cloud . "stats.json", Config::JSON);
+            if ($dcsettings->get("DC") == true) {
+                if ($stats->get("serverregister") === null) {
+                    $ip = $this->getServer()->getIp();
+                    $port = $this->getServer()->getPort();
+                    $this->sendMessage("CoreV6", "Ein neuer Server nutzt die CoreV6 " . Main::$version . " auf $ip : $port");
+                    $stats->set("serverregister", true);
+                    $stats->save();
+                } else {
+                    $this->sendMessage("CoreV6", $dcsettings->get("Enable"));
+                }
+            }
 		}
+    }
+    public function onDisable() : void
+    {
+        $config = new Config($this->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
+        if ($config->get("Rejoin") === true) {
+            foreach ($this->getServer()->getOnlinePlayers() as $player) {
+                $player->transfer($config->get("IP"), $config->get("Port"));
+            }
+        }
+        $dcsettings = new Config($this->getDataFolder() . Main::$setup . "discordsettings" . ".yml", Config::YAML);
+        if ($dcsettings->get("DC") == true) {
+            $this->sendMessage("CoreV6", $dcsettings->get("Disable"));
+        }
     }
 
     public function isSpoon()
@@ -840,7 +859,7 @@ class Main extends PluginBase implements Listener
             $sstats->set("Users", $sstats->get("Users") + 1);
             $sstats->save();
             $log->set("first-join", $fj);
-            //$log->set("first-ip", $player->getAddress());
+            $log->set("first-ip", $player->getNetworkSession()->getIp());
             $log->set("first-XboxID", $player->getXuid());
             $log->set("first-uuid", $player->getUniqueId());
             $log->save();
@@ -1014,21 +1033,19 @@ class Main extends PluginBase implements Listener
         }
     }
 
-    /*public function TotemEffect(Player $player)
+    public function TotemEffect(Player $player)
     {
         $config = new Config($this->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
         if ($config->get("totem") == true) {
-            $original = $player->getInventory()->getItemInHand();
-            $player->getInventory()->setItemInHand(ItemFactory::getInstance()->get(450, 0, 1));
-            $player->broadcastAnimation(new OnScreenTextureAnimationPacket());
-            //$pk = ;
-            $pk->evid = OnScreenTextureAnimationPacket::EVENT_SOUND_TOTEM;
-            $pk->position = $player->getEyePos();
-            $pk->data = 0;
-            $player->sendData((array)$pk);
-            $player->getInventory()->setItemInHand($original);
+            //$original = $player->getInventory()->getItemInHand();
+            //$player->getInventory()->setItemInHand(ItemFactory::getInstance()->get(450, 0, 1));
+            $packet = new OnScreenTextureAnimationPacket();
+            $packet->effectId = 0;
+            //$packet->position = $player->getEyePos();
+            $player->sendData(array($packet));
+            //$player->getInventory()->setItemInHand($original);
         }
-    }*/
+    }
 
     public function addStrike(Player $player)
 	{
@@ -1080,6 +1097,12 @@ class Main extends PluginBase implements Listener
 			//$particle->setCompunets($x, $y, $z);
             $level->addParticle($pos,$particle);
         }
+    }
+    public function screenanimation(Player $player, int $effectID)
+    {
+        $packet = new OnScreenTextureAnimationPacket();
+        $packet->effectId = $effectID;
+        $player->sendData((array)$packet);
     }
 
     public function reload()
@@ -1348,7 +1371,7 @@ class Main extends PluginBase implements Listener
     public function sendMessage($player, string $msg):bool
     {
         $dcsettings = new Config($this->getDataFolder() . Main::$setup . "discordsettings" . ".yml", Config::YAML);
-        $name = $dcsettings->get("chatname");
+        $name = $dcsettings->get("webhookname");
         $webhook = $dcsettings->get("webhookurl");
         $curlopts = [
             "content" => $msg,
@@ -1531,53 +1554,6 @@ class Main extends PluginBase implements Listener
         $this->universalMute = $bool;
     }
 
-    public function getSessionById(int $id)
-    {
-        if (isset($this->sessions[$id])) {
-            return $this->sessions[$id];
-        } else {
-            return null;
-        }
-    }
-
-    public function destroySession(Player $player): bool
-    {
-        if (isset($this->sessions[$player->getId()])) {
-            unset($this->sessions[$player->getId()]);
-            return true;
-        }
-        return false;
-    }
-
-    public function getSessionByName(string $name)
-    {
-        foreach ($this->sessions as $session) {
-            if ($session->getPlayer()->getName() == $name) {
-                return $session;
-            }
-        }
-        return null;
-    }
-
-    //Redstone
-
-    public function getScheduledBlockUpdateLoader(): ScheduledBlockUpdateLoader
-    {
-        return $this->scheduledBlockUpdateLoader;
-    }
-
-    public function getGlobalBlockPalette(): GlobalBlockPalette
-    {
-        return $this->palette;
-    }
-
-    /*public function onDisable() : void
-    {
-        $config = new Config($this->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
-        foreach ($this->getServer()->getOnlinePlayers() as $player) {
-            $player->transfer($config->get("rejoinserverip"), $config->get("rejoinserverport"));
-        }
-    }*/
 
     //TPASystem
     public function setInvite(Player $sender, Player $target): void

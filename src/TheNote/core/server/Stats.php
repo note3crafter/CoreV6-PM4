@@ -13,6 +13,7 @@ namespace TheNote\core\server;
 
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityItemPickupEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerBlockPickEvent;
@@ -26,6 +27,9 @@ use pocketmine\event\player\PlayerJumpEvent;
 use pocketmine\event\player\PlayerKickEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
+use pocketmine\network\mcpe\protocol\OnScreenTextureAnimationPacket;
+use pocketmine\network\mcpe\protocol\PlaySoundPacket;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 
@@ -38,7 +42,7 @@ class Stats implements Listener
         $this->plugin = $plugin;
     }
 
-    public function onJoin(PlayerJoinEvent $event)
+    public function onJoin(PlayerJoinEvent $event) :void
     {
         $player = $event->getPlayer();
         $name = $player->getName();
@@ -53,10 +57,16 @@ class Stats implements Listener
         if ($joins == 10000) {
             $player->sendMessage($config->get("erfolg") . "Toll du bist dem Server schon 10000x Beigetreten!");
             $this->plugin->addStrike($player);
-            $this->plugin->screenanimation($player, 26);
-            $volume = mt_rand();
-            $player->getWorld()->addSound($player->getPosition(), LevelSoundEventPacket::SOUND_LEVELUP, [$volume]);
-            $stats->set("joinerfolg", true);
+            $this->screenanimation($player, 26);
+			$packet = new PlaySoundPacket();
+			$packet->soundName = "entity.player.levelup";
+			$packet->x = $player->getPosition()->getX();
+			$packet->y = $player->getPosition()->getY();
+			$packet->z = $player->getPosition()->getZ();
+			$packet->volume = 1;
+			$packet->pitch = 1;
+			$player->getNetworkSession()->sendDataPacket($packet);
+			$stats->set("joinerfolg", true);
             $stats->save();
         }
     }
@@ -77,9 +87,15 @@ class Stats implements Listener
         if ($breaks == 1000000) {
             $player->sendMessage($config->get("erfolg") . "Absoluter hammer! Du hast 1.000.000 Blöcke abgebaut! Das heißt, dass du ein Meisterminer bist! Glückwunsch! Als Belohnung bekommst du dafür 2500 Coins!");
             $this->plugin->addStrike($player);
-            $this->plugin->screenanimation($player, 3);
-            $volume = mt_rand();
-            $player->getWorld()->addSound($player->getPosition(), LevelSoundEventPacket::SOUND_LEVELUP, [$volume]);
+            $this->screenanimation($player, 3);
+			$packet = new PlaySoundPacket();
+			$packet->soundName = "entity.player.levelup";
+			$packet->x = $player->getPosition()->getX();
+			$packet->y = $player->getPosition()->getY();
+			$packet->z = $player->getPosition()->getZ();
+			$packet->volume = 1;
+			$packet->pitch = 1;
+			$player->getNetworkSession()->sendDataPacket($packet);
             $coins->set("coins", $coins->get("coins") + 2500);
             $coins->save();
             $stats->set("breakerfolg", true);
@@ -103,9 +119,15 @@ class Stats implements Listener
         if ($place == 1000000) {
             $player->sendMessage($config->get("erfolg") . "Absoluter hammer! Du hast 1.000.000 Blöcke gesetzt! Das heißt, dass du ein Meisterbauer bist! Glückwunsch! Als Belohnung bekommst du dafür 2500 Coins!");
             $this->plugin->addStrike($player);
-            $this->plugin->screenanimation($player, 3);
-            $volume = mt_rand();
-			$player->getWorld()->addSound($player->getPosition(), LevelSoundEventPacket::SOUND_LEVELUP, [$volume]);
+            $this->screenanimation($player, 3);
+			$packet = new PlaySoundPacket();
+			$packet->soundName = "entity.player.levelup";
+			$packet->x = $player->getPosition()->getX();
+			$packet->y = $player->getPosition()->getY();
+			$packet->z = $player->getPosition()->getZ();
+			$packet->volume = 1;
+			$packet->pitch = 1;
+			$player->getNetworkSession()->sendDataPacket($packet);
             $coins->set("coins", $coins->get("coins") + 2500);
             $coins->save();
             $stats->set("placeerfolg", true);
@@ -118,7 +140,6 @@ class Stats implements Listener
         $player = $event->getPlayer();
         $name = $player->getName();
         $stats = new Config($this->plugin->getDataFolder() . Main::$statsfile . $name . ".json", Config::JSON);
-        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         $stats->set("kicks", $stats->get("kicks") + 1);
         $stats->save();
         $serverstats = new Config($this->plugin->getDataFolder() . Main::$cloud . "stats.json", Config::JSON);
@@ -126,7 +147,14 @@ class Stats implements Listener
         $serverstats->save();
         $kick = $stats->get("kick");
         if ($kick == 1000) {
-			$player->getWorld()->addSound($player->getPosition(), LevelSoundEventPacket::SOUND_LEVELUP);
+			$packet = new PlaySoundPacket();
+			$packet->soundName = "entity.player.levelup";
+			$packet->x = $player->getPosition()->getX();
+			$packet->y = $player->getPosition()->getY();
+			$packet->z = $player->getPosition()->getZ();
+			$packet->volume = 1;
+			$packet->pitch = 1;
+			$player->getNetworkSession()->sendDataPacket($packet);
             $stats->set("kickerfolg", true);
             $stats->save();
         }
@@ -142,6 +170,16 @@ class Stats implements Listener
         $serverstats = new Config($this->plugin->getDataFolder() . Main::$cloud . "stats.json", Config::JSON);
         $serverstats->set("deaths", $serverstats->get("deaths") + 1);
         $serverstats->save();
+		$cause = $player->getLastDamageCause();
+		if($cause instanceof EntityDamageByEntityEvent){
+			$damager = $cause->getDamager();
+			if($damager instanceof Player){
+				$serverstats->set("kills", $serverstats->get("kills") + 1);
+				$serverstats->save();
+				$stats->set("kills", $stats->get("kills") + 1);
+				$stats->save();
+			}
+		}
     }
 
     public function onDrop(PlayerDropItemEvent $event)
@@ -172,9 +210,15 @@ class Stats implements Listener
         if ($message == 1000000) {
             $player->sendMessage($config->get("erfolg") . "Du hast soeben deine 1.000.000ste Nachrricht geschickt! Glückwunsch :D");
             $this->plugin->addStrike($player);
-            $this->plugin->screenanimation($player, 27);
-            $volume = mt_rand();
-			$player->getWorld()->addSound($player->getPosition(), LevelSoundEventPacket::SOUND_LEVELUP, [$volume]);
+            $this->screenanimation($player, 27);
+			$packet = new PlaySoundPacket();
+			$packet->soundName = "entity.player.levelup";
+			$packet->x = $player->getPosition()->getX();
+			$packet->y = $player->getPosition()->getY();
+			$packet->z = $player->getPosition()->getZ();
+			$packet->volume = 1;
+			$packet->pitch = 1;
+			$player->getNetworkSession()->sendDataPacket($packet);
             $stats->set("messageerfolg", true);
             $stats->save();
         }
@@ -244,9 +288,15 @@ class Stats implements Listener
         if ($jumps == 10000) {
             $player->sendMessage($config->get("erfolg") . "Wow du hast nun 10000 Sprünge! Das hast du gut gemacht!");
             $this->plugin->addStrike($player);
-            $this->plugin->screenanimation($player, 8);
-            $volume = mt_rand();
-			$player->getWorld()->addSound($player->getPosition(), LevelSoundEventPacket::SOUND_LEVELUP, [$volume]);
+            $this->screenanimation($player, 8);
+			$packet = new PlaySoundPacket();
+			$packet->soundName = "entity.player.levelup";
+			$packet->x = $player->getPosition()->getX();
+			$packet->y = $player->getPosition()->getY();
+			$packet->z = $player->getPosition()->getZ();
+			$packet->volume = 1;
+			$packet->pitch = 1;
+			$player->getNetworkSession()->sendDataPacket($packet);
         }
     }
 
@@ -274,4 +324,10 @@ class Stats implements Listener
             $serverstats->save();
         }
     }
+	public function screenanimation(Player $player, int $effectID)
+	{
+		$packet = new OnScreenTextureAnimationPacket();
+		$packet->effectId = $effectID;
+		$player->getNetworkSession()->sendDataPacket($packet);
+	}
 }

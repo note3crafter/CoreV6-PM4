@@ -29,28 +29,30 @@ class Eventsettings implements Listener
     {
         $this->plugin = $plugin;
     }
-    public function onBreak(BlockBreakEvent $event) {
+    public function onBreak(BlockBreakEvent $event)
+    {
         $player = $event->getPlayer();
         $cfg = new Config($this->plugin->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
-        $level = $cfg->getNested("Break", []);
-        if ($player->getLevel()->getFolderName() == $level) {
-            if ($player->hasPermission("core.events.blockbreak") or $player->isOp()) {
-                $event->setCancelled(false);
+        $level = $cfg->get("Break", []);
+        if (in_array($player->getWorld()->getFolderName(), $level)) {
+            if ($player->hasPermission("core.events.blockbreak")) {
+                $event->uncancel();
             } else {
-                $event->setCancelled(true);
+                $event->cancel();
                 $player->sendPopup("§cNo Permissons to do that!");
             }
         }
     }
+
     public function onPlace(BlockPlaceEvent $event) {
         $player = $event->getPlayer();
         $cfg = new Config($this->plugin->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
-        $level = $cfg->getNested("Place", []);
-        if ($player->getLevel()->getFolderName() == $level) {
-            if ($player->hasPermission("core.events.blockplace") or $player->isOp()) {
-                $event->setCancelled(false);
+        $level = $cfg->get("Place", []);
+        if (in_array($player->getWorld()->getFolderName(), $level)) {
+            if ($player->hasPermission("core.events.blockplace")) {
+                $event->uncancel();
             } else {
-                $event->setCancelled(true);
+                $event->cancel();
                 $player->sendPopup("§cNo Permissons to do that!");
             }
         }
@@ -58,12 +60,12 @@ class Eventsettings implements Listener
     public function onChat(PlayerChatEvent $event) {
         $player = $event->getPlayer();
         $cfg = new Config($this->plugin->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
-        $level = $cfg->getNested("Chat", []);
-        if ($player->getLevel()->getFolderName() == $level) {
-            if ($player->hasPermission("core.events.chat") or $player->isOp()) {
-                $event->setCancelled(false);
+        $level = $cfg->get("Chat", []);
+        if (in_array($player->getWorld()->getFolderName(), $level)) {
+            if ($player->hasPermission("core.events.chat")) {
+                $event->uncancel();
             } else {
-                $event->setCancelled(true);
+                $event->cancel();
                 $player->sendPopup("§cNo Permissons to do that!");
             }
         }
@@ -71,12 +73,12 @@ class Eventsettings implements Listener
     public function onDrop(PlayerDropItemEvent $event){
         $player = $event->getPlayer();
         $cfg = new Config($this->plugin->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
-        $level = $cfg->getNested("Drop", []);
-        if ($player->getLevel()->getFolderName() == $level) {
-            if ($player->hasPermission("core.events.drop") or $player->isOp()) {
-                $event->setCancelled(false);
+        $level = $cfg->get("Drop", []);
+        if (in_array($player->getWorld()->getFolderName(), $level)) {
+            if ($player->hasPermission("core.events.drop")) {
+                $event->uncancel();
             } else {
-                $event->setCancelled(true);
+                $event->cancel();
                 $player->sendPopup("§cNo Permissons to do that!");
             }
         }
@@ -84,12 +86,12 @@ class Eventsettings implements Listener
     public function bucketemty(PlayerBucketEmptyEvent $event) {
         $player = $event->getPlayer();
         $cfg = new Config($this->plugin->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
-        $level = $cfg->getNested("Bucketempty", []);
-        if ($player->getLevel()->getFolderName() == $level) {
-            if ($player->hasPermission("core.events.bucketempty") or $player->isOp()) {
-                $event->setCancelled(false);
+        $level = $cfg->get("Bucketempty", []);
+        if (in_array($player->getWorld()->getFolderName(), $level)) {
+            if ($player->hasPermission("core.events.bucketempty")) {
+                $event->uncancel();
             } else {
-                $event->setCancelled(true);
+                $event->cancel();
                 $player->sendPopup("§cNo Permissons to do that!");
             }
         }
@@ -97,12 +99,12 @@ class Eventsettings implements Listener
     public function bucketfill(PlayerBucketFillEvent $event) {
         $player = $event->getPlayer();
         $cfg = new Config($this->plugin->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
-        $level = $cfg->getNested("Bucketfill", []);
-        if ($player->getLevel()->getFolderName() == $level) {
-            if ($player->hasPermission("core.events.bucketfill") or $player->isOp()) {
-                $event->setCancelled(false);
+        $level = $cfg->get("Bucketfill", []);
+        if (in_array($player->getWorld()->getFolderName(), $level)) {
+            if ($player->hasPermission("core.events.bucketfill")) {
+                $event->uncancel();
             } else {
-                $event->setCancelled(true);
+                $event->cancel();
                 $player->sendPopup("§cNo Permissons to do that!");
             }
         }

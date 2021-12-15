@@ -15,6 +15,7 @@ use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
 use onebone\economyapi\EconomyAPI;
+use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
@@ -56,6 +57,8 @@ class FFAArena implements Listener
 									$event->cancel();
 									return;
 								}
+
+
 								/*$x = $entity->getX();
 								$y = $entity->getY();
 								$z = $entity->getZ();

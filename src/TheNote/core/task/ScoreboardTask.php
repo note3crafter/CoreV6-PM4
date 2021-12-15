@@ -58,11 +58,7 @@ class ScoreboardTask extends Task
 			$playerdata = new Config($this->plugin->getDataFolder() . Main::$cloud . "players.yml", Config::YAML);
 			$money = new Config($this->plugin->getDataFolder() . Main::$cloud . "Money.yml", Config::YAML);
 
-			$mymoney = $money->getNested("money." . $player->getName());
-			$votes = $stats->get("votes");
-			$joins = $stats->get("joins");
-			$break = $stats->get("break");
-			$player->setScoreTag("§eVotes §f: §6$votes\n §eJoins §f: §6$joins\n§eAbgebaut §f: §6$break");
+
 			$pk = new SetDisplayObjectivePacket();
 			$pk->displaySlot = "sidebar";
 			$pk->objectiveName = "test";
@@ -70,6 +66,29 @@ class ScoreboardTask extends Task
 			$pk->criteriaName = "dummy";
 			$pk->sortOrder = 0;
 			$player->getNetworkSession()->sendDataPacket($pk);
+
+
+			$mymoney = $money->getNested("money." . $player->getName());
+			$votes = $stats->get("votes");
+			$joins = $stats->get("joins");
+			$break = $stats->get("break");
+			$player->setScoreTag("§eVotes §f: §6$votes\n §eJoins §f: §6$joins\n§eAbgebaut §f: §6$break");
+
+			//ScoreboardConfig zukünftig
+			/*$sb = new Config($this->plugin->getDataFolder() . Main::$setup . "Scoreboard.json", Config::JSON);
+			$slots = str_replace("{slots}" ,  $settings->get("slots") ,$sb->getAll());
+			$oline = str_replace("{online}" ,  $online->get("players") ,$slots);
+			$clan = str_replace("{clan}" ,  $gruppe->get("Clan") ,$oline);
+			$marry = str_replace("{marry}" ,  $hei->get("heiraten") ,$clan);
+			$coins = str_replace("{coins}" ,  $user->get("coins") ,$marry);
+			$rank = str_replace("{rank}" ,   $playerdata->getNested($player->getName() . ".groupprefix") ,$coins);
+			$username = str_replace("{username}" , $player->getName() ,$rank);
+			if ($this->plugin->economyapi === null) {
+				$money = str_replace("{money}" ,  $mymoney ,$username);
+			} else {
+				$money = str_replace("{money}" ,  $this->plugin->economyapi->myMoney($player) ,$username);
+			}*/
+
 			$this->numberPacket($player, 1, "§eDein Rang");
 			$this->numberPacket($player, 2, "§f➥ " . $playerdata->getNested($player->getName() . ".groupprefix"));
 			$this->numberPacket($player, 3, "§eDein Geldstand");

@@ -55,11 +55,11 @@ class EconomySell implements Listener
 			$pMeta = ($meta = array_shift($productData)) ? (int)$meta : 0;
 			$item = ItemFactory::getInstance()->get($pID, $pMeta)->getName();
 
-			if (!is_numeric($count) or $count <= 0) {
+			if (!is_numeric($count)/* or $count <= 0*/) {
 				$player->sendMessage($config->get("error") . "§cDie Menge muss in Zahlen angegeben werden");
 				return;
 			}
-			if (!is_numeric($price) or $price < 0) {
+			if (!is_numeric($price) /*or $price < 0*/) {
 				$player->sendMessage($config->get("error") . "§cDer Preis muss in Zahlen angegeben werden");
 				return;
 			}
@@ -147,7 +147,7 @@ class EconomySell implements Listener
                 $signsell = ItemFactory::getInstance()->get((int)$sell["item"], (int)$sell["meta"], (int)$sell["amount"]);
                 $player->getInventory()->removeItem($signsell);
                 if ($this->plugin->economyapi == null) {
-                    $money->setNested("money." . $player->getName(), $money->getNested("money." . $player->getName()) + $sell ["cost"]);
+                    $money->setNested("money." . $player->getName(), $money->getNested("money." . $player->getName()) + $sell ["price"]);
                     $money->save();
                 } else {
                     EconomyAPI::getInstance()->addMoney($player, $sell["price"]);

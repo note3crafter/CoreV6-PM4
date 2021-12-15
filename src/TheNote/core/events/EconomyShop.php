@@ -56,11 +56,11 @@ class EconomyShop implements Listener
 			$pMeta = ($meta = array_shift($productData)) ? (int)$meta : 0;
 			$item = ItemFactory::getInstance()->get($pID, $pMeta)->getName();
 
-			if (!is_numeric($count) or $count <= 0) {
+			if (!is_numeric($count) /*or $count <= 0*/) {
 				$player->sendMessage($config->get("error") . "§cDie Menge muss in Zahlen angegeben werden");
 				return;
 			}
-			if (!is_numeric($price) or $price < 0) {
+			if (!is_numeric($price) /*or $price < 0*/) {
 				$player->sendMessage($config->get("error") . "§cDer Preis muss in Zahlen angegeben werden");
 				return;
 			}
@@ -85,7 +85,7 @@ class EconomyShop implements Listener
 				"amount" => (int)$event->getOldText()->getLine(3)
 			);
 			$cfg = new Config($this->plugin->getDataFolder() . Main::$cloud . "Shop.yml", Config::YAML);
-			$cfg->setAll($this->shop);
+            $cfg->setAll($this->shop);
 			$cfg->save();
 			$player->sendMessage($config->get("money") . "§6Du hast den Shop erfolgreich erstellt!");
 			$event->setNewText(new SignText([
