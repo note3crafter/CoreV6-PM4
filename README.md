@@ -2,6 +2,9 @@
 <br />
 Für Pocketmine API 4.0.0 
 
+Edit 01.03.2022
+Aktuell hab ich einfach keine Zeit um am dieses Projekt weiter zu machen... :/ 
+
 Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/427472879072968714.svg?style=flat-square&label=discord&colorB=7289da)](https://discord.gg/Pebq8Wu) <br>
 # Download und Wichtig 
 
