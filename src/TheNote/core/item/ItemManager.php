@@ -79,7 +79,7 @@ class ItemManager
         $factory->register(new LodestoneCompass(new ItemIdentifier(CustomIds::LODESTONE_COMPASS,0)), true);
 
         ItemFactory::getInstance()->register(new Armor(new ItemIdentifier(449, 0), "Turtle Helmet", new ArmorTypeInfo(2,  275, ArmorInventory::SLOT_HEAD)), true);
-        ItemFactory::getInstance()->register(new Shield(new ItemIdentifier(ItemIds::SHIELD, 0), "Shield"), true);
+        //ItemFactory::getInstance()->register(new Shield(new ItemIdentifier(ItemIds::SHIELD, 0), "Shield"), true);
         ItemFactory::getInstance()->register(new Item(new ItemIdentifier(ItemIds::ELYTRA, 0), "Elytra"), true);
         ItemFactory::getInstance()->register(new Item(new ItemIdentifier(ItemIds::TRIDENT, 0), "Trident"), true);
         ItemFactory::getInstance()->register(new Item(new ItemIdentifier(ItemIds::LEAD, 0), "Lead"), true);
