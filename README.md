@@ -2,8 +2,8 @@
 <br />
 Für Pocketmine API 4.0.0 
 
-Edit 01.03.2022
-Aktuell hab ich einfach keine Zeit um am dieses Projekt weiter zu machen... :/ 
+Edit 31.08.2022
+Da ich aktuell kein PHP-Storm besitze kann ich leider nicht an der CoreV6 Arbeiten :( 
 
 Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/427472879072968714.svg?style=flat-square&label=discord&colorB=7289da)](https://discord.gg/Pebq8Wu) <br>
 # Download und Wichtig 
