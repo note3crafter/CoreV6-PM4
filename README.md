@@ -1,33 +1,28 @@
 <h1>CoreV6 ALPHA<img src="https://github.com/note3crafter/Core-V5/blob/main/resources/icon.png" height="64" width="64" align="left"></img></h1>
 <br />
-Für Pocketmine API 4.0.0 
+Für Pocketmine API 4.8.1
 
-Edit 31.08.2022
-Da ich aktuell kein PHP-Storm besitze kann ich leider nicht an der CoreV6 Arbeiten :( 
 
 Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/427472879072968714.svg?style=flat-square&label=discord&colorB=7289da)](https://discord.gg/Pebq8Wu) <br>
 # Download und Wichtig 
 
 - [Hier downloaden](https://poggit.pmmp.io/ci/note3crafter/Core-V6/Core-V6)!
   Das Core Plugin wurde speziell für CityBuild Server entwickelt! Ist jedoch auch nutzbar für anderes!
-# Neues v6.0.10 ALPHA
-- /world teleport Fix das der Server Crasht!
-- Composter sowie weitere netheritems und erweiterungen hinugefügt danke an [ipad54](https://github.com/ipad54) für benutzen
-- Events sind wieder in welten einstellbar also man kann einstellen das man nicht bauen kann in der Lobby z.b.
-- EconomySell den eintrag const dursch price ersetzt
-- Blocksystem Überarbeitet
-- HubCommand repaiert
-- Shield, Chainmall, Composter, 1.16 Blöcke, Lectern und viele weitere sachen hizugefügt!
-- 
-- sethub hinzugefügt obs funktioniert? keine zeit dafür :(
-- 
-- Erweiterung für das LanguageSystem
-- Weitere kleine Bugfixes
+# Neues v6.0.11 ALPHA
+- /day command Nachrricht Korrigiert
+- /stats -> Command funktioniert wieder
+- /mycoin command verändert
+- EconomyShop & Sell gefixxt
+- /hub fehlerbehebung
+- /tree wieder funktional
+- /milk hinzugefügt
+- Glocke hinzugefügt
+- Groupsystem kleine fehler behoben
+- /pay 
+- Totem Effekt beim Join sowie der Blitz den man beim joinen aktivieren kann wurde repaiert
 
 # Bekannte Fehler
-- EconomyShop/Sell  lässt sich nicht korrekt entfernen!
-- Statsboard funktioniert jedoch tretet nach einer zeit ein fehler im statsboard auf (verdoppelt sich)
-- MusicSystem Spielt nur 1 Ton ab
+- MusicSystem nicht funktional
 - AdminItems aktuell nicht funktional
 - /invsee - /ecinvsee nicht funktional
 - /head nicht funktional
@@ -41,7 +36,7 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 
 # Für die Zukunft Geplant :
 - ScoreBoard Feature überarbeiten
-- Weitere Commands wie : /top, /milk, /nofire
+- Weitere Commands wie : /top, /nofire, /speed sind geplant
 - Neuschreiben des Booster Commands
 - Neuschreiben des Ban Systems
 - API für das Economy System
@@ -49,12 +44,11 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 - Language System (Sprachen System) - Da es sehr Arbeitsintensiv ist, kann dies noch dauern!
   -> Mit Auswahl eigener Sprachen und Erweiterung auf weiterer Sprachen!
 - Amboss & Enchantment Table - Geplant aber vermutlich eher nicht
-- Chest Shop System
+- ChestShop System -> kommt auf jeden fall!
 
 # Features
 - [Alle Commands](https://github.com/note3crafter/Core-V6/blob/main/resources/commands.md)
 - Multi Language Support! (Aktuell noch nicht vollständig)
-- [AntiXray](https://github.com/HimmelKreis4865/AntiXray) & [HeadSystem](https://github.com/HimmelKreis4865/BetterSkulls) (by HimmelKreis4865)
 - [MCPEtoDiscord](https://github.com/JaxkDev/MCPEToDiscord) (by [JaxkDev](https://github.com/JaxkDev))
 - VoteSystem   
 - ClanSystem
@@ -68,11 +62,12 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 - Farbiges Schreiben mit &
 - Economy System (Kompatible mit EconomyAPI) (Money.yml kann weitergenutzt werden)
 - World Managment System
+- Alle ötigen Commands für einen Server zu betreiben sind drinne
 
 # Hilfe & Support
 Ich werde die Core solange wie Möglich Aktuell halten und Updaten sofern es meine Zeit zulässt...
 Beachtet die Configs etc und stellt dort eure sachen ein... 
-Und an unseren Forker! Gebt das Plugin nicht als Euers aus! Ich habe eine menge arbeit reingsteckt über Jahre!
+Und an unseren Forker! Gebt das Plugin nicht als Euers aus! Ich habe eine menge arbeit reingsteckt über Jahre! Sowie um erlaubnis anderer Developer gefragt ob ich ihre werke Intregieren darf
 
 # Großes Dankeschön geht an :
 - [ipad54](https://github.com/ipad54) (INether & Composter)
@@ -83,7 +78,6 @@ Und an unseren Forker! Gebt das Plugin nicht als Euers aus! Ich habe eine menge 
 - [JaxkDev](https://github.com/JaxkDev) (Für die MCPE to Discord Codes die ich verwende & JukeBox-pmmp)
 - [Crasher508](https://github.com/Crasher508) aka KommandToasti (Fürs repaieren mancher dinge! und er ist der Beste!)
 - [CortexPE](https://github.com/CortexPE) (Für ein Teil das ich von Teaspoon mit Intregiert habe) 
-- [HimmelKreis4865](https://github.com/HimmelKreis4865) (Für AntiXray & BetterSkulls)
 - [MDevPmmP](https://github.com/MarlonDevPMMP) (Für das GroupSystem, EconomySystem)
 - [TheBalkanDev](https://github.com/TheBalkanDev) (Für das Invsee/Enderinvsee)  
 - [TuranicTeam](https://github.com/TuranicTeam) (Für Sämtliche Items/Blöcke etc)
@@ -92,7 +86,7 @@ Und an unseren Forker! Gebt das Plugin nicht als Euers aus! Ich habe eine menge 
 - [ipad54](https://github.com/ipad54/INether) (Für Composter und Netherstuff)
 - [LookitsAku](https://github.com/Akuroma) & und vielen vielen weiteren Helfern!
 
-2017-2021 ©NoteLand & TheNote/Rudolf2000 
+2017-2022 ©NoteLand & TheNote/RetroRolf/note3crafter
 
 
 

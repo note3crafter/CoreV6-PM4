@@ -15,7 +15,7 @@
     "afknoafk": "§6Du bist nun AFK!",
     "afknowafk": "§6Du bist nun nicht mehr AFK!",
     "afknomove": "§cDu kannst dich nicht bewegen da du im AFK Modus bist!",
-    "afknochat": "§CDu kannst dich nicht bewegen da du im AFK Modus bist!",
+    "afknochat": "§cDu kannst dich nicht bewegen da du im AFK Modus bist!",
     "animationprefix": "§6Benutze eine Animation",
     "burnprefix": "§6Zünde einen anderen Spieler an",
     "burnusage": "§eNutze : /burn {spielername} [sekunden]",

@@ -1,6 +1,6 @@
 name: CoreV6
 main: TheNote\core\Main
-version: 6.0.10
+version: 6.0.11_ALPHA
 api:
   - 4.0.0
 author: TheNote/Rudolf2000
@@ -23,7 +23,7 @@ authors:
   - jojoe77777 #FormAPI
   - muqsit #InvMenü
   - TheBalkanDev #ecinvsee, invsee
-description: Core v6.0.10 ALPHA
+description: Core v6.0.11 ALPHA
 
 permissions:
   core.command.adventure:
@@ -240,6 +240,9 @@ permissions:
     default: op
   core.command.sethub:
     description: "Setze den Hub"
+    default: op
+  core.command.milk:
+    description: "Entferne deine Effekte"
     default: op
   core.economy.shop.create:
     default: op
