@@ -25,20 +25,26 @@ class PayallCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("payall", $config->get("prefix") . "Verschenke dein Geld an alle Spieler auf dem Server", "/payall", ["paya"]);
+        parent::__construct("payall", $config->get("prefix") . $lang->get("payallprefix"), "/payall", ["paya"]);
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         $money = new Config($this->plugin->getDataFolder() . Main::$cloud . "Money.yml", Config::YAML);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
             return false;
         }
         if (isset($args[0])) {
@@ -65,15 +71,18 @@ class PayallCommand extends Command
                             EconomyAPI::getInstance()->reduceMoney($sender, $amount);
                         }
                     }
-                    $this->plugin->getServer()->broadcastMessage($config->get("prefix") . "§e" . $sender->getNameTag() . "§6 hat §c" . $args[0] . "€ §6 an alle Spieler verteilt. Jeder hat: §e" . $amount . "€§6 erhalten.");
+                    $message = str_replace("{name}", $sender->getNameTag(), $lang->get("payallbc"));
+                    $message1 = str_replace("{money}", $args[0] , $message);
+                    $message2 =str_replace("{amount}", $amount, $message1);
+                    $this->plugin->getServer()->broadcastMessage($config->get("prefix") . $message2);
                 } else {
-                    $sender->sendMessage($config->get("error") . "§cTut mir leid du hast zu wenig Geld auf deinem Konto!");
+                    $sender->sendMessage($config->get("error") . $lang->get("payallnomoney"));
                 }
             } else {
-                $sender->sendMessage($config->get("error") . "§cDeine Eingabe war falsch bitte versuche es erneut!");
+                $sender->sendMessage($config->get("error") . $lang->get("payallwrong"));
             }
         } else {
-            $sender->sendMessage($config->get("info") . "§cBitte gebe eine Summe an");
+            $sender->sendMessage($config->get("error") . $lang->get("payallnovalue"));
         }
         return true;
     }

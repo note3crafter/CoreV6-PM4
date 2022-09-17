@@ -22,22 +22,28 @@ class ListWarpCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("listwarp", $config->get("prefix") . "Liste alle Warps auf", "/listwarp", ["warps"]);
+        parent::__construct("listwarp", $config->get("prefix") . $lang->get("listwarpprefix"), "/listwarp", ["warps"]);
     }
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         $warp = new Config($this->plugin->getDataFolder() . Main::$cloud . "warps.json", Config::JSON);
         $warps = $warp->getAll(true);
-        $sender->sendMessage($config->get("info") . "Hier sind die Warps:");
+        $sender->sendMessage($config->get("info") . $lang->get("listwarp"));
         foreach ($warps as $key) {
             if ($warps === null) {
-                $sender->sendMessage($config->get("error" . "§cEs sind keine Warps vohanden!"));
+                $sender->sendMessage($config->get("error" . $lang->get("listwarperror")));
             } else {
                 $sender->sendMessage("§e-" . $key);
             }

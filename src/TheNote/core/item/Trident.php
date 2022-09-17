@@ -30,7 +30,7 @@ class Trident extends Tool implements Releasable
         return 251;
     }
 
-    public function onReleaseUsing(Player $player): ItemUseResult
+    public function onReleaseUsing(Player|\pocketmine\Player $player): ItemUseResult
     {
         $location = $player->getLocation();
 
@@ -57,6 +57,7 @@ class Trident extends Tool implements Releasable
         }
         $ev->getEntity()->spawnToAll();
         $location->getWorld()->addSound($location, new TridentThrowSound());
+
 
         if ($player->hasFiniteResources()) {
             $item = $entity->getItem();

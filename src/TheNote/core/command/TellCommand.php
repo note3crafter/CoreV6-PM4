@@ -24,51 +24,60 @@ class TellCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("tell", $config->get("prefix") . "Sende eine Privatnachrricht", "/tell <Spieler> <Nachrricht>", ["msg", "whisper", "w"]);
+        parent::__construct("tell", $config->get("prefix") . $lang->get("tellprefix"), "/tell <Spieler> <Nachrricht>", ["msg", "whisper", "w"]);
         $this->plugin = $plugin;
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
-        if(empty($args[0])) {
-            $sender->sendMessage("info" . "Nutze: /tell {player} [message]");
+        if (empty($args[0])) {
+            $sender->sendMessage($config->get("info") . $lang->get("tellusage"));
             return false;
         }
-
         $player = $sender->getServer()->getPlayerExact(strtolower($args[0]));
+        $cfg = new Config($this->plugin->getDataFolder() . Main::$userfile . $args[0] . ".json", Config::JSON);
         unset($args[0]);
         if ($player == null) {
-            $sender->sendMessage($config->get("error") . "Der Spieler ist nicht Online!");
+            $sender->sendMessage($config->get("error") . $lang->get("playernotonline"));
             return false;
         }
-        $cfg = new Config($this->plugin->getDataFolder() . Main::$userfile . $sender->getName() . ".json", Config::JSON);
         $stats = new Config($this->plugin->getDataFolder() . Main::$statsfile . $player->getName() . ".json", Config::JSON);
         $vote = new Config($this->plugin->getDataFolder() . Main::$setup . "Config.yml", Config::YAML);
         if ($vote->get("Mindestvotes") === true) {
             if ($stats->get("votes") < 1) {
-                $player->sendMessage($config->get("error") . "§cDu musst mindestens 1x Gevotet haben um auf dem Server Schreiben zu können! §f-> §e" . $vote->get("votelink"));
+                $message = str_replace("{votelink}", $vote->get("votelink"), $lang->get("tellvote"));
+                $player->sendMessage($config->get("error") . $message);
                 return false;
             }
         }
-        if($cfg->get("nodm") === true) {
-            $sender->sendMessage($config->get("error") . "Dieser Spieler hat seine MSGs Ausgeschaltet!");
+        if ($player === $sender) {
+            $sender->sendMessage($config->get("error") . $lang->get("tellnotyou"));
             return false;
         }
-        if($player === $sender){
-            $sender->sendMessage($config->get("error") . "Du kannst dir nicht selbst eine Nachricht senden!");
+        if ($cfg->get("nodm") === true) {
+            $sender->sendMessage($config->get("error") . $lang->get("tellmsgblock"));
             return false;
-        }
-        if ($player instanceof Player) {
-            $sender->sendMessage($config->get("msg") . "{$sender->getNameTag()} §f-> {$player->getNameTag()} §f| §b" . implode(" ", $args));
-            $name = $config->get("msg") . $sender->getNameTag();
-            $player->sendMessage($config->get("msg") . "$name §f-> zu dir | §b" . implode(" ", $args));
-            $this->plugin->onMessage($sender, $player);
+        } else {
+            if ($player instanceof Player) {
+                $message = str_replace("{sender}", $sender->getNameTag(), $lang->get("tellsuccessender"));
+                $message1 = str_replace("{player}", $player->getNameTag() , $message);
+                $sender->sendMessage($config->get("msg") . $message1 . implode(" ", $args));
+                $message2 = str_replace("{sender}", $sender->getName(), $lang->get("tellsuccestarget"));
+                $player->sendMessage($config->get("msg") . $message2 . implode(" ", $args));
+                $this->plugin->onMessage($sender, $player);
+            }
         }
         return true;
     }

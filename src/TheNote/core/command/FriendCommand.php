@@ -15,6 +15,7 @@ use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\utils\Config;
+use TheNote\core\formapi\SimpleForm;
 use TheNote\core\Main;
 
 class FriendCommand extends Command
@@ -38,14 +39,27 @@ class FriendCommand extends Command
 
         $playerfile = new Config($this->plugin->getDataFolder() . Main::$freundefile . $sender->getName() . ".json", Config::JSON);
         if (empty($args[0])) {
-            $sender->sendMessage("§f======[§aFreundeSystem Hilfe§f]======");
-            $sender->sendMessage("§c/friend » §7accept » §f Aktzeptiere eine Anfrage");
-            $sender->sendMessage("§c/friend » §7add » §fLade ein Freund ein");
-            $sender->sendMessage("§c/friend » §7list » §fZeigt Deine Freunde an");
-            $sender->sendMessage("§c/friend » §7deny » §f Lehne eine Anfrage ab");
-            $sender->sendMessage("§c/friend » §7remove » §fEntferne einen Freund");
-            $sender->sendMessage("§c/friend » §7block » §fDeaktiviere Freundschaftsanfragen");
-            return false;
+            $form = new SimpleForm(function (Player $player, int $data = null) {
+
+                $result = $data;
+                if ($result === null) {
+                    return true;
+                }
+                switch ($result) {
+                    case 0:
+                        break;
+                }
+            });
+            $form->setTitle("§f======[§aFreundeSystem Hilfe§f]======");
+            $form->setContent("§e/friend accept (player) » Aktzeptiere eine Anfrage\n" .
+                "§e/friend deny » Lehne eine Anfrage ab\n" .
+                "§e/friend add (player) » Lade ein Freund/in ein\n" .
+                "§e/friend list » Zeigt Deine Freunde an\n" .
+                "§e/friend remove (player) » fEntferne einen Freund/in\n" .
+                "§e/friend block (player) » Deaktiviere Freundschaftsanfragen");
+            $form->addButton("verlassen");
+            $form->sendToPlayer($sender);
+            return true;
         }
 
         if ($args[0] == "add") {
@@ -60,8 +74,13 @@ class FriendCommand extends Command
                         $einladungen[] = $sender->getName();
                         $vplayerfile->set("Invitations", $einladungen);
                         $vplayerfile->save();
-                        $sender->sendMessage($config->get("friend") . "§aDeine Freundschaftsanfrage wurde gesendet zu  " . $args[1]);
-                        $v = $this->plugin->getServer()->getPlayerExact($args[1]);
+                        if ($args[1] === $sender) {
+                            $sender->sendMessage($config->get("friend") . "§cDu kannst dich nicht selbst befreunden!");
+                            return false;
+                        } else {
+                            $sender->sendMessage($config->get("friend") . "§aDeine Freundschaftsanfrage wurde gesendet zu  " . $args[1]);
+                            $v = $this->plugin->getServer()->getPlayerExact($args[1]);
+                        }
                         if (!$v == null) {
                             $v->sendMessage($config->get("friend") . "§a" . $sender->getName() . " hat Dir eine Freundschafts Anfrage gesendet akzeptier sie mit §e/friend accept " . $sender->getName() . "§a oder lehne sie ab mit §e /friend deny " . $sender->getName() . "§a!");
                         }

@@ -45,18 +45,17 @@ class CreditsCommand extends Command
                     break;
             }
         });
-        $form->setTitle("§0===§f[§6Credits§f]§0==§f[§eCore§4V5§f]§0===");
+        $form->setTitle("§0===§f[§6Credits§f]§0==§f[§eCore§4V6§f]§0===");
         $form->setContent("§e- TheNote/Rudolf2000 #Inhaber der Core\n" .
                     "§e- tim03we #BanSystem usw\n" .
                     "§e- xxflow #Heiraten,Payall\n" .
-                    "§e- Aneoxic #Grundgerüst\n" .
+                    "§e- Aenoxic #Grundgerüst\n" .
                     "§e- FleekRush #Booster\n" .
                     "§e- JackMD #Discord, FormAPI\n" .
                     "§e- LookItsAku #Hilfe\n" .
                     "§e- Hagnbrain #homesystem\n" .
                     "§e- EnderDirt #füraltecodes\n" .
                     "§e- Crasher508 #Fixxer\n" .
-                    "§e- HimmelKreis4865 #AntiXray & BetterSkulls\n" .
                     "§e- MDevPmmP #GroupSystem/EconomySystem\n" .
                     "§e- jojoe77777 #FormAPI\n" .
                     "§e- muqsit #InvMenü\n" .

@@ -11,7 +11,6 @@
 
 namespace TheNote\core\server\LiftSystem;
 
-use pocketmine\block\BlockFactory;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\block\Block;

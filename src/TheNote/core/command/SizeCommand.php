@@ -24,6 +24,9 @@ class SizeCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         parent::__construct("size", $config->get("prefix") . "Verändere deine Größe", "/size [Zahl] {player}");
         $this->setPermission("core.command.size");
@@ -31,35 +34,38 @@ class SizeCommand extends Command
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
-
-        $configs = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
+        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($configs->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($configs->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
             return false;
         }
         if (empty($args[0])) {
             $sender->setScale(1);
-            $sender->sendMessage($configs->get("prefix") . "§6Du hast deine Größe zurückgesetzt!");
+            $sender->sendMessage($config->get("prefix") . $lang->get("sizereset"));
             return false;
         }
         if (isset($args[0])) {
             if (is_numeric($args[0])) {
                 if ($args[0] > 10) {
-                    $sender->sendMessage($configs->get("error") . "§cDu kannst nicht größer wie §e10 §cwerden");
+                    $sender->sendMessage($config->get("error") . $lang->get("sizetohigh"));
                     return true;
                 } elseif ($args[0] < 0.05) {
-                    $sender->sendMessage($configs->get("error") . "§cDu kannst nicht kleiner wie §e0.05 §cwerden");
+                    $sender->sendMessage($config->get("error") . $lang->get("sizetolow"));
                     return true;
                 }
                 $sender->setScale((float)$args[0]);
-                $sender->sendMessage($configs->get("prefix") . "§6Du hast deine Größe zu §e" . $args[0] . " §6geändert!");
+                $message = str_replace("{size}" , $args[0], $lang->get("sizesucces"));
+                $sender->sendMessage($config->get("prefix") . $message);
                 return true;
             } else {
-                $sender->sendMessage($configs->get("error") . "Deine eingabe war falsch überprüfe sie nochmal!");
+                $sender->sendMessage($config->get("error") . $lang->get("sizenumb"));
             }
         }
         return true;

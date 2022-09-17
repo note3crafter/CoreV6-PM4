@@ -67,6 +67,7 @@ final class CustomIds {
     public const WEEPING_VINES_ITEM = -231;
     public const TWISTING_VINES_BLOCK = 542;
     public const TWISTING_VINES_ITEM = -287;
+    public const SPYGLASS = 626;
     public const ITEM_NETHERITE_SCRAP = 752;
     public const ITEM_NETHERITE_INGOT = 742;
     public const ITEM_NETHERITE_SWORD = 743;

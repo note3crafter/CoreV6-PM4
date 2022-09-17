@@ -27,6 +27,9 @@ class HeiratsListener implements Listener {
 
     public function setScheidung($a)
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $player = $a->getName();
         $x = new Config($this->plugin->getDataFolder() . Main::$heifile . strtolower($player) . ".json", Config::JSON);
         $hochzeit = $x->get("heiraten");
@@ -40,13 +43,13 @@ class HeiratsListener implements Listener {
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
 
 
-        $v->set("heiraten", NULL);
+        $v->set("heiraten", "No Partners");
         $v->set("heiraten-hit", 0);
         $vgesch = $v->get("geschieden");
         $v->set("geschieden", $vgesch + 1);
         $v->save();
 
-        $x->set("heiraten", NULL);
+        $x->set("heiraten", "No Partners");
         $x->set("heiraten-hit", 0);
         $xgesch = $x->get("geschieden");
         $x->set("geschieden", $xgesch + 1);
@@ -56,9 +59,9 @@ class HeiratsListener implements Listener {
         $hei->save();
         $heiv->set("heistatus", false);
         $heiv->save();
-
-        $this->plugin->getServer()->broadcastMessage($config->get("heirat") . "§a " . $player . "§6 und §a" . $victim . "§6 haben sich grade geschiden!");
-
+        $message = str_replace("{sender}", $player, $lang->get("heischbc"));
+        $message1 = str_replace("{victim}", $victim, $message);
+        $this->plugin->getServer()->broadcastMessage($config->get("heirat") . $message1);
         return true;
     }
     public function onHochzeitDamage(EntityDamageByEntityEvent $event)

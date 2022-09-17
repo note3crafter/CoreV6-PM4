@@ -30,7 +30,6 @@ class Version extends Command {
     public function execute(CommandSender $sender, string $commandLabel, array $args)
     {
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-
         if (!$this->testPermission($sender)){
             return false;
         }
@@ -40,7 +39,6 @@ class Version extends Command {
         $date = Main::$dateversion;
 		$pmmpv = $this->plugin->getServer()->getPocketMineVersion();
         $sender->sendMessage($config->get("info"). "Dieser Server läuft auf PocketMine-MP $pmmpv mir Core Version $v für Minecraft: Bedrock Edition v$mcpe (Protokollversion $p) Stand : $date ");
-
         return false;
     }
 }

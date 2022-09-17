@@ -22,20 +22,26 @@ class SudoCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("sudo", $config->get("prefix") . "Führe ein Command/Nachrricht als ein anderen Spieler aus", "/sudo");
+        parent::__construct("sudo", $config->get("prefix") . $lang->get("sudoprefix"), "/sudo");
         $this->setPermission("core.command.sudo");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
             return false;
         }
         if (count($args) < 2) {
-            $sender->sendMessage($config->get("prefix") . "Benutze: /sudo (player) (command)");
+            $sender->sendMessage($config->get("info") . $lang->get("sudousage"));
             return true;
         }
         $player = $this->plugin->getServer()->getPlayerExact(array_shift($args));
@@ -43,7 +49,7 @@ class SudoCommand extends Command
             $player->chat(trim(implode(" ", $args)));
             return true;
         } else {
-            $sender->sendMessage($config->get("error") . "Der Spieler wurde nicht gefunden");
+            $sender->sendMessage($config->get("error") . $lang->get("playernotonline"));
             return true;
         }
     }

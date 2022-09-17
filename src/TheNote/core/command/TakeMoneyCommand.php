@@ -24,51 +24,61 @@ class TakeMoneyCommand extends Command implements Listener
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("takemoney", $config->get("prefix") . "Hole das Geld eines Spielers", "/takemoney {player} {value}");
+        parent::__construct("takemoney", $config->get("prefix") . $lang->get("takemoneyprefix"), "/takemoney {player} {value}");
         $this->setPermission("core.command.takemoney");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         $money = new Config($this->plugin->getDataFolder() . Main::$cloud . "Money.yml", Config::YAML);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
             return false;
         }
         if (!isset($args[0])) {
-            $sender->sendMessage($config->get("money") . "Nutze : /takemoney {player} {value}");
+            $sender->sendMessage($config->get("info") . $lang->get("takemoneyprefix"));
             return false;
         }
         if (!isset($args[1])) {
-            $sender->sendMessage($config->get("money") . "Nutze : /takemoney {player} {value}");
+            $sender->sendMessage($config->get("info") . $lang->get("takemoneyprefix"));
             return false;
         }
         if (!is_numeric($args[1])) {
-            $sender->sendMessage($config->get("error") . "Bitte gebe eine Numeriche Zahl an!");
+            $sender->sendMessage($config->get("error") . $lang->get("takemoneynumb"));
             return false;
         }
         $player = $sender->getServer()->getPlayerExact(strtolower($args[0]));
         if($player === $sender){
-            $sender->sendMessage($config->get("error") . "Du kannst dir nicht selbst geld Abziehen!");
+            $sender->sendMessage($config->get("error") . $lang->get("takemoneynotyourself"));
             return false;
         }
 
         $target = Server::getInstance()->getPlayerExact(strtolower($args[0]));
         if ($target == null) {
-            $sender->sendMessage($config->get("error") . "Der Spieler ist nicht Online");
+            $sender->sendMessage($config->get("error") . $lang->get("playernotonline"));
             return false;
         }
         $old = $money->getNested("money." . $target->getName());
         $money->setNested("money." . $target->getName(), $old - (int)$args[1]);
         $money->save();
-        $sender->sendMessage($config->get("money") . "§6Du hast§e " . $target->getName() . " §f:§e " . $args[1] . "$ §6abgezogen!");
-        $target->sendMessage($config->get("money") . "§6Du hast von §e" . $sender->getName() . " §f:§e " . $args[1] . "$ §6abgezogen bekommen!");
+        $message = str_replace("{target}", $target->getName(), $lang->get("takemoneysender"));
+        $message1 = str_replace("{money}", $args[1] , $message);
+        $sender->sendMessage($config->get("money") . $message1);
+        $message2 = str_replace("{money}", $args[1], $lang->get("takemoneytarget"));
+        $message3 = str_replace("{sender}", $sender->getName() , $message2);
+        $target->sendMessage($config->get("money") . $message3);
         return true;
     }
 }

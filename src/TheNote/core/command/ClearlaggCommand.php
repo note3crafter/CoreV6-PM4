@@ -12,7 +12,9 @@
 namespace TheNote\core\command;
 
 use pocketmine\command\CommandSender;
+use pocketmine\entity\Creature;
 use pocketmine\entity\Entity;
+use pocketmine\entity\Human;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\utils\Config;
 use TheNote\core\Main;

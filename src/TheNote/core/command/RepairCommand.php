@@ -24,25 +24,31 @@ class RepairCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("repair", $config->get("prefix") . "§6Repaiert ein Item", "/repair");
+        parent::__construct("repair", $config->get("prefix") . $lang->get("repairprefix"), "/repair");
         $this->setPermission("core.command.repair");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
             return false;
         }
         $item = $sender->getInventory()->getItemInHand();
         if ($item === null) {
-            $sender->sendMessage($config->get("error") . "Du musst ein Item in der Hand halten!");
+            $sender->sendMessage($config->get("error") . $lang->get("repairiteminhand"));
             return true;
         }
         if ($item->getDamage() > 0) {
@@ -50,9 +56,9 @@ class RepairCommand extends Command
             $sender->getInventory()->setItemInHand($item);
 			$sender->getWorld()->addSound($sender->getPosition(), new AnvilUseSound());
 
-			$sender->sendMessage($config->get("info") . "Das Item wurde erfolgreich Repaiert");
+			$sender->sendMessage($config->get("prefix") . $lang->get("repairsucces"));
         } else {
-            $sender->sendMessage($config->get("error") . "Dieses Item hat keine Beschädigung");
+            $sender->sendMessage($config->get("error") . $lang->get("repairerror"));
             return true;
         }
         return false;

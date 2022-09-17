@@ -23,26 +23,32 @@ class PosCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("position", $config->get("prefix") . "§6Zeige deine Position an", "/position", ["pos"]);
+        parent::__construct("position", $config->get("prefix") . $lang->get("posprefix"), "/position", ["pos"]);
         $this->setPermission("core.command.position");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-             $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
-             return false;
-        }
-        if (!$this->testPermission($sender)) {
-            $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
-        $x = $sender->getLocation()->getX();
-        $y = $sender->getLocation()->getY();
-        $z = $sender->getLocation()->getZ();
-        $sender->sendMessage($config->get("prefix") . "Deine Aktuelle Position ist §eX§f: §a$x- §eY§f: §a$y- §eZ§f: §a$z");
+        if (!$this->testPermission($sender)) {
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
+            return false;
+        }
+        $message = str_replace("{x}", $sender->getLocation()->getX(), $lang->get("possucces"));
+        $message1 = str_replace("{y}", $sender->getLocation()->getY() , $message);
+        $message2 = str_replace("{z}", $sender->getLocation()->getZ() , $message1);
+        $sender->sendMessage($config->get("prefix") . $message2);
         return true;
     }
 }

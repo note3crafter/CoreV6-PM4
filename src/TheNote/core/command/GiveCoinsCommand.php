@@ -24,23 +24,33 @@ class GiveCoinsCommand extends Command
 	public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("givecoins", $config->get("prefix") . "§6Gebe einem Spieler Coins", "/givecoins <player> <coins>");
+        parent::__construct("givecoins", $config->get("prefix") . $lang->get("givecoinsdprefix"), "/givecoins <player> <coins>");
         $this->setPermission("core.command.givecoins");
     }
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
+            return false;
+        }
+        if (!is_numeric($args[1])) {
+            $sender->sendMessage($config->get("error") . $lang->get("givecoinsnumb"));
             return false;
         }
         if(count($args) < 2){
-            $sender->sendMessage($config->get("prefix") . "§r§cNutze: /givecoins {player} [coins]");
+            $sender->sendMessage($config->get("prefix") . $lang->get("givecoinssusage"));
             return false;
         }
         if($this->plugin->getServer()->getPlayerExact($args[0])){
@@ -48,12 +58,13 @@ class GiveCoinsCommand extends Command
             $coins = new Config($this->plugin->getDataFolder() . Main::$userfile . $player->getName() . ".json", Config::JSON);
             $coins->set("coins", $coins->get("coins") + $args[1]);
             $coins->save();
-            $sender->sendMessage($config->get("info") . "§r§6Du hast§c " . $player->getName() . " §r§6genau§c " . $args[1] . " Coins §6gezahlt.");
+            $message = str_replace("{player}" , $player->getName(), $lang->get("givecoinssucces"));
+            $message1 = str_replace("{coins}" , $args[1], $message);
+            $sender->sendMessage($config->get("info") . $message1);
         }else{
-            $sender->sendMessage($config->get("error") . "§cSpieler nicht gefunden");
+            $sender->sendMessage($config->get("error") . $lang->get("playernotfound"));
             return false;
         }
         return true;
     }
-
 }

@@ -24,23 +24,29 @@ class DelWarpCommand extends Command
 	public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("delwarp", $config->get("prefix") . "Lösche ein Warppunkt", "/delwarp <warpname>");
+        parent::__construct("delwarp", $config->get("prefix") . $lang->get("delhomeprefix"), "/delwarp <warpname>");
         $this->setPermission("core.command.delwarp");
     }
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
-            return true;
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
+            return false;
         }
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
             return false;
         }
         if (empty($args[0])) {
-            $sender->sendMessage($config->get("prefix") . "§cBenutze : /delwarp [warpname]");
+            $sender->sendMessage($config->get("prefix") . $lang->get("delwarpusage"));
             return true;
         }
         if (isset($args[0])) {
@@ -49,9 +55,11 @@ class DelWarpCommand extends Command
             if($warp->exists($args[0])){
                 $warp->remove($args[0]);
                 $warp->save();
-                $sender->sendMessage($config->get("prefix") . "Der Warp " . $args[0] . " wurde erfolgreich gelöscht.");
+                $message = str_replace("{warp}" , $args[0], $lang->get("delwarpconfirm"));
+                $sender->sendMessage($config->get("prefix") . $message);
             }else{
-                $sender->sendMessage($config->get("prefix") . "§cDer Warp mit dem Namen " . $args[0] . " konnte nicht gefunden werden");
+                $message = str_replace("{warp}" , $args[0], $lang->get("delwarpnotfound"));
+                $sender->sendMessage($config->get("prefix") . $message);
             }
         }
         return true;

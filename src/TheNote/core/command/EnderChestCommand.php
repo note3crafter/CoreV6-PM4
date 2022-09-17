@@ -38,31 +38,32 @@ class EnderChestCommand extends Command
 	public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("ec", $config->get("prefix") . "Siehe in deiner Enderchest", "/ec", ["enderchest"]);
+        parent::__construct("ec", $config->get("prefix") . $lang->get("ecprefix"), "/ec", ["enderchest"]);
         $this->setPermission("core.command.enderchest");
-
     }
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
 	{
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
 		$config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-		if (!$sender instanceof Player) {
-			$sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
-			return false;
-		}
-		if (!$this->testPermission($sender)) {
-			$sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
-			return false;
-		}
-		if (!$sender instanceof Player) {
-			$sender->sendMessage($config->get("error") . "Du kannst diesem Befehl nur Ingame nutzen!");
-			return false;
-		}
+        if (!$sender instanceof Player) {
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
+            return false;
+        }
+        if (!$this->testPermission($sender)) {
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
+            return false;
+        }
 		if ($sender instanceof Player) {
 			$this->tName = "";
 			$tName = $sender->getName();
 			$this->tName = "$tName";
-			$sender->sendMessage($config->get("prefix") . "Enderchest wird geöffnet!");
+			$sender->sendMessage($config->get("prefix") . $lang->get("ecopen"));
 			$this->send($sender);
 		}
 		return true;

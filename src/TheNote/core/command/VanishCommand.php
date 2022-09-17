@@ -26,33 +26,41 @@ class VanishCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("vanish", $config->get("prefix") . "§aAktiviert§f/§cDeaktiviert§6 Vanish", "/vanish", ["v"]);
+        parent::__construct("vanish", $config->get("prefix") . $lang->get("vanishprefix"), "/vanish", ["v"]);
         $this->setPermission("core.command.vanish");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
             return false;
         }
         if ($sender->hasPermission("core.command.vanish")) {
             if(!isset($this->vanish[$sender->getName()])){
                 $this->vanish[$sender->getName()] = true;
                 $sender->setNameTagVisible(false);
-                $sender->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
-                $sender->sendMessage($config->get("prefix") . "Dein §eVanish §6wurde §aAktiviert§6.");
+                $sender->setSilent(true);
+                $sender->setInvisible(true);
+                $sender->sendMessage($config->get("prefix") . $lang->get("vanishon"));
             }else{
                 unset($this->vanish[$sender->getName()]);
                 $sender->setNameTagVisible(true);
-                $sender->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, false);
-                $sender->sendMessage($config->get("prefix") . "Dein §eVanish §6wurde §cDeaktiviert§6.");
+                $sender->setInvisible(false);
+                $sender->setSilent(false);
+                $sender->sendMessage($config->get("prefix") . $lang->get("vanishoff"));
             }
         }
         return false;

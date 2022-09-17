@@ -26,20 +26,26 @@ class ZuschauerCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("gmspc", $config->get("prefix") . "Setzt den Spielmodus auf §aZuschauer", "/gmspc", ["spectator", "zuschauer", "gm3"]);
+        parent::__construct("gmspc", $config->get("prefix") . $lang->get("spectatorprefix"), "/gmspc", ["spectator", "zuschauer", "gm3"]);
         $this->setPermission("core.command.spectator");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
-        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
+        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings.json", Config::JSON);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
             return false;
         }
         if (isset($args[0])) {
@@ -47,21 +53,22 @@ class ZuschauerCommand extends Command
                 $victim = $this->plugin->getServer()->getPlayerExact($args[0]);
                 $target = Server::getInstance()->getPlayerExact(strtolower($args[0]));
                 if ($target == null) {
-                    $sender->sendMessage($config->get("error") . "Der Spieler ist nicht Online!");
+                    $sender->sendMessage($config->get("error") . $lang->get("playernotonline"));
                     return false;
                 } else {
                     $victim->setGamemode(GameMode::SPECTATOR());
-                    $victim->sendMessage($config->get("prefix") . "§6Du bist nun im §eZuschauer §6modus.");
-                    $sender->sendMessage($config->get("prefix") . "§6Der Spielmodus von " . $victim->getName() . " wurde auf §eZuschauer gesetzt.");
+                    $cfgmsg = str_replace("{victim}", $victim->getName(), $lang->get("spectatortarget2"));
+                    $victim->sendMessage($config->get("prefix") . $lang->get("spectatortarget1"));
+                    $sender->sendMessage($config->get("prefix") . $cfgmsg);
                     return false;
                 }
             } else {
-                $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um anderen Spielern den Zuschauermodus zu geben!");
+                $sender->sendMessage($config->get("error") . $lang->get("spectatornopermtarget"));
                 return false;
             }
         }
-        $sender->setGamemode(GameMode::SPECTATOR());
-        $sender->sendMessage($config->get("prefix") . "Du bist nun im §eZuschauer §6modus.");
+        $sender->setGamemode(GameMode::SPECTATOR()) ;
+        $sender->sendMessage($config->get("prefix") . $lang->get("spectatorsender"));
         return true;
     }
 }

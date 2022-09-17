@@ -63,8 +63,8 @@ class StatsCommand extends Command {
             "Deine Sprünge : " . $stats->get("jumps") . "\n" .
             "Deine Kicks : " . $stats->get("kicks") . "\n" .
             "Deine Interacts : " . $stats->get("interact") . "\n" .
-            "Gelaufene Meter : " . $stats->get("movewalk") . "m\n" .
-            "Geflogene Meter : " . $stats->get("movefly") . "m\n" .
+            "Gelaufene Meter : " . round($stats->get("movewalk")) . "m\n" .
+            "Geflogene Meter : " . round($stats->get("movefly")) . "m\n" .
             "Blöcke abgebaut : " . $stats->get("break") . "\n" .
             "Blöcke gesetzt : " . $stats->get("place") . "\n" .
             "Gedroppte Items : " . $stats->get("drop") . "\n" .

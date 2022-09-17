@@ -33,24 +33,30 @@ class TreeCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("tree", $config->get("prefix") . "Lasse ein Baum Spawnen", "/tree", ["baum"]);
+        parent::__construct("tree", $config->get("prefix") . $lang->get("treeprefix"), "/tree", ["baum"]);
         $this->setPermission("core.command.tree");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
             return false;
         }
         if (empty($args[0])) {
-            $sender->sendMessage($config->get("info") . "Nutze : /tree <oak|spruce|birch|jungle>");
+            $sender->sendMessage($config->get("info") . $lang->get("treeusage"));
             return true;
         }
 
@@ -70,11 +76,12 @@ class TreeCommand extends Command
                 break;
         }
         if($object === null) {
-            $sender->sendMessage($config->get("error") . "Diese Baumart konnte nicht gefunden werden!");
+            $sender->sendMessage($config->get("error") . $lang->get("treeerror"));
             return false;
         }
         $object->getBlockTransaction($sender->getWorld(), $sender->getPosition()->getFloorX(), $sender->getPosition()->getFloorY(), $sender->getPosition()->getFloorZ(), new Random())?->apply();
-        $sender->sendMessage($config->get("info") . "§6Der Baum §e" .  $args[0] . " §6wurde erfolgreich gesetzt");
+        $message = str_replace("{tree}", $args[0], $lang->get("treesucces"));
+        $sender->sendMessage($config->get("prefix") . $message);
         return true;
     }
 }

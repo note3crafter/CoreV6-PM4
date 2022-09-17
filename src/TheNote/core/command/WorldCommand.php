@@ -40,25 +40,22 @@ class WorldCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("world", $config->get("prefix") . "§aManage die Welten", "/world");
+        parent::__construct("world", $config->get("prefix") . $lang->get("worldprefix"), "/world");
         $this->setPermission("core.command.world");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
-        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-
-        /*if (!$sender instanceof Player) {
-            $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
-            return false;
-        }*/
-        if (empty($args[0])) {
-            $sender->sendMessage($config->get("info") . "§cBenutze : /world (help) für Hilfe");
-            return false;
-        }
         $levels = [];
-        if ($args[0] == "help") {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
+        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
+        if (empty($args[0])) {
             $sender->sendMessage($config->get("world") . "§6Hilfe");
             $sender->sendMessage("§e/world teleport (worldname)");
             $sender->sendMessage("§e/world create (name) (generator) (seed)");
@@ -66,127 +63,139 @@ class WorldCommand extends Command
             $sender->sendMessage("§e/world delete (worldname)");
             $sender->sendMessage("§e/world list");
         }
-        if ($args[0] == "teleport" and "tp") {
-			if (!$sender instanceof Player) {
-				$sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
-				return false;
-			}
-            if (!isset($args[1])) {
-                $sender->sendMessage($config->get("info") . "Nutze : /world teleport [worldname]");
-                return false;
-            }
-
-            if (!$this->plugin->getServer()->getWorldManager()->isWorldGenerated($args[1])) {
-                $sender->sendMessage($config->get("error") . "§cDie Welt mit dem Namen §f:§e " . $args[1] . " §cexistiert nicht!");
-                return false;
-            }
-			$level = $this->plugin->getServer()->getWorldManager()->getWorldByName($args[1]);
-			if (!$this->plugin->getServer()->getWorldManager()->isWorldLoaded($args[1])) {
-				$this->plugin->getServer()->getWorldManager()->loadWorld($args[1]);
-			}
-			/*if (!$sender->teleport($level->getSafeSpawn())) {
-				$sender->sendMessage($config->get("error") . "§cDer Teleportvorgang wurde abgebrochen!");
-				return true;
-			}*/
-			$sender->teleport($level->getSpawnLocation());
-            $sender->sendMessage($config->get("world") . "§6Du wurdest erfolgreich in die Welt §f: §e" . $args[1] . " §6teleportiert!");
-        }
-        if ($args[0] == "delete") {
-            if (empty($args[1])) {
-                $sender->sendMessage($config->get("info") . "Nutze : /world delete [worldname]");
-                return false;
-            }
-            if (!$this->isLevelLoaded($args[1])) $this->plugin->getServer()->getWorldManager()->loadWorld($args[1]);
-
-            if (!$this->plugin->getServer()->getWorldManager()->isWorldGenerated($args[0]) and !file_exists($this->plugin->getServer()->getDataPath() . "worlds/" . $args[1])) {
-                if ($this->plugin->getServer()->getWorldManager()->getDefaultWorld() === $this->plugin->getServer()->getWorldManager()->getWorldByName($args[1])) {
-                    $sender->sendMessage($config->get("error") . "§cDu kannst die Standartwelt nicht Löschen!");
-                } else {
-                    $sender->sendMessage($config->get("error") . "§cDie Welt mit dem Namen " . $args[1] . " existiert nicht!");
-                    return false;
-                }
-            } else {
-                $files = $this->removeLevel($args[1]);
-                $sender->sendMessage($config->get("world") . "§6Du hast die Welt§f:§e " . $args[1] . " §6erfolgreich gelöscht!");
-                $sender->sendMessage("§6$files Dataien Gelöscht!");
-            }
-        }
-
-        if ($args[0] == "list") {
-            foreach (scandir($this->plugin->getServer()->getDataPath() . "worlds") as $file) {
-                if ($this->isLevelGenerated($file)) {
-                    $isLoaded = $this->isLevelLoaded($file);
-                    $players = 0;
-
-                    if ($isLoaded) {
-                        $players = count($this->plugin->getServer()->getWorldManager()->getWorldByName($file)->getPlayers());
+        if (isset($args[0])) {
+            switch (strtolower($args[0])) {
+                case "teleport":
+                case "tp":
+                    if (!$sender instanceof Player) {
+                        $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
+                        return false;
                     }
+                    if (empty($args[1])) {
+                        $sender->sendMessage($config->get("info") . "test" . $lang->get("worldusagetp"));
+                        return false;
+                    }
+                    if (!$this->plugin->getServer()->getWorldManager()->isWorldGenerated($args[1])) {
+                        $message = str_replace("{name}", $args[1], $lang->get("worldnotexist"));
+                        $sender->sendMessage($config->get("error") . $message);
+                        return false;
+                    }
+                    $level = $this->plugin->getServer()->getWorldManager()->getWorldByName($args[1]);
+                    if (!$this->plugin->getServer()->getWorldManager()->isWorldLoaded($args[1])) {
+                        $this->plugin->getServer()->getWorldManager()->loadWorld($args[1]);
+                    }
+                    /*if (!$sender->teleport($level->getSafeSpawn())) {
+                        $sender->sendMessage($config->get("error") . "§cDer Teleportvorgang wurde abgebrochen!");
+                        return true;
+                    }*/
+                    $sender->teleport($level->getSpawnLocation());
+                    $message = str_replace("{world}", $args[1], $lang->get("worldtpsucces"));
+                    $sender->sendMessage($config->get("world") . $message);
+                    break;
+                case "delete":
+                    if (empty($args[1])) {
+                        $sender->sendMessage($config->get("info") . $lang->get("worldusagedelete"));
+                        return false;
+                    }
+                    if (!$this->isLevelLoaded($args[1])) $this->plugin->getServer()->getWorldManager()->loadWorld($args[1]);
 
-                    $levels[$file] = [$isLoaded, $players];
-                }
-            }
-            $sender->sendMessage($config->get("world") . "§eGeladene Welten :" . (string)count($levels));
+                    if (!$this->plugin->getServer()->getWorldManager()->isWorldGenerated($args[0]) and !file_exists($this->plugin->getServer()->getDataPath() . "worlds/" . $args[1])) {
+                        if ($this->plugin->getServer()->getWorldManager()->getDefaultWorld() === $this->plugin->getServer()->getWorldManager()->getWorldByName($args[1])) {
+                            $sender->sendMessage($config->get("error") . $lang->get("worlddefaultcantdelete"));
+                        } else {
+                            $message = str_replace("{name}", $args[1], $lang->get("worldnotexist"));
+                            $sender->sendMessage($config->get("error") . $message);
+                            return false;
+                        }
+                    } else {
+                        $files = $this->removeLevel($args[1]);
+                        $message = str_replace("{world}", $args[1], $lang->get("worlddeletet"));
+                        $sender->sendMessage($config->get("world") . $message);
+                        $message1 = str_replace("{files}", $files, $lang->get("worldfilesdeletet"));
+                        $sender->sendMessage($config->get("world") . $message1);
+                    }
+                    break;
+                case "list":
+                    foreach (scandir($this->plugin->getServer()->getDataPath() . "worlds") as $file) {
+                        if ($this->isLevelGenerated($file)) {
+                            $isLoaded = $this->isLevelLoaded($file);
+                            $players = 0;
 
-            foreach ($levels as $level => [$loaded, $players]) {
-                $loaded = $loaded ? "§aGeladen§7" : "§cUngeladen§7";
-                $sender->sendMessage("§7{$level} > {$loaded} §7Spieler§f:§e {$players}");
-            }
-        }
-        if ($args[0] == "create") {
-            if (empty($args[1])) {
-                $sender->sendMessage($config->get("info") . "§eBenutze : /world create (worldname) (generator) (seed)");
-                return false;
+                            if ($isLoaded) {
+                                $players = count($this->plugin->getServer()->getWorldManager()->getWorldByName($file)->getPlayers());
+                            }
+
+                            $levels[$file] = [$isLoaded, $players];
+                        }
+                    }
+                    $message = str_replace("{worlds}", (string)count($levels), $lang->get("worldsloaded"));
+                    $sender->sendMessage($config->get("world") . $message);
+                    foreach ($levels as $level => [$loaded, $players]) {
+                        $loaded = $loaded ? $lang->get("worldload") : $lang->get("worldunload");
+                        $sender->sendMessage("§7{$level} > {$loaded} " . $lang->get("worldplayer") . " {$players}");
+                    }
+                    break;
+                case "create":
+                    if (empty($args[1])) {
+                        $sender->sendMessage($config->get("info") . $lang->get("worldusagecreate"));
+                        return false;
+
+                    }
+                    if ($this->isLevelGenerated($args[1])) {
+                        $message = str_replace("{name}", $args[1], $lang->get("worldalreadyexist"));
+                        $sender->sendMessage($config->get("error") . $message);
+                        return false;
+                    }
+                    $seed = 0;
+                    if (isset($args[3]) && is_numeric($args[3])) {
+                        $seed = (int)$args[3];
+                    }
+                    $generatorName = "normal";
+                    $generator = null;
+
+                    if (isset($args[2])) {
+                        $generatorName = $args[2];
+                    }
+                    switch (strtolower($generatorName)) {
+                        case "normal":
+                            $generator = WorldCommand::GENERATOR_NORMAL;
+                            $generatorName = "Normal";
+                            break;
+                        case "vanilla":
+                            $generator = WorldCommand::GENERATOR_NORMAL_CUSTOM;
+                            $generatorName = "Custom";
+                            break;
+                        case "flat":
+                            $generator = WorldCommand::GENERATOR_FLAT;
+                            $generatorName = "Flat";
+                            break;
+                        case "nether":
+                            $generator = WorldCommand::GENERATOR_HELL;
+                            $generatorName = "Nether";
+                            break;
+                        case "ender":
+                            $generator = WorldCommand::GENERATOR_ENDER;
+                            $generatorName = "End";
+                            break;
+                        case "void":
+                            $generator = WorldCommand::GENERATOR_VOID;
+                            $generatorName = "Void";
+                            break;
+                        default:
+                            $generator = WorldCommand::GENERATOR_NORMAL;
+                            $generatorName = "Normal";
+                            break;
+                    }
+                    $this->generateLevel($args[1], $seed, $generator);
+                    $message = str_replace("{name}", $args[1], $lang->get("worldsucces"));
+                    $message1 = str_replace("{seed}", $seed, $message);
+                    $message2 = str_replace("{generator}", $generatorName, $message1);
+                    $sender->sendMessage($config->get("world") . $message2);
+                    break;
 
             }
-            if ($this->isLevelGenerated($args[1])) {
-                $sender->sendMessage($config->get("error") . "§cDie Welt mit dem Namen §f:§e " . $args[1] . " §cexistiert bereits!");
-                return false;
-            }
-            $seed = 0;
-            if (isset($args[3]) && is_numeric($args[3])) {
-                $seed = (int)$args[3];
-            }
-            $generatorName = "normal";
-            $generator = null;
-
-            if (isset($args[2])) {
-                $generatorName = $args[2];
-            }
-            switch (strtolower($generatorName)) {
-                case "normal":
-                    $generator = WorldCommand::GENERATOR_NORMAL;
-                    $generatorName = "Normal";
-                    break;
-                case "vanilla":
-                    $generator = WorldCommand::GENERATOR_NORMAL_CUSTOM;
-                    $generatorName = "Custom";
-                    break;
-                case "flat":
-                    $generator = WorldCommand::GENERATOR_FLAT;
-                    $generatorName = "Flat";
-                    break;
-                case "nether":
-                    $generator = WorldCommand::GENERATOR_HELL;
-                    $generatorName = "Nether";
-                    break;
-                case "ender":
-                    $generator = WorldCommand::GENERATOR_ENDER;
-                    $generatorName = "End";
-                    break;
-                case "void":
-                    $generator = WorldCommand::GENERATOR_VOID;
-                    $generatorName = "Void";
-                    break;
-                default:
-                    $generator = WorldCommand::GENERATOR_NORMAL;
-                    $generatorName = "Normal";
-                    break;
-            }
-            $this->generateLevel($args[1], $seed, $generator);
-            $sender->sendMessage($config->get("world") . "§6Die Welt wurde erfolgreich erstellt! §eName§f: " . $args[1] . " §eSeed§f: " . $seed . " §eGenerator§f: " . $generatorName);
         }
         return true;
-
     }
 
     public static function isLevelLoaded(string $levelName): bool

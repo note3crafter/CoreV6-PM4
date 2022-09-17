@@ -24,34 +24,44 @@ class TpadenyCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("tpadeny", $config->get("prefix") . "Lehne eine Teleportanfrage ab", "/tpadeny");
+        parent::__construct("tpadeny", $config->get("prefix") . $lang->get("tpadenyprefix"), "/tpadeny");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
-        $configs = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
+        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($configs->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (!empty($args[0])) {
-            $sender->sendMessage($configs->get("info") . "Nutze : /tpadeny");
+            $sender->sendMessage($config->get("info") . $lang->get("tpadenyusage"));
         } else {
             $this->tpar($sender->getName());
         }
         return true;
     }
-    public function tpar($name) : void{
-        $configs = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
+    public function tpar($name) : void
+    {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
+        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         $player = $this->plugin->getServer()->getPlayerExact($name);
         if($this->plugin->getInviteControl($name)){
             $sender = $this->plugin->getServer()->getPlayerExact($this->plugin->getInvite($name));
             unset($this->plugin->invite[$name]);
-            $sender->sendMessage($configs->get("tpa") . "§6Der Spieler§e $name §6hat deine TPA-Anfrage abgelehnt.");
-
-        }else{
-            $player->sendMessage($configs->get("tpa") . "Du hast derzeit keine TPA-Anfrage");
+            $message = str_replace("{player}", $name, $lang->get("tpadenysender"));
+            $sender->sendMessage($config->get("tpa") . $message);
+        } else {
+            $player->sendMessage($config->get("tpa") . $lang->get("tpadenytarget"));
         }
     }
 }

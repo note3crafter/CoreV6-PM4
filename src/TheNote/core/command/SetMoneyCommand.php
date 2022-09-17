@@ -24,49 +24,49 @@ class SetMoneyCommand extends Command implements Listener
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("setmoney", $config->get("prefix") . "Setze ein Geldstand", "/setmoney {player} {value}");
+        parent::__construct("setmoney", $config->get("prefix") . $lang->get("setmoneyprefix"), "/setmoney {player} {value}");
         $this->setPermission("core.command.setmoney");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         $money = new Config($this->plugin->getDataFolder() . Main::$cloud . "Money.yml", Config::YAML);
-        if (!$sender instanceof Player) {
-            $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
-            return false;
-        }
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
             return false;
         }
         if(!isset($args[0])) {
-            $sender->sendMessage($config->get("money") . "Nutze : /setmoney {player} {value}");
+            $sender->sendMessage($config->get("info") . $lang->get("setmoneyusage"));
             return false;
         }
         if(!isset($args[1])) {
-            $sender->sendMessage($config->get("money") . "Nutze : /setmoney {player} {value}");
+            $sender->sendMessage($config->get("info") . $lang->get("setmoneyusage"));
             return false;
         }
         if(!is_numeric($args[1])) {
-            $sender->sendMessage($config->get("error") . "Bitte gebe eine Numeriche Zahl an!");
+            $sender->sendMessage($config->get("error") . $lang->get("setmoneynumb"));
             return false;
         }
         $target = Server::getInstance()->getPlayerExact(strtolower($args[0]));
         if ($target == null) {
-            $sender->sendMessage($config->get("error") . "Der Spieler ist nicht Online");
+            $sender->sendMessage($config->get("error") . $lang->get("playernotonline"));
             return false;
         }
-
         $money->setNested("money." . $target->getName() , (int)$args[1]);
         $money->save();
-
-        //$stepone = str_replace("{player}", $player->getName(), $lang->get("eco-set-success-sender"));
-        //$steptwo = str_replace("{amount}", $args[2], $stepone); ##Future
-
-        $sender->sendMessage($config->get("money") . "§6Der Geldstand von§e " . $target->getName() . " §6wurde auf §f:§e " . $args[1] . "$ §6gesetzt!");
-        $target->sendMessage($config->get("money") . "§6Dein Geldstand wurde auf §f:§e " . $args[1] . "$ §6gesetzt!");
+        $message = str_replace("{target}", $target->getName(), $lang->get("setmoneysender"));
+        $message1 = str_replace("{money}", $args[1] , $message);
+        $sender->sendMessage($config->get("money") . $message1);
+        $message2 = str_replace("{money}", $args[1], $lang->get("setmoneytarget"));
+        $target->sendMessage($config->get("money") . $message2);
         return true;
     }
 

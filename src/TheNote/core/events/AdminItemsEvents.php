@@ -40,7 +40,7 @@ class AdminItemsEvents implements Listener
             $value = $bogen->getNamedTag()->getString("custom_data");
             if ($value == "super_bow") {
                 $projectile = $event->getProjectile();
-                $projectile->setNameTag(string["custom_data", "super_arrow"]);
+                $projectile->setNameTag("string" . ["custom_data", "super_arrow"]);
                 $projectile->setNameTag();
             }
             if ($value == "explode_bow") {
@@ -56,7 +56,7 @@ class AdminItemsEvents implements Listener
         $entity = $event->getEntity();
         $block = $event->getBlockHit();
         $radius = 5;
-        if ($entity->hasTag("custom_data")) {
+        if ($entity->getString("custom_data")) {
             $value = $entity->getNameTag() === "custom_data";
             if ($value == "explode_egg") {
                 if (!$event->getEntity() instanceof Egg) {

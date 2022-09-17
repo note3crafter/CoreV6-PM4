@@ -339,7 +339,7 @@ class ClanCommand extends Command
                             foreach($members as $member){
                                 if($clan->get($member) !== ""){
                                     $pf = new Config($this->plugin->getDataFolder() . Main::$gruppefile . $clan->get($member) . ".json", Config::JSON);
-                                    $pf->set("Clan", "");
+                                    $pf->set("Clan", "No Clan");
                                     $pf->set("ClanStatus", false);
                                     $pf->save();
                                 }
@@ -367,7 +367,7 @@ class ClanCommand extends Command
                             $clan->set("Owner2", "");
                             $clan->set("Member", $clan->get("Member") - 1);
                             $clan->save();
-                            $pf->set("Clan", "");
+                            $pf->set("Clan", "No Clan");
                             $pf->set("ClanStatus", false);
                             $pf->save();
                             $sender->sendMessage($config->get("clans") . str_replace("{clan}", $pf->get("Clan"), $lang->get("clanleaveconfirm")));
@@ -376,7 +376,7 @@ class ClanCommand extends Command
                                 $clan->set("Owner3", "");
                                 $clan->set("Member", $clan->get("Member") - 1);
                                 $clan->save();
-                                $pf->set("Clan", "");
+                                $pf->set("Clan", "No Clan");
                                 $pf->set("ClanStatus", false);
                                 $pf->save();
                                 $sender->sendMessage($config->get("clans") . str_replace("{clan}", $pf->get("Clan"), $lang->get("clanleaveconfirm")));
@@ -385,7 +385,7 @@ class ClanCommand extends Command
                                     $clan->set("player1", "");
                                     $clan->set("Member", $clan->get("Member") - 1);
                                     $clan->save();
-                                    $pf->set("Clan", "");
+                                    $pf->set("Clan", "No Clan");
                                     $pf->set("ClanStatus", false);
                                     $pf->save();
                                     $sender->sendMessage($config->get("clans") . str_replace("{clan}", $pf->get("Clan"), $lang->get("clanleaveconfirm")));
@@ -394,7 +394,7 @@ class ClanCommand extends Command
                                         $clan->set("player2", "");
                                         $clan->set("Member", $clan->get("Member") - 1);
                                         $clan->save();
-                                        $pf->set("Clan", "");
+                                        $pf->set("Clan", "No Clan");
                                         $pf->set("ClanStatus", false);
                                         $pf->save();
                                         $sender->sendMessage($config->get("clans") . str_replace("{clan}", $pf->get("Clan"), $lang->get("clanleaveconfirm")));
@@ -403,7 +403,7 @@ class ClanCommand extends Command
                                             $clan->set("player3", "");
                                             $clan->set("Member", $clan->get("Member") - 1);
                                             $clan->save();
-                                            $pf->set("Clan", "");
+                                            $pf->set("Clan", "No Clan");
                                             $pf->set("ClanStatus", false);
                                             $pf->save();
                                             $sender->sendMessage($config->get("clans") . str_replace("{clan}", $pf->get("Clan"), $lang->get("clanleaveconfirm")));
@@ -412,7 +412,7 @@ class ClanCommand extends Command
                                                 $clan->set("player4", "");
                                                 $clan->set("Member", $clan->get("Member") - 1);
                                                 $clan->save();
-                                                $pf->set("Clan", "");
+                                                $pf->set("Clan", "No Clan");
                                                 $pf->set("ClanStatus", false);
                                                 $pf->save();
                                                 $sender->sendMessage($config->get("clans") . str_replace("{clan}", $pf->get("Clan"), $lang->get("clanleaveconfirm")));
@@ -421,7 +421,7 @@ class ClanCommand extends Command
                                                     $clan->set("player5", "");
                                                     $clan->set("Member", $clan->get("Member") - 1);
                                                     $clan->save();
-                                                    $pf->set("Clan", "");
+                                                    $pf->set("Clan", "No Clan");
                                                     $pf->set("ClanStatus", false);
                                                     $pf->save();
                                                     $sender->sendMessage($config->get("clans") . str_replace("{clan}", $pf->get("Clan"), $lang->get("clanleaveconfirm")));
@@ -430,7 +430,7 @@ class ClanCommand extends Command
                                                         $clan->set("player6", "");
                                                         $clan->set("Member", $clan->get("Member") - 1);
                                                         $clan->save();
-                                                        $pf->set("Clan", "");
+                                                        $pf->set("Clan", "No Clan");
                                                         $pf->set("ClanStatus", false);
                                                         $pf->save();
                                                         $sender->sendMessage($config->get("clans") . str_replace("{clan}", $pf->get("Clan"), $lang->get("clanleaveconfirm")));
@@ -439,7 +439,7 @@ class ClanCommand extends Command
                                                             $clan->set("player7", "");
                                                             $clan->set("Member", $clan->get("Member") - 1);
                                                             $clan->save();
-                                                            $pf->set("Clan", "");
+                                                            $pf->set("Clan", "No Clan");
                                                             $pf->set("ClanStatus", false);
                                                             $pf->save();
                                                             $sender->sendMessage($config->get("clans") . str_replace("{clan}", $pf->get("Clan"), $lang->get("clanleaveconfirm")));
@@ -448,7 +448,7 @@ class ClanCommand extends Command
                                                                 $clan->set("player8", "");
                                                                 $clan->set("Member", $clan->get("Member") - 1);
                                                                 $clan->save();
-                                                                $pf->set("Clan", "");
+                                                                $pf->set("Clan", "No Clan");
                                                                 $pf->set("ClanStatus", false);
                                                                 $pf->save();
                                                                 $sender->sendMessage($config->get("clans") . str_replace("{clan}", $pf->get("Clan"), $lang->get("clanleaveconfirm")));
@@ -457,7 +457,7 @@ class ClanCommand extends Command
                                                                     $clan->set("player9", "");
                                                                     $clan->set("Member", $clan->get("Member") - 1);
                                                                     $clan->save();
-                                                                    $pf->set("Clan", "");
+                                                                    $pf->set("Clan", "No Clan");
                                                                     $pf->set("ClanStatus", false);
                                                                     $pf->save();
                                                                     $sender->sendMessage($config->get("clans") . str_replace("{clan}", $pf->get("Clan"), $lang->get("clanleaveconfirm")));
@@ -466,7 +466,7 @@ class ClanCommand extends Command
                                                                         $clan->set("player10", "");
                                                                         $clan->set("Member", $clan->get("Member") - 1);
                                                                         $clan->save();
-                                                                        $pf->set("Clan", "");
+                                                                        $pf->set("Clan", "No Clan");
                                                                         $pf->set("ClanStatus", false);
                                                                         $pf->save();
                                                                         $sender->sendMessage($config->get("clans") . str_replace("{clan}", $pf->get("Clan"), $lang->get("clanleaveconfirm")));
@@ -475,7 +475,7 @@ class ClanCommand extends Command
                                                                             $clan->set("player11", "");
                                                                             $clan->set("Member", $clan->get("Member") - 1);
                                                                             $clan->save();
-                                                                            $pf->set("Clan", "");
+                                                                            $pf->set("Clan", "No Clan");
                                                                             $pf->set("ClanStatus", false);
                                                                             $pf->save();
                                                                             $sender->sendMessage($config->get("clans") . str_replace("{clan}", $pf->get("Clan"), $lang->get("clanleaveconfirm")));
@@ -484,7 +484,7 @@ class ClanCommand extends Command
                                                                                 $clan->set("player12", "");
                                                                                 $clan->set("Member", $clan->get("Member") - 1);
                                                                                 $clan->save();
-                                                                                $pf->set("Clan", "");
+                                                                                $pf->set("Clan", "No Clan");
                                                                                 $pf->set("ClanStatus", false);
                                                                                 $pf->save();
                                                                                 $sender->sendMessage($config->get("clans") . str_replace("{clan}", $pf->get("Clan"), $lang->get("clanleaveconfirm")));
@@ -598,14 +598,14 @@ class ClanCommand extends Command
             });
             $form->setTitle($lang->get("clanlistuititle"));
             $form->setContent("§e/clan make (ClanName)\n" .
-                "§e/clan delete confirm\n" .
-                "§e/clan leave confirm\n" .
-                "§e/clan add (player)\n" .
-                "§e/clan accept (ClanName)\n" .
-                "§e/clan list\n" .
-                "§e/clan list (Clanname)\n" .
-                "§e/clan leader1 (player)\n" .
-                "§e/clan leader2 (player)");
+                "§e/clan delete confirm » Lösche deinen Clan\n" .
+                "§e/clan leave confirm » Verlasse einen Clan\n" .
+                "§e/clan add (player) » Füge einen Spieler deinen Clan Hinzu\n" .
+                "§e/clan accept (ClanName) » Bestätige die Clananfrage\n" .
+                "§e/clan list » Liste den Clan auf\n" .
+                "§e/clan list (Clanname) » Liste ein Clan auf\n" .
+                "§e/clan leader1 (player) » Befördere einen Spieler zum Ersten Officier\n" .
+                "§e/clan leader2 (player) » Befördere einen Spieler zum Zweiten Officier");
             $form->addButton($lang->get("clanlistuibutton"));
             $form->sendToPlayer($sender);
             return true;

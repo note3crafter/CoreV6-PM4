@@ -23,20 +23,25 @@ class WarpCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("warp", $config->get("prefix") . "§aTeleportiere dich zu einem Warp", "/warp");
+        parent::__construct("warp", $config->get("prefix") . $lang->get("warpprefix"), "/warp");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-
         if (!$sender instanceof Player) {
-            $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (empty($args[0])) {
-            $sender->sendMessage($config->get("info") . "§cBenutze : /warp [warpname]");
+            $sender->sendMessage($config->get("info") . $lang->get("warpusage"));
         }
         if (isset($args[0])) {
             $name = $args[0];
@@ -46,15 +51,19 @@ class WarpCommand extends Command
             $z = $warp->getNested($args[0] . ".Z");
             $world = $warp->getNested($args[0] . ".world");
             if ($name === null) {
-                $sender->sendMessage($config->get("info") . "§cBenutze : /listwarp um die verfügbaren Warps zu sehen");
+                $sender->sendMessage($config->get("info") . $lang->get("warpinfo"));
                 return false;
             } else {
                 if ($world == null) {
-                    $sender->sendMessage($config->get("error") . "§6Der angegebene Warp §c$args[0] §6existiert nicht.");
+                    $message = str_replace("{warp}", $args[0], $lang->get("warpnotexicst"));
+                    $sender->sendMessage($config->get("error") . $message);
                     return false;
                 } else {
                     $this->plugin->getServer()->getWorldManager()->loadWorld($world);
 					$sender->teleport(new Position($x , $y , $z, $this->plugin->getServer()->getWorldManager()->getWorldByName($world)));
+
+                    $message = str_replace("{warp}", $args[0], $lang->get("warpsucces"));
+                    $sender->sendMessage($config->get("prefix") . $message);
                 }
                 return false;
             }

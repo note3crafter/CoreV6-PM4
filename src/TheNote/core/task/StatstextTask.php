@@ -50,7 +50,7 @@ class StatstextTask extends Task
             } elseif ($this->plugin->anni === 2) {
                 $this->plugin->anni = 1;
             }
-            if ($config->get("statstext") == true) {
+            if ($config->get("leaderboard") == true) {
                 if (!isset($this->floattext[$player->getName()])) {
 
                     # existiert noch nicht

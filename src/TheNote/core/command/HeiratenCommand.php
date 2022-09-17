@@ -27,6 +27,9 @@ class HeiratenCommand extends Command implements Listener
 	public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         parent::__construct("heiraten", $config->get("prefix") . "Heirate andere Spieler", "/heiraten", ["hei"]);
         $this->plugin = $plugin;
@@ -35,9 +38,12 @@ class HeiratenCommand extends Command implements Listener
 
     public function execute(CommandSender $sender, string $label, array $args)
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (isset($args[0])) {
@@ -47,36 +53,46 @@ class HeiratenCommand extends Command implements Listener
                 $ba = $this->getPCFG($victim->getName(), "antrag");
                 $antrag = $this->plugin->getServer()->getPlayerExact($ba);
 
-               /* if (isset($antrag) AND $antrag instanceof Player) {
-                    $sender->sendMessage($config->get("heirat") . "§c" . $victim->getName() . " §6hat bereits einen §aAntrag §6von §c" . $antrag->getName() . "§6 am laufen.");
-                } else {*/
+                if (isset($antrag) AND $antrag instanceof Player) {
+                    $message = str_replace("{sender}" , $sender->getNameTag(), $lang->get("heierror"));
+                    $message1 = str_replace("{victim}", $victim->getName(), $message);
+                    $sender->sendMessage($config->get("prefix") . $message1);
+                } else {
 
                     if ($victim === $sender) {
-                        $sender->sendMessage($config->get("heirat") . "§cDu kannst dich nicht selbst heiraten!");
+                        $sender->sendMessage($config->get("error") . $lang->get("heinoyourself"));
 
                     } else {
                         $bh = $this->getPCFG($victim->getName(), "heiraten");
                         $hochzeit = $this->plugin->getServer()->getPlayerExact($bh);
 
                         if (isset($hochzeit) AND $hochzeit instanceof Player) {
-                            $sender->sendMessage($config->get("heirat") . "§c" . $victim->getName() . "§6 ist bereits mit §c" . $hochzeit->getName() . "§a verheiratet.");
+                            $message = str_replace("{player}" , $hochzeit->getName(), $lang->get("heiratet"));
+                            $message1 = str_replace("{victim}", $victim->getName(), $message);
+                            $sender->sendMessage($config->get("heirat") . $message1);
 
                         } else {
                             $this->addPCFG($victim->getName(), "antrag", $sender->getName());
-                            $this->plugin->getServer()->broadcastMessage($config->get("heirat") . "§c" . $sender->getName() . "§6 macht gerade §c" . $victim->getName() . "§6 einen §aHeiratsantrag! ");
-                            $victim->sendMessage($config->get("heirat") . $sender->getName() . " §6hat dir gerade einen §aHeiratsantrag §6gemacht! Nimm diesen mit §e/heiraten annehmen §6an oder lehne ihn mit §e/heiraten ablehnen §6ab.");
+                            $message = str_replace("{sender}", $sender->getName(), $lang->get("heibc"));
+                            $message1 = str_replace("{victim}", $victim->getName(), $message);
+                            $this->plugin->getServer()->broadcastMessage($config->get("heirat") . $message1);
+                            $message2 = str_replace("{sender}", $sender->getName(), $lang->get("heisuccestarget"));
+                            $victim->sendMessage($config->get("heirat") . $message2);
                         }
-                 //   }
+                    }
                 }
             } else {
                 switch (strtolower($args[0])) {
                     case "annehmen":
+                    case "accept":
                         $antrag = $this->getPCFG($sender->getName(), "antrag");
                         $victim = $this->plugin->getServer()->getPlayerExact($antrag);
                         $hei = new Config($this->plugin->getDataFolder() . Main::$heifile . $sender->getName() . ".json", Config::JSON);
                         $user = new Config($this->plugin->getDataFolder() . Main::$userfile . $sender->getName() . ".json", Config::JSON);
                         if (isset($victim) AND $victim instanceof Player) {
-                            $this->plugin->getServer()->broadcastMessage($config->get("heirat") . "§a" . $sender->getName() . "§6 und §a" . $victim->getName() . "§6 sind jetzt §averheiratet!");
+                            $message = str_replace("{sender}", $sender->getName(), $lang->get("heianbc"));
+                            $message1 = str_replace("{victim}", $victim->getName(), $message);
+                            $this->plugin->getServer()->broadcastMessage($config->get("heirat") . $message1);
                             $this->addPCFG($victim->getName(), "heiraten", $sender->getName());
                             $this->addPCFG($sender->getName(), "heiraten", $victim->getName());
                             $packet = new OnScreenTextureAnimationPacket();
@@ -94,27 +110,31 @@ class HeiratenCommand extends Command implements Listener
                             $heiv->set("heistatus", true);
                             $heiv->save();
                         } else {
-                            $sender->sendMessage($config->get("heirat") . "§cDu hast derzeit keine §aAnträge.");
+                            $sender->sendMessage($config->get("heirat") . $lang->get("heianerror"));
                         }
                         break;
                     case "ablehnen":
+                    case "denied":
                         $antrag = $this->getPCFG($sender->getName(), "antrag");
                         $victim = $this->plugin->getServer()->getPlayerExact($antrag);
 
                         if (isset($victim) AND $victim instanceof Player) {
-                            $this->plugin->getServer()->broadcastMessage($config->get("heirat") . "§a" . $sender->getName() . "§6 hat den §aAntrag §6von §a" . $victim->getName() . "§c abgelehnt! :-(");
+                            $message = str_replace("{sender}", $sender->getName(), $lang->get("heiabc"));
+                            $message1 = str_replace("{victim}", $victim->getName(), $message);
+                            $this->plugin->getServer()->broadcastMessage($config->get("heirat") . $message1);
 
                             $x = $this->getPCFG($sender->getName(), "antrag-abgelehnt");
                             $this->addPCFG($sender->getName(), "antrag-abgelehnt", ($x + 1));
                             $this->addPCFG($sender->getName(), "antrag", NULL);
 
                         } else {
-                            $sender->sendMessage($config->get("heirat") . "§cDu hast derzeit keine §aAnträge.");
+                            $sender->sendMessage($config->get("heirat") . $lang->get("heiaberror"));
                         }
 
 
                         break;
                     case "scheidung":
+                    case "divorce":
                         $scheidung = $this->getPCFG($sender->getName(), "heiraten");
                         $victim = $this->plugin->getServer()->getPlayerExact($scheidung);
 
@@ -127,21 +147,28 @@ class HeiratenCommand extends Command implements Listener
                             $hei->save();
                             $heiv->set("heistatus", false);
                             $heiv->save();
-                            $victim->sendMessage($config->get("heirat") . "§cLeider hat sich " . $sender->getName() . "§c von dir Getrennt :c");
-                            $sender->sendMessage($config->get("heirat") . "§aDu hast dich von " . $victim->getNameTag() . "§aGetrennt.");
+                            $message = str_replace("{sender}", $sender->getName(), $lang->get("heischbc"));
+                            $message1 = str_replace("{victim}", $victim->getName(), $message);
+                            $this->plugin->getServer()->broadcastMessage($config->get("heirat") . $message1);
+
+                            $message2 = str_replace("{sender}", $sender->getName(), $lang->get("heischsender"));
+                            $victim->sendMessage($config->get("heirat") . $message2);
+
+                            $message3 = str_replace("{victim}", $victim->getNameTag(), $lang->get("heischtarget"));
+                            $sender->sendMessage($config->get("heirat") . $message3);
                             $packet = new OnScreenTextureAnimationPacket();
                             $packet->effectId = 20;
                             $sender->sendData((array)$packet);
                             $victim->sendData((array)$packet);
 
                         } else {
-                            $sender->sendMessage($config->get("heirat") . "§cDu bist derzeit nicht §averheiratet.");
+                            $sender->sendMessage($config->get("heirat") . $lang->get("heischerror"));
                         }
 
                         break;
                     case "hilfe":
-                        $sender->getName();
-                        $sender->sendMessage("§aBenutze : /hei [name] scheidung/suprise/annehmen/ablehnen");
+                    case "help":
+                        $sender->sendMessage($config->get("info") . $lang->get("heiusage"));
 
                         break;
                     case "surprise":
@@ -165,13 +192,9 @@ class HeiratenCommand extends Command implements Listener
 
                             $surprise = $b[rand(0, 7)];
                             $this->plugin->getServer()->broadcastMessage($config->get("heirat") . $surprise);
-
-
                         } else {
-                            $sender->sendMessage($config->get("heirat") . "§cDu bist derzeit nicht verheiratet.");
-
+                            $sender->sendMessage($config->get("heirat") . $lang->get("heischerror"));
                         }
-
                         break;
                 }
 
@@ -213,6 +236,9 @@ class HeiratenCommand extends Command implements Listener
 
     public function setScheidung($a)
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $player = $a->getLowerCaseName();
         $x = new Config($this->plugin->getDataFolder() . Main::$heifile . strtolower($player) . ".json", Config::JSON);
         $hochzeit = $x->get("heiraten");
@@ -225,19 +251,20 @@ class HeiratenCommand extends Command implements Listener
         $heiv = new Config($this->plugin->getDataFolder() . Main::$userfile . $victim . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
 
-        $v->set("heiraten", NULL);
+        $v->set("heiraten", "No Partners");
         $v->set("heiraten-hit", 0);
         $vgesch = $v->get("geschieden");
         $v->set("geschieden", $vgesch + 1);
         $v->save();
 
-        $x->set("heiraten", NULL);
+        $x->set("heiraten", "No Partners");
         $x->set("heiraten-hit", 0);
         $xgesch = $x->get("geschieden");
         $x->set("geschieden", $xgesch + 1);
         $x->save();
-
-        $this->plugin->getServer()->broadcastMessage($config->get("heirat") . "§a" . $player . "§6 und §a" . $victim . "§6 haben sich grade geschiden!");
+        $message = str_replace("{sender}", $player, $lang->get("heischbc"));
+        $message1 = str_replace("{victim}", $victim, $message);
+        $this->plugin->getServer()->broadcastMessage($config->get("heirat") . $message1);
         $hei->set("heistatus", false);
         $hei->save();
         $heiv->set("heistatus", false);

@@ -20,6 +20,7 @@ use pocketmine\item\Item;
 use pocketmine\item\ItemIds;
 use pocketmine\item\VanillaItems;
 use pocketmine\math\Vector3;
+use pocketmine\network\mcpe\protocol\SpawnParticleEffectPacket;
 use pocketmine\player\Player;
 use TheNote\core\sounds\ComposterEmptySound;
 use TheNote\core\sounds\ComposterFillSound;
@@ -99,19 +100,30 @@ class Composter extends Opaque
         return 0b1111;
     }
 
+    private function spawnParticleEffect(Vector3 $position): void
+    {
+        $packet = new SpawnParticleEffectPacket();
+        $packet->position = $position;
+        $packet->particleName = "minecraft:crop_growth_emitter";
+        $recipients = $this->position->getWorld()->getViewersForPosition($this->position);
+        foreach($recipients as $player){
+            $player->getNetworkSession()->sendDataPacket($packet);
+        }
+    }
+
     public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null): bool
     {
         if ($this->fill >= 8) {
             $this->fill = 0;
             $this->position->getWorld()->setBlock($this->position, $this);
             $this->position->getWorld()->addSound($this->position, new ComposterEmptySound());
-            $this->position->getWorld()->dropItem($this->position, VanillaItems::BONE_MEAL());
+            $this->position->getWorld()->dropItem($this->position->add(0.5, 1.1, 0.5), VanillaItems::BONE_MEAL());
             return true;
         }
         if (isset($this->ingridients[$item->getId()]) && $this->fill < 7) {
             $item->pop();
+            $this->spawnParticleEffect($this->position->add(0.5, 0.5, 0.5));
             if ($this->fill == 0) {
-
                 $this->incrimentFill(true);
                 return true;
             }
@@ -124,7 +136,6 @@ class Composter extends Opaque
         }
         return true;
     }
-
 
     public function incrimentFill(bool $playsound = false): bool
     {
@@ -147,7 +158,7 @@ class Composter extends Opaque
         if ($this->fill == 7) {
             ++$this->fill;
             $this->position->getWorld()->setBlock($this->position, $this);
-            $this->position->getWorld()->addSound($this->position, new ComposterReadySound() );
+            $this->position->getWorld()->addSound($this->position, new ComposterReadySound());
         }
     }
 }

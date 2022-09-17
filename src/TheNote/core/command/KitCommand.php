@@ -65,9 +65,10 @@ class KitCommand extends Command
                     if ($time->format("d.m.Y H:i") > $now->format("d.m.Y H:i")) {
                         $sender->sendMessage($config->get("kits") . "§r§6Du kannst deine Wöchentliche Belohnung erst am§c $bannedtime h §6wieder abholen.");
                         return false;
-                    } elseif (!$sender->getInventory()->canAddItem($emptySlots)) {
+                    } elseif ($sender->getInventory()->canAddItem($emptySlots)) {
                         $sender->sendMessage($config->get("kits") . "§cDu benötigst mindestens " . $kit->get("weeklyslots") . " Freie Slots in deinem Inventarum dieses Kit zu Claimen!");
                         return false;
+
                     } else {
                         $newtime = new DateTime("now", new DateTimeZone("Europe/Berlin"));
                         $newtime->modify("+7 day");

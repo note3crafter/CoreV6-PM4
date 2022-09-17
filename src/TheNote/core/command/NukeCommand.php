@@ -28,20 +28,26 @@ class NukeCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("nuke", $config->get("prefix") . "Jage die Umgebung in die Luft", "/nuke");
+        parent::__construct("nuke", $config->get("prefix") . $lang->get("nukeprefix"), "/nuke");
         $this->setPermission("core.command.nuke");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
-        $configs = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
+        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($configs->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($configs->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
             return false;
         }
         if (isset($args[0])) {
@@ -49,25 +55,26 @@ class NukeCommand extends Command
                 $victim = $this->plugin->getServer()->getPlayerExact($args[0]);
                 $target = Server::getInstance()->getPlayerExact(strtolower($args[0]));
                 if ($target == null) {
-                    $sender->sendMessage($configs->get("error") . "Der Spieler ist nicht Online!");
+                    $sender->sendMessage($config->get("error") . $lang->get("playernotonline"));
                     return false;
                 } else {
                     $explosion = new Explosion($sender->getPosition(),100);
                     $explosion->explodeA();
                     $explosion->explodeB();
-                    $victim->sendMessage($configs->get("prefix") . "§6Du wurdest genuket!!!.");
-                    $sender->sendMessage($configs->get("prefix") . "§6Du hast " . $victim->getName() ." §6genuket.");
+                    $victim->sendMessage($config->get("prefix") . $lang->get("nuketarget"));
+                    $message = str_replace("{victim}", $victim->getName(), $lang->get("nukesender"));
+                    $sender->sendMessage($config->get("prefix") . $message);
                     return false;
                 }
             } else {
-                $sender->sendMessage($configs->get("error") . "Du hast keine Berechtigung um anderen Spieler in die Luft zu jagen zu!");
+                $sender->sendMessage($config->get("error") . $lang->get("nukenopermtarget"));
                 return false;
             }
         }
         $explosion = new Explosion($sender->getPosition(),100);
         $explosion->explodeA();
         $explosion->explodeB();
-        $sender->sendMessage($configs->get("prefix") . "§6Du hast eine Atombombe gelegt!");
+        $sender->sendMessage($config->get("prefix") . $lang->get("nukesucces"));
         return true;
     }
 }

@@ -23,21 +23,28 @@ class MyMoneyCommand extends Command implements Listener
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("mymoney", $config->get("prefix") . "Siehe deinen Geldstand", "/mymoney");
+        parent::__construct("mymoney", $config->get("prefix") . $lang->get("mymoneyprefix"), "/mymoney");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         $money = new Config($this->plugin->getDataFolder() . Main::$cloud . "Money.yml", Config::YAML);
         $name = $sender->getName();
         $mymoney = $money->getNested("money.$name");
-        $sender->sendMessage($config->get("money") . "Dein Geldstand ist §f: §e" . $mymoney . "$");
+        $message = str_replace("{money}", $mymoney, $lang->get("mymoney"));
+        $sender->sendMessage($config->get("money") . $message);
         return true;
     }
 }

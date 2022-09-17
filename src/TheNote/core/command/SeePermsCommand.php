@@ -62,6 +62,8 @@ class SeePermsCommand extends Command
         $pageHeight = $sender instanceof ConsoleCommandSender ? 48 : 6;
         $chunkedPermissions = array_chunk($permissions, $pageHeight);
         $maxPageNumber = count($chunkedPermissions);
+        $permArray = PermissionManager::getInstance()->getPermissions(); //Gets all permissions objects
+        $permName_DescArray = [];
         if (!isset($args[1]) || !is_numeric($args[1]) || $args[1] <= 0) {
             $pageNumber = 1;
         } else if ($args[1] > $maxPageNumber) {
@@ -73,9 +75,16 @@ class SeePermsCommand extends Command
             $sender->sendMessage($config->get("group") . "§6Seite §f: §e" . $pageNumber . "§f/§e" . $maxPageNumber);
         }
 
-		foreach ($chunkedPermissions[$pageNumber - 1] as $permission) {
+		/*foreach ($chunkedPermissions[$pageNumber - 1] as $permission) {
             $sender->sendMessage("§e" . $permission->getName());
         }
+        return true;*/
+
+        foreach($permArray as $perm)
+        {
+            $permName_DescArray[] = TextFormat::DARK_PURPLE."Permission: " . TextFormat::GREEN.$perm->getName() . TextFormat::YELLOW . " Description: " . $perm->getDescription(); //Message parsing
+        }
+        $this->plugin->getServer()->getLogger()->info("Here are all of the permission nodes:\n" . implode("\n", $permName_DescArray));
         return true;
 
     }

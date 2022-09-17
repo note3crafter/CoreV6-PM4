@@ -24,12 +24,18 @@ class TopMoneyCommand extends Command implements Listener
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("topmoney", $config->get("prefix") . "Siehe die Topliste der Spieler", "/topmoney");
+        parent::__construct("topmoney", $config->get("prefix") . $lang->get("topmoneyprefix"), "/topmoney");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args)
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $moneys = new Config($this->plugin->getDataFolder() . Main::$cloud . "Money.yml", Config::YAML);
         $moneys = $moneys->get("money", []);
         $money = [];
@@ -37,7 +43,7 @@ class TopMoneyCommand extends Command implements Listener
             $money[] = ["Money" => $m ,"Player" => $p];
         }
         rsort($money);
-        $sender->sendMessage("=======§f[§eTopMoney§f]=======");
+        $sender->sendMessage($lang->get("topmoneytitle"));
         $money = array_slice($money, 0, 10);
         foreach ($money as $rank => $data) {
             $datas = round($data["Money"], 2);

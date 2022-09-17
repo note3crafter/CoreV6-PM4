@@ -24,39 +24,44 @@ class NickCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("nick", $config->get("prefix") . "Ändere dein §eNickname", "/nick <Name>");
+        parent::__construct("nick", $config->get("prefix") . $lang->get("nickprefix"), "/nick <Name>");
         $this->setPermission("core.command.nick");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         $pf = new Config($this->plugin->getDataFolder() . Main::$gruppefile . $sender->getName() . ".json", Config::JSON);
         $groups = new Config($this->plugin->getDataFolder(). Main::$cloud . "groups.yml", Config::YAML);
         $playerdata = new Config($this->plugin->getDataFolder() . Main::$cloud . "players.yml", Config::YAML);
-
         if (!$sender instanceof Player) {
-            $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
             return false;
         }
         if ($pf->get("Nick") === true) {
-            $sender->sendMessage($config->get("error") . "Du hast bereits ein Nickname");
+            $sender->sendMessage($config->get("error") . $lang->get("nickalreadyname"));
             return true;
         }
         If (empty($args[0])) {
-            $sender->sendMessage($config->get("info") . "§eBitte benutze /nick <name>");
+            $sender->sendMessage($config->get("info") . $lang->get("nickusage"));
             return true;
         }
         $name = $sender->getName();
         If (isset($args[0])) {
-
             $nickname = $args[0];
-            $sender->sendMessage($config->get("info") . "§6Du hast deinen Nicknamen zu §e$nickname §6geändert!");
+            $message = str_replace("{nick}", $nickname, $lang->get("nick"));
+            $sender->sendMessage($config->get("info") . $message);
             $pf->set("Nick", true);
             $pf->set("Nickname", $args[0]);
             $pf->save();

@@ -14,7 +14,7 @@ namespace TheNote\core\command;
 use TheNote\core\Main;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 
 class KickallCommand extends Command
@@ -24,37 +24,43 @@ class KickallCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("kickall", $config->get("prefix") . "Kickt alle Spieler vom Server!", "/kickall");
+        parent::__construct("kickall", $config->get("prefix") . $lang->get("kickallprefix"), "/kickall");
         $this->setPermission("core.command.kickall");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        if (!$this->testPermission($sender)) {
-            $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+        if (!$sender instanceof Player) {
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (empty($args[0])) {
-            $sender->sendMessage($config->get("info") . "Nutze: /kickall {reason}");
+            $sender->sendMessage($config->get("info") . $lang->get("kickallusage"));
         }
-
-            if (isset($args[0])) {
-                $onlinePlayers = $this->plugin->getServer()->getOnlinePlayers();
-                if ($sender->hasPermission("core.command.kickall") || $sender->isOp()) {
-                    foreach ($this->plugin->getServer()->getOnlinePlayers() as $players) {
-                        $name = $sender->getDisplayName();
-                        if (count($onlinePlayers) === 0 || (count($onlinePlayers) === 1)) {
-                            $sender->sendMessage($config->get("error") . "§cEs sind keine Spieler Online zum kicken");
-                        } elseif ($players !== $sender) {
-                            $players->kick($config->get("info") . "Jeder wurde vom Server gekickt!\n§cGrund : $args[0]", false);
-                            $this->plugin->getServer()->broadcastMessage($config->get("info") . "§c$name §6hat alle Spieler vom Server gekickt!");
-                        }
+        if (isset($args[0])) {
+            $onlinePlayers = $this->plugin->getServer()->getOnlinePlayers();
+            if ($sender->hasPermission("core.command.kickall") || $sender->isOp()) {
+                foreach ($this->plugin->getServer()->getOnlinePlayers() as $players) {
+                    $name = $sender->getDisplayName();
+                    if (count($onlinePlayers) === 0 || (count($onlinePlayers) === 1)) {
+                        $sender->sendMessage($config->get("error") . $lang->get("kickallnoonline"));
+                    } elseif ($players !== $sender) {
+                        $message = str_replace("{reason}", $args[0], $lang->get("kickallsucces"));
+                        $players->kick($config->get("info") . $message, false);
+                        $message1 = str_replace("{sender}", $name . $lang->get("kickallbc"));
+                        $this->plugin->getServer()->broadcastMessage($config->get("info") . $message1);
                     }
                 }
             }
-
+        }
         return true;
     }
 }

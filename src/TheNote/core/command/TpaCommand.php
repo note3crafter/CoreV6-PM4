@@ -25,32 +25,40 @@ class TpaCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("tpa", $config->get("prefix") . "Sende eine Teleportanfrage an einem Spieler", "/tpa");
+        parent::__construct("tpa", $config->get("prefix") . $lang->get("tpaprefix"), "/tpa");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
-        $configs = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
+        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($configs->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (empty($args[0])) {
-            $sender->sendMessage($configs->get("info") . "Nutze : /tpa {player}");
+            $sender->sendMessage($config->get("info") . $lang->get("tpausage"));
             return false;
         }
         $target = Server::getInstance()->getPlayerExact(strtolower($args[0]));
         if ($target === $sender){
-            $sender->sendMessage($configs->get("error") . "§cDu kannst dir keine TPA´s schicken!");
+            $sender->sendMessage($config->get("error") . $lang->get("tpanotyourself"));
             return false;
         }
         if ($target instanceof Player) {
             $this->plugin->setInvite($sender, $target);
-            $target->sendMessage($configs->get("tpa") . "§e" . $sender->getName() . " §6hat dir eine TPA-Anfrage gesendet! Nehme sie mit /tpaccept an oder lehne sie mit /tpadeny ab!");
-            $sender->sendMessage($configs->get("tpa") . " §6Du hast §e". $target->getName() . " §6eine TPA-Anfrage gesendet!");
+            $message = str_replace("{sender}", $sender->getName(), $lang->get("tpatarget"));
+            $target->sendMessage($config->get("tpa") . $message);
+            $message1 = str_replace("{target}", $target->getName(), $lang->get("tpasender"));
+            $sender->sendMessage($config->get("tpa") . $message1);
         } else {
-            $sender->sendMessage($configs->get("tpa") . "Bitte gebe ein Spieler an!");
+            $sender->sendMessage($config->get("tpa") . $lang->get("playernotonline"));
         }
         return true;
     }

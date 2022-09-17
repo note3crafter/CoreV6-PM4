@@ -15,6 +15,7 @@ use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockLegacyIds as Ids;
 use pocketmine\block\utils\RecordType;
 use pocketmine\inventory\ArmorInventory;
+use pocketmine\inventory\CreativeInventory;
 use pocketmine\item\Armor;
 use pocketmine\item\ArmorTypeInfo;
 use pocketmine\item\Axe;
@@ -27,10 +28,14 @@ use pocketmine\item\ItemIds;
 use pocketmine\item\Pickaxe;
 use pocketmine\item\Record;
 use pocketmine\item\Shovel;
+use pocketmine\item\StringToItemParser;
 use pocketmine\item\Sword;
 use pocketmine\item\ToolTier;
 use pocketmine\lang\Translatable;
+use pocketmine\network\mcpe\convert\ItemTranslator;
+use ReflectionClass;
 use TheNote\core\utils\CustomIds;
+use const pocketmine\BEDROCK_DATA_PATH;
 
 class ItemManager
 {
@@ -76,18 +81,19 @@ class ItemManager
         $factory->register(new Armor(new ItemIdentifier(CustomIds::NETHERITE_LEGGINGS, 0), 'Netherite Leggings', new ArmorTypeInfo(3, 481, ArmorInventory::SLOT_LEGS)), true);
         $factory->register(new Armor(new ItemIdentifier(CustomIds::NETHERITE_BOOTS, 0), 'Netherite Boots', new ArmorTypeInfo(6, 555, ArmorInventory::SLOT_FEET)), true);
         $factory->register(new ItemBlock(new ItemIdentifier(CustomIds::CHAIN_ITEM, 0), BlockFactory::getInstance()->get(CustomIds::CHAIN_BLOCK, 0)), true);
-        $factory->register(new LodestoneCompass(new ItemIdentifier(CustomIds::LODESTONE_COMPASS,0)), true);
+        $factory->register(new LodestoneCompass(new ItemIdentifier(CustomIds::LODESTONE_COMPASS, 0)), true);
+        //$factory->register(new Spyglass(new ItemIdentifier(CustomIds::SPYGLASS, 0), "Spyglass"), true);
 
-        ItemFactory::getInstance()->register(new Armor(new ItemIdentifier(449, 0), "Turtle Helmet", new ArmorTypeInfo(2,  275, ArmorInventory::SLOT_HEAD)), true);
+        ItemFactory::getInstance()->register(new Armor(new ItemIdentifier(449, 0), "Turtle Helmet", new ArmorTypeInfo(2, 275, ArmorInventory::SLOT_HEAD)), true);
         //ItemFactory::getInstance()->register(new Shield(new ItemIdentifier(ItemIds::SHIELD, 0), "Shield"), true);
         ItemFactory::getInstance()->register(new Item(new ItemIdentifier(ItemIds::ELYTRA, 0), "Elytra"), true);
-        ItemFactory::getInstance()->register(new Item(new ItemIdentifier(ItemIds::TRIDENT, 0), "Trident"), true);
+        //ItemFactory::getInstance()->register(new Item(new ItemIdentifier(ItemIds::TRIDENT, 0), "Trident"), true);
         ItemFactory::getInstance()->register(new Item(new ItemIdentifier(ItemIds::LEAD, 0), "Lead"), true);
         ItemFactory::getInstance()->register(new Item(new ItemIdentifier(ItemIds::CROSSBOW, 0), "Crossbow"), true);
         ItemFactory::getInstance()->register(new Item(new ItemIdentifier(ItemIds::ENDER_EYE, 0), "Ender Eye"), true);
         ItemFactory::getInstance()->register(new Item(new ItemIdentifier(ItemIds::SADDLE, 0), "Saddle"), true);
         ItemFactory::getInstance()->register(new Item(new ItemIdentifier(ItemIds::FIREWORKS, 0), "Fireworks"), true);
-        //ItemFactory::getInstance()->register(new NetheriteHelmet(new ItemIdentifier(ItemIds::, 0), "Trident"));
+        ItemFactory::getInstance()->register(new Trident(new ItemIdentifier(ItemIds::TRIDENT, 0), "Trident"));
 
         /*ItemFactory::registerItem(new Trident(), true);
         ItemFactory::registerItem(new EndCrystal(), true);
@@ -98,6 +104,6 @@ class ItemManager
         //ItemFactory::addCreativItem(new Item(525, 0, "Netherite Block"), true);
         ItemFactory::registerItem(new Firework(), true);*/
         //Item::initCreativeItems();
-
     }
 }
+

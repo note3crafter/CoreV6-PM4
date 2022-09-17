@@ -26,26 +26,26 @@ class AbenteuerCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
-        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
         $l = $langsettings->get("Lang");
         $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
+        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         parent::__construct("gma", $config->get("prefix") . $lang->get("adventureprefix"), "/gma", ["abenteuer", "gm2"]);
         $this->setPermission("core.command.adventure");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): int
     {
-        $configs = new Config($this->plugin->getDataFolder() . Main::$setup . "settings.json", Config::JSON);
         $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
         $l = $langsettings->get("Lang");
         $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
+        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings.json", Config::JSON);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($configs->get("error") . $lang->get("commandingame"));
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($configs->get("error") . $lang->get("nopermission"));
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
             return false;
         }
         if (isset($args[0])) {
@@ -53,20 +53,22 @@ class AbenteuerCommand extends Command
                 $victim = $this->plugin->getServer()->getPlayerExact($args[0]);
                 $target = Server::getInstance()->getPlayerExact(strtolower($args[0]));
                 if ($target == null) {
-                    $sender->sendMessage($configs->get("error") . $lang->get("playernotonline"));
+                    $sender->sendMessage($config->get("error") . $lang->get("playernotonline"));
                     return false;
                 } else {
                     $victim->setGamemode(GameMode::ADVENTURE());
                     $cfgmsg = str_replace("{victim}", $victim->getName(), $lang->get("adventuretarget2"));
-                    $victim->sendMessage($configs->get("prefix") . $lang->get("adventuretarget1"));
-                    $sender->sendMessage($configs->get("prefix") . $cfgmsg);
+                    $victim->sendMessage($config->get("prefix") . $lang->get("adventuretarget1"));
+                    $sender->sendMessage($config->get("prefix") . $cfgmsg);
                     return false;
                 }
+            } else {
+                $sender->sendMessage($config->get("error") . $lang->get("adventurenopermtarget"));
+                return false;
             }
         }
         $sender->setGamemode(GameMode::ADVENTURE()) ;
-        $sender->sendMessage($configs->get("prefix") . $lang->get("adventuresender"));
+        $sender->sendMessage($config->get("prefix") . $lang->get("adventuresender"));
         return true;
     }
-
 }

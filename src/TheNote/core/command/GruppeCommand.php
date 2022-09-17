@@ -25,7 +25,10 @@ class GruppeCommand extends Command
     {
         $this->plugin = $plugin;
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("group", $config->get("prefix") . "Setze die Gruppe eines Spielers", "/group", ["gruppe"]);
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
+        parent::__construct("group", $config->get("prefix") . $lang->get("groupprefix"), "/group", ["gruppe"]);
         $this->setPermission("core.command.group");
     }
 
@@ -34,8 +37,11 @@ class GruppeCommand extends Command
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         $groups = new Config($this->plugin->getDataFolder() . Main::$cloud . "groups.yml", Config::YAML);
         $playerdata = new Config($this->plugin->getDataFolder() . Main::$cloud . "players.yml", Config::YAML);
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
             return false;
         }
         if (empty($args[0])) {
@@ -77,7 +83,8 @@ class GruppeCommand extends Command
                 $groups->setNested("Groups." . $groupName . ".displayname", "$groupName §7: §8{name}");
                 $groups->setNested("Groups." . $groupName . ".permissions", ["CoreV5"]);
                 $groups->save();
-                $sender->sendMessage($config->get("gruppe") . "§6Die Gruppe §f:§e $groupName §6wurde hinzugefügt.");
+                $message = str_replace("{group}" , $groupName, $lang->get("groupaddsucces"));
+                $sender->sendMessage($config->get("gruppe") . $message);
             }
             if ($args[0] == "list") {
                 if (empty($args[0])) {
@@ -100,12 +107,13 @@ class GruppeCommand extends Command
                 }
                 $groupName = $args[1];
                 if ($groups->getNested("Groups." . $groupName) == null) {
-                    $sender->sendMessage($config->get("error") . "Die Gruppe gibts nicht... überprüfe deine Eingabe!");
+                    $sender->sendMessage($config->get("error") . $lang->get("grouperror"));
                     return true;
                 }
                 $groups->removeNested("Groups." . $groupName);
                 $groups->save();
-                $sender->sendMessage($config->get("group") . "Die Gruppe $groupName wurde erfolgreich entfernt.");
+                $message = str_replace("{group}" , $groupName, $lang->get("groupremovesucces"));
+                $sender->sendMessage($config->get("gruppe") . $message);
             }
             if ($args[0] == "addperm") {
                 if (empty($args[0])) {
@@ -119,7 +127,7 @@ class GruppeCommand extends Command
                 $groups = new Config($this->plugin->getDataFolder() . Main::$cloud . "groups.yml", Config::YAML);
                 $groupName = $args[1];
                 if ($groups->getNested("Groups." . $groupName) == null) {
-                    $sender->sendMessage($config->get("error") . "Die Gruppe gibts nicht... überprüfe deine Eingabe!");
+                    $sender->sendMessage($config->get("error") . $lang->get("grouperrorperms"));
                     return true;
                 }
                 $perms = $groups->getNested("Groups.{$groupName}.permissions", []);
@@ -127,7 +135,9 @@ class GruppeCommand extends Command
                 $perms[] = $permission;
                 $groups->setNested("Groups.{$groupName}.permissions", $perms);
                 $groups->save();
-                $sender->sendMessage($config->get("gruppe") . "§6Die permissions §e" . $args[2] . " §6wurde für die Gruppe§e " . $args[1] . " §6hinzugefügt");
+                $message = str_replace("{group}" , $args[1], $lang->get("groupaddpermsucces"));
+                $message1 = str_replace("{perm}" , $args[2], $message);
+                $sender->sendMessage($config->get("gruppe") . $message1);
             }
             if ($args[0] == "removeperm") {
                 if (empty($args[0])) {
@@ -141,19 +151,22 @@ class GruppeCommand extends Command
                 $groups = new Config($this->plugin->getDataFolder() . Main::$cloud . "groups.yml", Config::YAML);
                 $groupName = $args[1];
                 if ($groups->getNested("Groups." . $groupName) == null) {
-                    $sender->sendMessage($config->get("error") . "Die Gruppe gibts nicht... überprüfe deine Eingabe!");
+                    $sender->sendMessage($config->get("error") . $lang->get("grouperror"));
                     return true;
                 }
                 $perms = $groups->getNested("Groups.{$groupName}.permissions", []);
                 $permission = $args[2];
                 if (!in_array($permission, $perms)) {
-                    $sender->sendMessage($config->get("error") . "Die Permission gibts nicht! Überprüfe deine Eingabe.");
+                    $sender->sendMessage($config->get("error") . $lang->get("grouperrorperms"));
                     return true;
                 }
                 unset($perms[array_search($permission, $perms)]);
                 $groups->setNested("Groups.{$groupName}.permissions", $perms);
                 $groups->save();
-                $sender->sendMessage($config->get("group") . "§6Die Permission §e" . $args[2] . " §6wurde von der Gruppe§e " . $args[1] . " §6entfernt.");
+
+                $message = str_replace("{group}" , $args[1], $lang->get("groupremovepermsucces"));
+                $message1 = str_replace("{perm}" , $args[2], $message);
+                $sender->sendMessage($config->get("gruppe") . $message1);
             }
             if ($args[0] == "default") {
                 if (empty($args[0])) {
@@ -165,12 +178,13 @@ class GruppeCommand extends Command
                     return true;
                 }
                 if ($groups->getNested("Groups." . $args[1]) == null) {
-                    $sender->sendMessage($config->get("error") . "Die Gruppe gibts nicht... überprüfe deine Eingabe!");
+                    $sender->sendMessage($config->get("error") . $lang->get("grouperror"));
                     return true;
                 }
                 $groups->set("DefaultGroup", $args[1]);
                 $groups->save();
-                $sender->sendMessage($config->get("gruppe") . "Die Gruppe : §f[$args[1]] §6wurde erfolgreich als Standartgruppe ausgewählt.");
+                $message = str_replace("{group}" , $args[1], $lang->get("groupdefaultsucces"));
+                $sender->sendMessage($config->get("gruppe") . $message);
             }
             if ($args[0] == "set") {
                 if (empty($args[0])) {
@@ -188,13 +202,13 @@ class GruppeCommand extends Command
                 $victim = $this->plugin->getServer()->getPlayerByPrefix($args[0]);
                 $target = Server::getInstance()->getPlayerByPrefix(strtolower($args[1]));
                 if ($target == null) {
-                    $sender->sendMessage($config->get("error") . "Der Spieler ist nicht Online!");
+                    $sender->sendMessage($config->get("error") . $lang->get("playernotonline"));
                     return false;
                 }
                 $name = $target->getName();
                 $group = $args[2];
                 if ($groups->getNested("Groups." . $group) == null) {
-                    $sender->sendMessage($config->get("error") . "Die Gruppe gibts nicht... überprüfe deine Eingabe!");
+                    $sender->sendMessage($config->get("error") . $lang->get("grouperror"));
                     return false;
                 }
                 $groupprefix = $groups->getNested("Groups." . $group .".groupprefix");
@@ -213,6 +227,9 @@ class GruppeCommand extends Command
                     $target->addAttachment($this->plugin)->setPermission($data, true);
                 }
                 //$target->kick($config->get("gruppe") . "§6Deine Gruppe wurde zu : $group §6geändert!\n§6Rejoine einfach den Server!", false);
+                $message = str_replace("{group}" , $group, $lang->get("groupsetsucces"));
+                $message1 = str_replace("{player}" , $victim, $message);
+                $sender->sendMessage($config->get("gruppe") . $message1);
                 $sender->sendMessage($config->get("group") . "§6Die Gruppe von $victim wurde zu $group geändert");
             }
             if ($args[0] == "adduserperm") {

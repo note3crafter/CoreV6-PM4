@@ -9,8 +9,6 @@
 //   Copyright by TheNote! Not for Resale! Not for others
 //
 
-declare(strict_types=1);
-
 namespace TheNote\core\command;
 
 use pocketmine\command\Command;
@@ -27,24 +25,30 @@ class SignCommand extends Command {
 	public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-		parent::__construct("sign", $config->get("prefix") . "Signiere ein Item", "/sign <text>");
+		parent::__construct("sign", $config->get("prefix") . $lang->get("signprefix"), "/sign <text>");
 		$this->setPermission("core.command.sign");
 	}
 	
 	public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($config->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
             return false;
         }
 		if(empty($args)) {
-			$sender->sendMessage($config->get("info") . "Nutze: /sign {text}");
+			$sender->sendMessage($config->get("info") . $lang->get("signusage"));
 			return false;
 		}
 		$item = $sender->getInventory()->getItemInHand();
@@ -56,7 +60,7 @@ class SignCommand extends Command {
         $item->setLore([$this->convert("{date} um {time}", $date, $time, $name)."\n".$this->convert("Signiert von {name}", $date, $time, $name)]);
 		$item->setCustomName(str_replace("&", TF::ESCAPE, $fullargs));
         $sender->getInventory()->setItemInHand($item);
-        $sender->sendMessage($config->get("prefix") . "Du hast dein Item erfolgreich Signiert");
+        $sender->sendMessage($config->get("prefix") . $lang->get("signsucces"));
         return true;
     }
 

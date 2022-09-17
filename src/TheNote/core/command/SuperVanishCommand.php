@@ -29,8 +29,11 @@ class SuperVanishCommand extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("supervanish", $config->get("prefix") . "§aAktiviert§f/§cDeaktiviert§6 Supervanish", "/supervanish", ["sv"]);
+        parent::__construct("supervanish", $config->get("prefix") . $lang->get("supervanishprefix"), "/supervanish", ["sv"]);
         $this->setPermission("core.command.supervanish");
     }
     public static function getInstance() : self {
@@ -38,25 +41,28 @@ class SuperVanishCommand extends Command
     }
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$cloud . "Config.yml", Config::YAML);
         $settings = new Config($this->plugin->getDataFolder() . Main::$setup . "settings.json", Config::JSON);
         $playerdata = new Config($this->plugin->getDataFolder() . Main::$cloud . "players.yml", Config::YAML);
         $gruppe = new Config($this->plugin->getDataFolder() . Main::$gruppefile . $sender->getName() . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            $sender->sendMessage($settings->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
+            $sender->sendMessage($config->get("error") . $lang->get("commandingame"));
             return false;
         }
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($settings->get("error") . "Du hast keine Berechtigung um diesen Command auszuführen!");
+            $sender->sendMessage($config->get("error") . $lang->get("nopermission"));
             return false;
         }
         if (empty($args[0])) {
-            $sender->sendMessage($settings->get("info") . "Nutze : /sv <on|off>");
+            $sender->sendMessage($settings->get("info") . $lang->get("supervanishusage"));
             return false;
         }
         if (isset($args[0])) {
             if ($args[0] == "on") {
-                $sender->sendMessage($settings->get("info") . "Dein §eSuperVanish §6wurde §aAktiviert§6.");
+                $sender->sendMessage($settings->get("prefix") . $lang->get("supervanishon"));
                 self::$vanished[$sender->getName()] = $sender;
                 $all = $this->plugin->getServer()->getOnlinePlayers();
                 $prefix = $playerdata->getNested($sender->getName() . ".groupprefix");
@@ -79,7 +85,7 @@ class SuperVanishCommand extends Command
                 }
             }
             if ($args[0] == "off") {
-                $sender->sendMessage($settings->get("info") . "Dein §eSuperVanish §6wurde §cDeaktiviert§6.");
+                $sender->sendMessage($settings->get("prefix") . $lang->get("supervanishoff"));
                 unset(self::$vanished[$sender->getName()]);
 
                 assert(true);
@@ -92,8 +98,6 @@ class SuperVanishCommand extends Command
                 $stp3 = str_replace("{slots}", $slots , $stp2);
                 $joinmsg = str_replace("{prefix}", $prefix, $stp3);
                 $this->plugin->getServer()->broadcastMessage($joinmsg);
-               // $sender->getServer()->updatePlayerListData($sender->getUniqueId(), $sender->getId(), $sender->getDisplayName(), $sender->getSkin(), $sender->getXuid());
-
                 foreach (Server::getInstance()->getOnlinePlayers() as $player) {
                     assert(true);
                     $player->showPlayer($sender);
