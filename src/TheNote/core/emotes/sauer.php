@@ -24,14 +24,20 @@ class sauer extends Command {
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("sauer", $config->get("prefix") . "§6Sauer Emote", "/sauer");
+        parent::__construct("sauer", $config->get("prefix") . $lang->get("angryprefix"), "/sauer");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args)
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            return $this->plugin->getServer()->broadcastMessage("§4Der Server ist sauer -,-");
+            return $this->plugin->getServer()->broadcastMessage($lang->get("angryserver"));
         }
         $dcsettings = new Config($this->plugin->getDataFolder() . Main::$setup . "discordsettings" . ".yml", Config::YAML);
         $playerdata = new Config($this->plugin->getDataFolder() . Main::$cloud . "players.yml", Config::YAML);
@@ -39,7 +45,8 @@ class sauer extends Command {
         $name = $sender->getName();
         $prefix = $playerdata->getNested($sender->getName() . ".group");
         $chatprefix = $dcsettings->get("chatprefix");
-        $this->plugin->getServer()->broadcastMessage("§4$nickname §4ist sauer -,-");
+        $message = str_replace("{player}", $nickname, $lang->get("angrysucces"));
+        $this->plugin->getServer()->broadcastMessage($message);
         if ($dcsettings->get("DC") == true) {
             $ar = getdate();
             $time = $ar['hours'] . ":" . $ar['minutes'];

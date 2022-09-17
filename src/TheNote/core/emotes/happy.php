@@ -24,14 +24,21 @@ class happy extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
+
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("happy", $config->get("prefix") . "§6Happy Emote", "/happy");
+        parent::__construct("happy", $config->get("prefix") . $lang->get("happyprefix"), "/happy");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args)
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            return $this->plugin->getServer()->broadcastMessage("§aDer Server ist glücklich :D");
+            return $this->plugin->getServer()->broadcastMessage($lang->get("happysucces"));
         }
         $dcsettings = new Config($this->plugin->getDataFolder() . Main::$setup . "discordsettings" . ".yml", Config::YAML);
         $playerdata = new Config($this->plugin->getDataFolder() . Main::$cloud . "players.yml", Config::YAML);
@@ -39,7 +46,8 @@ class happy extends Command
         $name = $sender->getName();
         $prefix = $playerdata->getNested($sender->getName() . ".group");
         $chatprefix = $dcsettings->get("chatprefix");
-        $this->plugin->getServer()->broadcastMessage("§a$nickname §aist glücklich :D");
+        $message = str_replace("{player}", $nickname, $lang->get("happysucces"));
+        $this->plugin->getServer()->broadcastMessage($message);
         if ($dcsettings->get("DC") == true) {
             $ar = getdate();
             $time = $ar['hours'] . ":" . $ar['minutes'];

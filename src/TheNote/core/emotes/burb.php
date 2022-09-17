@@ -24,22 +24,30 @@ class burb extends Command
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
+
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
-        parent::__construct("burb", $config->get("prefix") . " §6Rülps Emote", "/burb");
+        parent::__construct("burb", $config->get("prefix") . $lang->get("burbprefix"), "/burb");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args)
     {
+        $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
+        $l = $langsettings->get("Lang");
+        $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
         if (!$sender instanceof Player) {
-            return $this->plugin->getServer()->broadcastMessage("§bDer Server hat gerülpst O_O");
+            return $this->plugin->getServer()->broadcastMessage($lang->get("burbsucces"));
         }
         $dcsettings = new Config($this->plugin->getDataFolder() . Main::$setup . "discordsettings" . ".yml", Config::YAML);
         $playerdata = new Config($this->plugin->getDataFolder() . Main::$cloud . "players.yml", Config::YAML);
-        $tag = $sender->getNameTag();
+        $nickname = $sender->getNameTag();
         $name = $sender->getName();
         $prefix = $playerdata->getNested($sender->getName() . ".group");
         $chatprefix = $dcsettings->get("chatprefix");
-        $this->plugin->getServer()->broadcastMessage("§b$tag §bhat gerülpst O_O");
+        $message = str_replace("{player}", $nickname, $lang->get("burbsucces"));
+        $this->plugin->getServer()->broadcastMessage($message);
         if ($dcsettings->get("DC") == true) {
             $ar = getdate();
             $time = $ar['hours'] . ":" . $ar['minutes'];
