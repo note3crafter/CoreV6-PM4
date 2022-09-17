@@ -1,33 +1,31 @@
-<h1>CoreV6 ALPHA<img src="https://github.com/note3crafter/Core-V5/blob/main/resources/icon.png" height="64" width="64" align="left"></img></h1>
+<h1>CoreV6 BETA<img src="https://github.com/note3crafter/Core-V5/blob/main/resources/icon.png" height="64" width="64" align="left"></img></h1>
 <br />
 Für Pocketmine API 4.8.1
 
 
 Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/427472879072968714.svg?style=flat-square&label=discord&colorB=7289da)](https://discord.gg/Pebq8Wu) <br>
-# Download und Wichtig 
-
+# Download und Wichtig
 - [Hier downloaden](https://poggit.pmmp.io/ci/note3crafter/Core-V6/Core-V6)!
-  Das Core Plugin wurde speziell für CityBuild Server entwickelt! Ist jedoch auch nutzbar für anderes!
-# Neues v6.0.11 ALPHA
-- /day command Nachrricht Korrigiert
-- /stats -> Command funktioniert wieder
-- /mycoin command verändert
-- EconomyShop & Sell gefixxt
-- /hub fehlerbehebung
-- /tree wieder funktional
-- /milk hinzugefügt
-- Glocke hinzugefügt
-- Groupsystem kleine fehler behoben
-- /pay 
-- Totem Effekt beim Join sowie der Blitz den man beim joinen aktivieren kann wurde repaiert
+- Bitte jeden Fehler umgehend Melden!!!
+
+# Neues v6.1.0 BETA
+- SprachenSystem nun abgeschlossen
+- ScoreBoards sind nun vollständig bearbeitbar!
+- Modulsystem -> Das heißt ihr könnt absofort einzelne Teile der Core Abschalten!
+- Heiratssystem & ClanSystem etwas Angepasst damit es im Scoreboardsystem kein Fehler gibt!
+- Fernglas Hinzugefügt
+- /animation entfernt da nur spielerrei
+- /servermute entfernt
+- MSG System Überarbeitet!
+- Sprachensystem sind folgende Commands noch nicht übernommen
+- /ban /banid /banlist /booster /credits /erfolg /fake /friend /kit /perk /perkshop /seeperms /serverstats /stats /unban
+- Es wurden zudem kleinere Fehler behoben 
 
 # Bekannte Fehler
 - MusicSystem nicht funktional
 - AdminItems aktuell nicht funktional
-- /invsee - /ecinvsee nicht funktional
-- /head nicht funktional
-- /vanish nicht funktional -> lösungsvorschlag?
-- AntiXray nicht funktional?
+- /vanish nicht funktional
+
  
 # Mindestanforderungen 
 - 2 Kern CPU (Bestenfalls hohe Singlecore Performance)
@@ -39,11 +37,8 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 - Weitere Commands wie : /top, /nofire, /speed sind geplant
 - Neuschreiben des Booster Commands
 - Neuschreiben des Ban Systems
-- API für das Economy System
+- API für die Core
 - Internes World Edit System
-- Language System (Sprachen System) - Da es sehr Arbeitsintensiv ist, kann dies noch dauern!
-  -> Mit Auswahl eigener Sprachen und Erweiterung auf weiterer Sprachen!
-- Amboss & Enchantment Table - Geplant aber vermutlich eher nicht
 - ChestShop System -> kommt auf jeden fall!
 
 # Features
@@ -54,15 +49,16 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 - ClanSystem
 - HeiratsSystem
 - FreundeSystem
+- ScoreboardSystem
+- SprachenSystem
 - Perks, Booster und vieles Weiteres
-- Intregriertes ScoreBoard (Kann derzeit nicht Selbst Bearbeitet werden)  
 - NetheriteRüstung, Barren, Schrott sowie Werkzeuge
 - Viele Weitere Kleinigkeiten
 - Gruppensystem (Inkompatible zu PurePerms!!!)
 - Farbiges Schreiben mit &
 - Economy System (Kompatible mit EconomyAPI) (Money.yml kann weitergenutzt werden)
 - World Managment System
-- Alle ötigen Commands für einen Server zu betreiben sind drinne
+- Alle nötigen Commands für einen Server zu betreiben sind drinne
 
 # Hilfe & Support
 Ich werde die Core solange wie Möglich Aktuell halten und Updaten sofern es meine Zeit zulässt...

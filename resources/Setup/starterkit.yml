@@ -41,40 +41,40 @@ Slots:
     damage: 0
     count: 1
     name: StarterSword
-    lore: CoreV5 by TheNote
+    lore: CoreV6 by TheNote
 
   - slot: 1
     id: 275
     damage: 0
     count: 1
     name: StarterAxe
-    lore: CoreV5 by TheNote
+    lore: CoreV6 by TheNote
 
   - slot: 2
     id: 274
     damage: 0
     count: 1
     name: StarterPickaxe
-    lore: CoreV5 by TheNote
+    lore: CoreV6 by TheNote
 
   - slot: 3
     id: 273
     damage: 0
     count: 1
     name: StarterShovel
-    lore: CoreV5 by TheNote
+    lore: CoreV6 by TheNote
 
   - slot: 4
     id: 320
     damage: 0
     count: 32
     name: StarterPorkshop
-    lore: CoreV5 by TheNote
+    lore: CoreV6 by TheNote
 
   - slot: 5
     id: 264
     damage: 0
     count: 8
     name: StarterDiamond
-    lore: CoreV5 by TheNote
+    lore: CoreV6 by TheNote
 ...

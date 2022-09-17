@@ -1,9 +1,9 @@
 name: CoreV6
 main: TheNote\core\Main
-version: 6.0.11_ALPHA
+version: 6.1.0_BETA
 api:
-  - 4.0.0
-author: TheNote/Rudolf2000
+  - 4.8.1
+author: TheNote/Rudolf2000/note3crafter
 authors:
   - TheNote/Rudolf2000 #Inhaber der Core
   - tim03we #BanSystem usw
@@ -18,12 +18,12 @@ authors:
   - Hagnbrain #homesystem
   - EnderDirt #füraltecodes
   - Crasher508 #Fixxer
-  - HimmelKreis4865 #AntiXray & BetterSkulls
   - MDevPmmP #GroupSystem/EconomySystem
   - jojoe77777 #FormAPI
   - muqsit #InvMenü
   - TheBalkanDev #ecinvsee, invsee
-description: Core v6.0.11 ALPHA
+  - GamerMJay #hilfe
+description: Core v6.1.0 Beta
 
 permissions:
   core.command.adventure:
@@ -46,6 +46,9 @@ permissions:
     default: op
   core.command.animation:
     description: "Teste verschiednene Animationen aus"
+    default: op
+  core.command.back:
+    description: "TP dich zum letzten Punkt zurück"
     default: op
   core.command.ban:
     description: "Banne einen anderen Spieler"
@@ -225,9 +228,6 @@ permissions:
     default: op
   core.command.vanish:
     description: "Versteckt dich ohne Items in der Hand"
-    default: op
-  core.command.setstatstext:
-    description: "Setze den Statstext"
     default: op
   core.command.world:
     description: "Teleportiere dich zwichen welten"
