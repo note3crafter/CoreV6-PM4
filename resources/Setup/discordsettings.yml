@@ -1,13 +1,13 @@
 ---
 #DiscordEinstellungen
 
-#Möchtest du MCPE to Discord funktion Aktivieren?
+#Möchtest du MCPEtoDiscord funktion Aktivieren?
 DC: true #setze auf true um es zu aktivieren
 
 #Haupteinstellungen
-dclink: "https://discord.gg/Pebq8Wu"
-chatprefix: "CoreV6"
-webhookurl: "https://discordapp.com/api/webhooks/786652779191861308/bl21p4_fQR_HBZs6uudlC9qsL7M7Gz8zMuKfWI080vBnB-POUrv8BTQUuJFs8B3AY7to" #füge hier deine Webhockurl ein
+dclink: "https://discord.gg/ju2gGzq"
+chatprefix: "CoreV6_BETA"
+webhookurl: "https://discord.com/api/webhooks/955500170823471175/cijTgpZDdeUFec46VUof3ChwxgErUQQ4ZNyIoldfwItzCxg6noAqHIs_Ww6B9Wq-Ek3N" #füge hier deine Webhockurl ein
 webhookdc: "https://discordapp.com/api/webhooks/"
 webhookname: "CoreV6"
 

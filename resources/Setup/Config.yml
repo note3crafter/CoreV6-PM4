@@ -1,15 +1,14 @@
 ---
 #Allgemeine Einstellungen
-ConfigVersion: 6.0.10 #FingerWeg! Dont touch this!
+ConfigVersion: 6.1.0 #FingerWeg! Dont touch this!
 
 #Commands & Funktionen
 BoosterCommand: false #Muss Überarbeitet werden jedoch aktuell keine Zeit dafür...
 StarterKit: true #Aktiviere\Deaktiviere das StarterKit
-Emotes: true #Aktiviere\Deaktiviere die Emotes
 Kits: true #Aktiviere\Deaktiviere das KitSystem
 VoteSystem: true #Aktiviere\Deaktiviere das VoteSystem
-BanSystem: false #Aktiviere\Deaktiviere das BanSystem
-WorldSytem: true #Aktiviere\Deaktiviere das WorldSystem
+#In Modules.yml sind die restlichen funktionen die man ändern kann!
+
 
 #ItemDisplay
 inames: true #aktiviere/deaktiviere die ItemNamen
@@ -40,8 +39,10 @@ IP: noteland.citybuild.one
 Port: 19132
 
 #NetzwerkName
-networkname: "§f[§eCore§4V6§f] §eALPHA" #schreibe hier dein servername oder was frag mich rein...
+networkname: "§f[§eCore§4V6§f] §eBETA" #schreibe hier dein servername oder was frag mich rein...
 
+#CoinSystem
+DefaultCoins: 100
 #EconomySystem
 DefaultMoney: 1000
 
@@ -86,8 +87,8 @@ helferprivatliftuse: true
 helperprivateLift: true
 checkFloor: true
 
-#Statstext
-statstext: false
+#Leaderboard
+leaderboard: false
 X: 0
 Y: 0
 Z: 0

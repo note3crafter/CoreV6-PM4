@@ -1,0 +1,77 @@
+---
+##ScoreboardSystem Settings
+#Stelle hier ein welche Zeilen du nutzen möchtest!
+l1: true
+l2: true
+l3: true
+l4: true
+l5: true
+l6: true
+l7: true
+l8: true
+l9: true
+l10: true
+l11: true
+l12: true
+l13: false
+l14: false
+l15: false
+##Scoreboard
+#Trage hier deinen Text ein! Es gibt divere funktionen die ihr intrigrieren Könnt!
+title: "§f====[§eCore§4V6§f]===="
+line1: "§eDein Rang"
+line2: "§f➥ {rank}"
+line3: "§eDein Geldstand"
+line4: "§f➥ §e{money}$"
+line5: "§eDeine Coins"
+line6: "§f➥ §e{coins}"
+line7: "§aDein Partner§f/§ain"
+line8: "§f➥ §a{marry}"
+line9: "§dDein Clan"
+line10: "§f➥ §d{clan}"
+line11: "§eOnline"
+line12: "§f➥ §e{online}§f/§e{max_online}"
+line13: ""
+line14: ""
+line15: ""
+#Verfügbare Funktionen
+#{clan} -> Clanname
+#{marry} -> Mit wem du verheiratest bist
+#{coins} -> Deine Coins
+#{rank} -> Dein Rang
+#{money} -> Dein Geldstand
+#{ping} -> Dein Ping
+#{tps} -> ServerTPS
+#{name} ->Dein Spielername
+#{online} -> OnlineSpieler
+#{max_online} -> Maximale Anzahl an Spieler
+#{world} -> Deine Welt in der du Bist
+#{x} -> Deine X Position
+#{y} -> Deine Y Position
+#{z} -> Deine Z Position
+#{ip} -> Deine IP
+#{port} -> Dein Port
+#{uid} -> Deine UUDI
+#{xuid} -> Deine Xbox ID
+#{health} -> Dein Leben
+#{max_health} -> Deine Maximalen Leben
+#{food} -> Dein Essensstand
+#{max_food} -> Dein Maximaler Essenstand
+#{scale} -> Deine Größe
+#{xplevel} -> Dein XP Level
+#{id} -> Deine ITEM ID
+#{count} -> Deine Item Menge
+#{kicks} -> Deine Kicks
+#{joins} -> Deine Joins
+#{breaks} -> Deine Zertörten Blöcke
+#{places} -> Deine Gesetzten Blöcke
+#{drops} -> Deine Gedroppten Items
+#{picks} -> Deine Aufgesammelten Items
+#{interacts} -> Deine Interaktionen
+#{jumps} -> Deine Sprünge
+#{messages} -> Deine Nachrrichten
+#{votes} -> Deine Votes
+#{flymeters} -> Deine Geflogene Meter
+#{walkmeters} -> Deine Gelaufene Meter
+#{deaths} -> Deine Deaths
+...
