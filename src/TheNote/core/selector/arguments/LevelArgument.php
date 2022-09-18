@@ -9,9 +9,9 @@
 //   Copyright by TheNote! Not for Resale! Not for others
 //
 
-namespace TheNote\core\server\selector\arguments;
+namespace TheNote\core\selector\arguments;
 
-use pocketmine\Player;
+use pocketmine\Player; // Wtf use pocketmine\Player??
 
 use pocketmine\command\CommandSender;
 

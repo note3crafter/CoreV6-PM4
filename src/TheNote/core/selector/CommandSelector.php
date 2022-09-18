@@ -9,33 +9,33 @@
 //   Copyright by TheNote! Not for Resale! Not for others
 //
 
-namespace TheNote\core\server\selector;
+namespace TheNote\core\selector;
 
 use pocketmine\command\CommandSender;
 
-use TheNote\core\server\selector\arguments\DistanceArgument;
-use TheNote\core\server\selector\arguments\EntityTypeArgument;
-use TheNote\core\server\selector\arguments\GamemodeArgument;
-use TheNote\core\server\selector\arguments\IArgument;
-use TheNote\core\server\selector\arguments\LevelArgument;
-use TheNote\core\server\selector\arguments\LimitArgument;
-use TheNote\core\server\selector\arguments\NameArgument;
-use TheNote\core\server\selector\arguments\WorldArgument;
-use TheNote\core\server\selector\arguments\XPositionArgument;
-use TheNote\core\server\selector\arguments\XRelativePositionArgument;
-use TheNote\core\server\selector\arguments\XRotationArgument;
-use TheNote\core\server\selector\arguments\YPositionArgument;
-use TheNote\core\server\selector\arguments\YRelativePositionArgument;
-use TheNote\core\server\selector\arguments\YRotationArgument;
-use TheNote\core\server\selector\arguments\ZPositionArgument;
-use TheNote\core\server\selector\arguments\ZRelativePositionArgument;
+use TheNote\core\selector\arguments\DistanceArgument;
+use TheNote\core\selector\arguments\EntityTypeArgument;
+use TheNote\core\selector\arguments\GamemodeArgument;
+use TheNote\core\selector\arguments\IArgument;
+use TheNote\core\selector\arguments\LevelArgument;
+use TheNote\core\selector\arguments\LimitArgument;
+use TheNote\core\selector\arguments\NameArgument;
+use TheNote\core\selector\arguments\WorldArgument;
+use TheNote\core\selector\arguments\XPositionArgument;
+use TheNote\core\selector\arguments\XRelativePositionArgument;
+use TheNote\core\selector\arguments\XRotationArgument;
+use TheNote\core\selector\arguments\YPositionArgument;
+use TheNote\core\selector\arguments\YRelativePositionArgument;
+use TheNote\core\selector\arguments\YRotationArgument;
+use TheNote\core\selector\arguments\ZPositionArgument;
+use TheNote\core\selector\arguments\ZRelativePositionArgument;
 
-use TheNote\core\server\selector\variables\AllEntityVariable;
-use TheNote\core\server\selector\variables\AllPlayerVariable;
-use TheNote\core\server\selector\variables\IVariable;
-use TheNote\core\server\selector\variables\NearestPlayerVariable;
-use TheNote\core\server\selector\variables\RandomPlayerVariable;
-use TheNote\core\server\selector\variables\SenderVariable;
+use TheNote\core\selector\variables\AllEntityVariable;
+use TheNote\core\selector\variables\AllPlayerVariable;
+use TheNote\core\selector\variables\IVariable;
+use TheNote\core\selector\variables\NearestPlayerVariable;
+use TheNote\core\selector\variables\RandomPlayerVariable;
+use TheNote\core\selector\variables\SenderVariable;
 
 use function array_key_exists;
 use function count;

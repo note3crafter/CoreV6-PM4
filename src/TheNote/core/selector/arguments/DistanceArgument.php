@@ -9,10 +9,10 @@
 //   Copyright by TheNote! Not for Resale! Not for others
 //
 
-namespace TheNote\core\server\selector\arguments;
+namespace TheNote\core\selector\arguments;
 
 use pocketmine\command\CommandSender;
-use pocketmine\level\Position;
+use pocketmine\level\Position; // Wtf use pocketmine\level\Position??
 
 use function count;
 use function ctype_digit;

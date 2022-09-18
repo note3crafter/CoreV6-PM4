@@ -9,7 +9,7 @@
 //   Copyright by TheNote! Not for Resale! Not for others
 //
 
-namespace TheNote\core\server\selector\variables;
+namespace TheNote\core\selector\variables;
 
 use pocketmine\Server;
 use pocketmine\command\CommandSender;
