@@ -7,6 +7,7 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 # Download und Wichtig
 - [Hier downloaden](https://poggit.pmmp.io/ci/note3crafter/Core-V6/Core-V6)!
 - Bitte jeden Fehler umgehend Melden!!!
+- Es kann bei der größe vorkommen das ich was vergesse hochzuladen xD
 
 # Neues v6.1.0 BETA
 - SprachenSystem nun abgeschlossen
