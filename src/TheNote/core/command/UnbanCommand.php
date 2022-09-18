@@ -16,7 +16,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 
-class UnBanCommand extends Command {
+class UnbanCommand extends Command {
 
     public function __construct(Main $plugin)
     {
