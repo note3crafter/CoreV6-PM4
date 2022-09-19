@@ -11,7 +11,6 @@
 
 namespace TheNote\core\events;
 
-use pocketmine\block\BaseSign;
 use pocketmine\block\utils\SignText;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\Listener;
@@ -23,10 +22,10 @@ use pocketmine\event\block\BlockPlaceEvent;
 use TheNote\core\Main;
 
 use onebone\economyapi\EconomyAPI;
+use cooldogedev\BedrockEconomy\api\BedrockEconomyAPI;
 
 class EconomyShop implements Listener
 {
-
 	private $shop;
 	private $placeQueue;
 	private $plugin;
@@ -162,12 +161,14 @@ class EconomyShop implements Listener
                 }
                 $signshop = ItemFactory::getInstance()->get((int)$shop ["item"], (int)$shop["meta"], (int)$shop["amount"]);
                 $player->getInventory()->addItem($signshop);
-                if ($this->plugin->economyapi == null) {
+                if ($this->plugin->economyapi == null /*and $this->plugin->bedrockeconomy == null*/) {
                     $money->setNested("money." . $player->getName(), $money->getNested("money." . $player->getName()) - $shop ["price"]);
                     $money->save();
-                } else {
-                    EconomyAPI::getInstance()->reduceMoney($player, $shop ["cost"]);
-                }
+                } else/*if($this->plugin->bedrockeconomy == null)*/ {
+                    EconomyAPI::getInstance()->reduceMoney($player, $shop["price"]);
+                } /*elseif($this->plugin->economyapi == null) {
+                    BedrockEconomyAPI::legacy()->subtractFromPlayerBalance($player, $shop["price"]);
+                }*/
                 $player->sendTip($config->get("money") . "§6Du hast erfolgreich was gekauft!" /*. [$shop["amount"], $shop["itemName"], $shop["price"]]*/);
                 $event->cancel(true);
                 if ($event->getItem()->canBePlaced()) {

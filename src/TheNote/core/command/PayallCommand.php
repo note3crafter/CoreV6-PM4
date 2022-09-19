@@ -12,6 +12,7 @@
 namespace TheNote\core\command;
 
 use onebone\economyapi\EconomyAPI;
+use cooldogedev\BedrockEconomy\api\BedrockEconomyAPI;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
@@ -62,14 +63,16 @@ class PayallCommand extends Command
                     foreach ($this->plugin->getServer()->getOnlinePlayers() as $player) {
                         $name = $player->getName();
                         $iname = strtolower($name);
-                        if ($this->plugin->economyapi == null) {
+                        if ($this->plugin->economyapi == null /*and $this->plugin->bedrockeconomy == null*/) {
                             $money->setNested("money." . $iname, $money->getNested("money." . $iname) + $amount);
                             $money->setNested("money." . $sender->getName(), $money->getNested("money." . $sender->getName()) - $amount);
                             $money->save();
-                        } else {
+                        } else/*if ($this->plugin->bedrockeconomy == null)*/ {
                             EconomyAPI::getInstance()->addMoney($iname, $amount);
                             EconomyAPI::getInstance()->reduceMoney($sender, $amount);
-                        }
+                        }/* elseif ($this->plugin->economyapi == null) {
+                            BedrockEconomyAPI::legacy()->transferFromPlayerBalance($sender, $iname, $amount);
+                        }*/
                     }
                     $message = str_replace("{name}", $sender->getNameTag(), $lang->get("payallbc"));
                     $message1 = str_replace("{money}", $args[0] , $message);

@@ -1,8 +1,9 @@
 ---
 #Module einstellungen!
 #Hier kannst du einige Systeme aktivieren und deaktivieren!
-ModulesVersion: 6.1.0 #FingerWeg! Dont touch this!
+ModulesVersion: 6.1.1 #FingerWeg! Dont touch this!
 GamemodeCommands: true
+EconomySystem: true
 ClanSystem: true
 HeiratsSystem: true
 FriendSystem: true
@@ -14,11 +15,8 @@ PerkSystem: true
 TPASystem: true
 MSGSystem: true
 BanSystem: false
-EconomySystem: true
 StatsSystem: true
 Emotes: true
 CoinSystem: true
-
 LiftSystem: true
-OnlyonPlots: false
 ...

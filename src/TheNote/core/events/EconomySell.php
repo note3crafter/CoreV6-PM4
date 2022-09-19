@@ -22,6 +22,7 @@ use pocketmine\utils\Config;
 use TheNote\core\Main;
 
 use onebone\economyapi\EconomyAPI;
+use cooldogedev\BedrockEconomy\api\BedrockEconomyAPI;
 
 class EconomySell implements Listener
 {
@@ -152,13 +153,17 @@ class EconomySell implements Listener
             }
 
             if ($cnt >= $sell["amount"]) {
-                $this->removeItem($player, ItemFactory::getInstance()->get((int)$sell["item"], (int)$sell["meta"], (int)$sell["amount"]));
-                if ($this->plugin->economyapi == null) {
+                if ($this->plugin->economyapi == null /*and $this->plugin->bedrockeconomy == null*/) {
                     $money->setNested("money." . $player->getName(), $money->getNested("money." . $player->getName()) + $sell ["cost"]);
                     $money->save();
-                } else {
-                    EconomyAPI::getInstance()->addMoney($player, $sell["cost"]);
-                }
+                    $this->removeItem($player, ItemFactory::getInstance()->get((int)$sell["item"], (int)$sell["meta"], (int)$sell["amount"]));
+                } else/*if($this->plugin->bedrockeconomy == null)*/ {
+                    EconomyAPI::getInstance()->addMoney($player, $sell ["cost"]);
+                    $this->removeItem($player, ItemFactory::getInstance()->get((int)$sell["item"], (int)$sell["meta"], (int)$sell["amount"]));
+                } /*elseif($this->plugin->economyapi == null) {
+                    BedrockEconomyAPI::legacy()->addToPlayerBalance($player, $sell["cost"]);
+                    $this->removeItem($player, ItemFactory::getInstance()->get((int)$sell["item"], (int)$sell["meta"], (int)$sell["amount"]));
+                }*/
                 $player->sendTip($config->get("money") . "§6Du hast erfolgreich was verkauft!");
             } else {
                 $player->sendTip($config->get("error") . "§cDu hast bereits alles verkauft!");

@@ -8,24 +8,20 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 - [Hier downloaden](https://poggit.pmmp.io/ci/note3crafter/Core-V6/Core-V6)!
 - Bitte jeden Fehler umgehend Melden!!!
 
-# Neues v6.1.0 BETA
-- SprachenSystem nun abgeschlossen
-- ScoreBoards sind nun vollständig bearbeitbar!
-- Modulsystem -> Das heißt ihr könnt absofort einzelne Teile der Core Abschalten!
-- Heiratssystem & ClanSystem etwas Angepasst damit es im Scoreboardsystem kein Fehler gibt!
-- Fernglas Hinzugefügt
-- /animation entfernt da nur spielerrei
-- /servermute entfernt
-- MSG System Überarbeitet!
-- Sprachensystem sind folgende Commands noch nicht übernommen
-- /ban /banid /banlist /booster /credits /erfolg /fake /friend /kit /perk /perkshop /seeperms /serverstats /stats /unban
-- Es wurden zudem kleinere Fehler behoben 
+# Neues v6.1.1 BETA
+- Kleinere Fehler Behoben! 
+- Scoreboardsystem EconomyAPI Support
+- ChestShop Hinzugefügt
+- AntiCheat Hinzugefügt
+- Discordsystem 2 fehlende Texte zum bearbeiten Hinzugefügt sowie eine Möglichkeit um wörter zu Sperren!
 
 # Bekannte Fehler
 - MusicSystem nicht funktional
 - AdminItems aktuell nicht funktional
 - /vanish nicht funktional
-
+- Sprachensystem sind folgende Commands und Funktionen noch nicht übernommen
+- /ban /banid /banlist /booster /credits /erfolg /fake /friend /kit /perk /perkshop /seeperms /serverstats /stats /unban
+- EconomyShop/Sell/Chest
  
 # Mindestanforderungen 
 - 2 Kern CPU (Bestenfalls hohe Singlecore Performance)
@@ -33,14 +29,18 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 - 1GB Festplatte -
 
 # Für die Zukunft Geplant :
-- ScoreBoard Feature überarbeiten
 - Weitere Commands wie : /top, /nofire, /speed sind geplant
 - Neuschreiben des Booster Commands
 - Neuschreiben des Ban Systems
 - API für die Core
 - Internes World Edit System
-- ChestShop System -> kommt auf jeden fall!
-
+# Funktion EconomyShop/Sell/Chest:
+    | Zeile | Wert |
+    | :------: | :---: |
+    | 1 | sell\shop\leer |
+    | 2 | Menge |
+    | 3 | Preis |
+    | 4 | Item ID:meta |
 # Features
 - [Alle Commands](https://github.com/note3crafter/Core-V6/blob/main/resources/commands.md)
 - Multi Language Support! (Aktuell noch nicht vollständig)

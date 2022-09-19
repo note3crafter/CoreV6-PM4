@@ -2,15 +2,21 @@
 
 namespace TheNote\core\utils;
 
+use pocketmine\event\Listener;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use TheNote\core\Main;
 
-class ScoreboardManager
+use onebone\economyapi\EconomyAPI;
+use cooldogedev\BedrockEconomy\api\BedrockEconomyAPI;
+
+
+class ScoreboardManager implements Listener
 {
-    public static function formateString(Player $player, string $string): string
+    public static function formateString(Main $plugin, Player $player, string $string): string
     {
+
         $user = new Config(Main::getInstance()->getDataFolder() . Main::$userfile . $player->getName() . ".json", Config::JSON);
         $gruppe = new Config(Main::getInstance()->getDataFolder() . Main::$gruppefile . $player->getName() . ".json", Config::JSON);
         $online = new Config(Main::getInstance()->getDataFolder() . Main::$cloud . "Count.json", Config::JSON);
@@ -19,6 +25,13 @@ class ScoreboardManager
         $settings = new Config(Main::getInstance()->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
         $playerdata = new Config(Main::getInstance()->getDataFolder() . Main::$cloud . "players.yml", Config::YAML);
         $money = new Config(Main::getInstance()->getDataFolder() . Main::$cloud . "Money.yml", Config::YAML);
+        if($plugin->economyapi == null /*and $plugin->bedrockeconomy == null*/) {
+            $moneystand = $money->getNested("money." . $player->getName());
+        /*} elseif($plugin->economyapi == null) {
+            $moneystand = BedrockEconomyAPI::legacy()->getPlayerBalance($player->getName());*/
+        } else/*if($plugin->bedrockeconomy == null)*/ {
+            $moneystand = EconomyAPI::getInstance()->myMoney($player->getName());
+        }
         $string = str_replace([
             "{clan}",
             "{marry}",
@@ -65,7 +78,7 @@ class ScoreboardManager
                 , $hei->get("heiraten")
                 , $user->get("coins")
                 , $playerdata->getNested($player->getName() . ".groupprefix")
-                , $money->getNested("money." . $player->getName())
+                , $moneystand
                 , $player->getNetworkSession()->getPing()
                 , Server::getInstance()->getTicksPerSecond()
                 , $player->getName()
@@ -102,7 +115,7 @@ class ScoreboardManager
                 , $stats->get("movefly")
                 , $stats->get("movewalk")
                 , $stats->get("deaths")]
-            , $string);
+                , $string);
         return $string;
     }
 }

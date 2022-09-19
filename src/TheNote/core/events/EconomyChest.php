@@ -3,115 +3,270 @@
 namespace TheNote\core\events;
 
 use pocketmine\block\Block;
-use pocketmine\block\Chest;
+use pocketmine\block\BlockLegacyIds;
+use pocketmine\block\utils\SignText;
+use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\SignChangeEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
 use pocketmine\math\Vector3;
-use pocketmine\metadata\BlockMetadataStore;
-use pocketmine\metadata\MetadataValue;
-use pocketmine\metadata\PlayerMetadataStore;
+use pocketmine\utils\Config;
+use pocketmine\world\Position;
 use TheNote\core\Main;
+use TheNote\core\utils\ChestShopDataManager;
+use onebone\economyapi\EconomyAPI;
 
-class EconomyChest implements Listener {
+class EconomyChest implements Listener
+{
 
-    private $alertedPlayers;
+    private $plugin;
+    private $databaseManager;
 
-    public function __construct(Main $plugin) {
+    public function __construct(Main $plugin, ChestShopDataManager $chestShopManager)
+    {
         $this->plugin = $plugin;
-        $this->alertedPlayers = array();
+        $this->databaseManager = $chestShopManager;
     }
 
-    function onSignChange(SignChangeEvent $event) {
-        if (!in_array($event->getPlayer()->getName(), $this->alertedPlayers)) {
-            $event->getPlayer()->sendMessage("§9[ChestShop] Smack the sign to confirm changes.");
-            array_push($this->alertedPlayers, $event->getPlayer()->getName());
-        }
-    }
+    public function onPlayerInteract(PlayerInteractEvent $event): void
+    {
+        $block = $event->getBlock();
+        $player = $event->getPlayer();
+        $money = new Config($this->plugin->getDataFolder() . Main::$cloud . "Money.yml", Config::YAML);
+        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
 
-    //$chest = $this->findChest($event->getBlock());
-    function onSignSmack(PlayerInteractEvent $event) {
-        if ($event->getAction() != PlayerInteractEvent::RIGHT_CLICK_BLOCK || $event->getBlock()->getId() != Block::WALL_SIGN) {
-            return;
-        }
-
-        $sign = $event->getPlayer()->getLocation()->getWorld()->getTile($event->getBlock());
-        $signBlock = $sign;
-        $metadata = new BlockMetadataStore();
-        $sign = $signBlock->getText();
-
-        if (strtoupper($sign[0]) === "[CHESTSHOP]") {
-            if (!$this->findChest($event->getBlock())) {
-                // Check if chestshop is not on a chest
-                $signBlock->setText("§c[ChestShop]");
-                $event->getPlayer()->sendMessage("§c[ChestShop] You must place the sign on a chest.");
-                return;
-            }
-
-            if ($sign[1] === "buy") {
-                if (is_numeric($sign[2]) && is_numeric(str_replace("$", "", $sign[3]))) {
-                    $signBlock->setText("§1[ChestShop]", $sign[1], $sign[2], "$" . str_replace("$", "", $sign[3]));
-                    $metadata->setMetaData("owner", new PlayerMetadataStore());
-
-                    $event->getPlayer()->sendMessage("§a[ChestShop] Shop successfully created. It will sell items in the chest from first slot to last.");
+        switch ($block->getID()) {
+            case BlockLegacyIds::SIGN_POST:
+            case BlockLegacyIds::WALL_SIGN:
+                if (($shopInfo = $this->databaseManager->selectByCondition([
+                        "signX" => $block->getPosition()->getFloorX(),
+                        "signY" => $block->getPosition()->getFloorY(),
+                        "signZ" => $block->getPosition()->getFloorZ()
+                    ])) === false) return;
+                $shopInfo = $shopInfo->fetchArray(SQLITE3_ASSOC);
+                if ($shopInfo === false)
+                    return;
+                if ($shopInfo['shopOwner'] === $player->getName()) {
+                    $player->sendTip($config->get("error") .  "§cDu kannst nicht bei dir selbst kaufen!");
+                    return;
                 } else {
-                    $signBlock->setText("§c[ChestShop]");
-                    $event->getPlayer()->sendMessage("§c[ChestShop] Lines 3 & 4 must be numbers.");
+                    $event->cancel();
+                }
+                if ($this->plugin->economyapi == null) {
+                    $buyerMoney = $money->getNested("money." . $player->getName());
+                } else {
+                    $buyerMoney = EconomyAPI::getInstance()->myMoney($player->getName());
+                }
+                if ($buyerMoney === false) {
+                    $player->sendMessage("Couldn't acquire your money data!");
                     return;
                 }
-            } else {
-                $signBlock->setText("§c[ChestShop]");
-                $event->getPlayer()->sendMessage("§c[ChestShop] Your shop type must be [buy].");
-                return;
-            }
-        } else if (strtoupper($sign[0]) === "§1[CHESTSHOP]") {
-            $amount = $sign[2];
-            $price = str_replace("$", "", $sign[3]);
-
-            $chest = $event->getPlayer()->getLocation()->getWorld()->getTile($this->findChest($event->getBlock()));
-            $inventory = $chest->getInventory();
-            $item = $inventory->getItem(0);
-
-            if ($item->getCount() >= $amount) {
-                if (EconomyAPI::getInstance()->myMoney($event->getPlayer()) >= $price) {
-                    EconomyAPI::getInstance()->reduceMoney($event->getPlayer(), $price);
-                    if($item->getCount() == $amount){
-                        $inventory->clear(0);
-                    }else{
-                        $item->setCount($item->getCount() - $amount);
-                    }
-
-                    $event->getPlayer()->getInventory()->addItem(new Item($item->getId(), $item->getDamage(), $amount));
-                    $event->getPlayer()->sendMessage("§a[ChestShop] You have successfully bought " . $amount . "x " . $item->getName());
-                }else{
-                    $event->getPlayer()->sendMessage("§c[ChestShop] Sorry, you can't afford this item.");
+                if ($buyerMoney < $shopInfo['price']) {
+                    $player->sendTip($config->get("error") . "§cDu hast zu wenig Geld!");
+                    return;
                 }
-            } else {
-                $event->getPlayer()->sendMessage("§c[ChestShop] Sorry, this shop is out of stock.");
+                $chest = $player->getWorld()->getTile(new Vector3($shopInfo['chestX'], $shopInfo['chestY'], $shopInfo['chestZ']));
+                $itemNum = 0;
+                $pID = $shopInfo['productID'];
+                $pMeta = $shopInfo['productMeta'];
+                for ($i = 0; $i < $chest->getInventory()->getSize(); $i++) {
+                    $item = $chest->getInventory()->getItem($i);
+                    // use getDamage() method to get metadata of item
+                    if ($item->getID() === $pID and $item->getMeta() === $pMeta) $itemNum += $item->getCount();
+                }
+                if ($itemNum < $shopInfo['saleNum']) {
+                    $player->sendTip($config->get("error") . "§cDieser Shop ist leider Ausverkauft!");
+                    if (($p = $this->plugin->getServer()->getPlayerExact($shopInfo['shopOwner'])) !== null) {
+                        $p->sendMessage($config->get("error") . "§cDein Shop ist leider Leer! Bitte fülle ihn mit auf! §f:§e " . ItemFactory::getInstance()->get($pID, $pMeta)->getName());
+                    }
+                    return;
+                }
+                $item = ItemFactory::getInstance()->get((int)$shopInfo['productID'], (int)$shopInfo['productMeta'], (int)$shopInfo['saleNum']);
+                $chest->getInventory()->removeItem($item);
+                $player->getInventory()->addItem($item);
+                if ($this->plugin->economyapi == null) {
+                    $sellerMoney = $money->getNested("money." . $shopInfo['shopOwner']);
+                } else {
+                    $sellerMoney = EconomyAPI::getInstance()->myMoney($shopInfo['shopOwner']);
+                }
+                $chestShopIssuer = "ChestShop";
+                if ($this->plugin->economyapi === null) {
+                    if ($money->setNested("money." . $player->getName(), $money->getNested("money." . $player->getName()) - $shopInfo['price']) === $money->setNested("money." . $shopInfo['shopOwner'], $money->getNested("money." . $shopInfo['shopOwner']) + $shopInfo['price'])) {
+                        $player->sendTip($config->get("money") . "§6Der Einkauf war erfolgreich!");
+                        $money->save();
+                        if (($p = $this->plugin->getServer()->getPlayerExact($shopInfo['shopOwner'])) !== null) {
+                            $p->sendMessage("{$player->getName()} purchased " . ItemFactory::getInstance()->get($pID, $pMeta)->getName() . " for" . $shopInfo['price'] . "$");
+                        }
+                    } else {
+                        $player->getInventory()->removeItem($item);
+                        $chest->getInventory()->addItem($item);
+                        $money->setNested("money." . $player->getName(), $buyerMoney);
+                        $money->setNested("money." . $shopInfo['shopOwner'], $sellerMoney);
+                        $money->save();
+                        $player->sendTip($config->get("error") . "§cDer Kauf ist Fehlgeschlagen!");
+                    }
+                } else {
+                    if (EconomyAPI::getInstance()->reduceMoney($player->getName(), $shopInfo['price'], null, $chestShopIssuer) === EconomyAPI::RET_SUCCESS and EconomyAPI::getInstance()->addMoney($shopInfo['shopOwner'], $shopInfo['price'], null, $chestShopIssuer) === EconomyAPI::RET_SUCCESS) {
+                        $player->sendTip($config->get("money") . "§6Der Einkauf war erfolgreich!");
+                        if (($p = $this->plugin->getServer()->getPlayerExact($shopInfo['shopOwner'])) !== null) {
+                            $p->sendMessage("{$player->getName()} purchased " . ItemFactory::getInstance()->get($pID, $pMeta)->getName() . " for" . $shopInfo['price'] . "$");
+                        }
+                    } else {
+                        $player->getInventory()->removeItem($item);
+                        $chest->getInventory()->addItem($item);
+                        EconomyAPI::getInstance()->setMoney($player->getName(), $buyerMoney);
+                        EconomyAPI::getInstance()->setMoney($shopInfo['shopOwner'], $sellerMoney);
+                        $player->sendTip($config->get("error") . "§cDer Kauf ist Fehlgeschlagen!");
+                    }
+                }
+                break;
+
+            case BlockLegacyIds::CHEST:
+                $shopInfo = $this->databaseManager->selectByCondition([
+                    "chestX" => $block->getPosition()->getX(),
+                    "chestY" => $block->getPosition()->getY(),
+                    "chestZ" => $block->getPosition()->getZ()
+                ]);
+                if ($shopInfo === false)
+                    break;
+                $shopInfo = $shopInfo->fetchArray(SQLITE3_ASSOC);
+                if ($shopInfo !== false and $shopInfo['shopOwner'] !== $player->getName() and !$player->hasPermission("core.economy.chestshop.admin")) {
+                    $player->sendMessage($config->get("error") . "§cDieser Shop ist geschützt! Du hast keine Berechtigung dafür!");
+                    $event->cancel();
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    public function onPlayerBreakBlock(BlockBreakEvent $event): void
+    {
+        $block = $event->getBlock();
+        $player = $event->getPlayer();
+        $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
+        switch ($block->getID()) {
+            case BlockLegacyIds::SIGN_POST:
+            case BlockLegacyIds::WALL_SIGN:
+                $condition = [
+                    "signX" => $block->getPosition()->getFloorX(),
+                    "signY" => $block->getPosition()->getFloorY(),
+                    "signZ" => $block->getPosition()->getFloorZ()
+                ];
+                $shopInfo = $this->databaseManager->selectByCondition($condition);
+                if ($shopInfo !== false) {
+                    $shopInfo = $shopInfo->fetchArray();
+                    if ($shopInfo === false)
+                        break;
+                    if ($shopInfo['shopOwner'] !== $player->getName() and !$player->hasPermission("core.economy.chestshop.admin")) {
+                        $player->sendMessage($config->get("error") . "§cDieser Shop ist geschützt! Du hast keine Berechtigung dafür!");
+                        $event->cancel();
+                    } else {
+                        $this->databaseManager->deleteByCondition($condition);
+                        $player->sendMessage($config->get("money") . "§6Dein Shop wurde geschlossen!");
+                    }
+                }
+                break;
+
+            case BlockLegacyIds::CHEST:
+                $condition = [
+                    "chestX" => $block->getPosition()->getX(),
+                    "chestY" => $block->getPosition()->getY(),
+                    "chestZ" => $block->getPosition()->getZ()
+                ];
+                $shopInfo = $this->databaseManager->selectByCondition($condition);
+                if ($shopInfo !== false) {
+                    $shopInfo = $shopInfo->fetchArray();
+                    if ($shopInfo === false)
+                        break;
+                    if ($shopInfo['shopOwner'] !== $player->getName() and !$player->hasPermission("core.economy.chestshop.admin")) {
+                        $player->sendMessage($config->get("error") . "§cDieser Shop ist geschützt! Du hast keine Berechtigung dafür!");
+                        $event->cancel();
+                    } else {
+                        $this->databaseManager->deleteByCondition($condition);
+                        $player->sendMessage($config->get("money") . "§6Dein Shop wurde geschlossen!");
+                    }
+                }
+                break;
+        }
+    }
+
+    public function onSignChange(SignChangeEvent $event): void
+    {
+        $shopOwner = $event->getPlayer()->getName();
+        $signText = $event->getNewText();
+        $saleNum = (int)$signText->getLine(1);
+        $price = (int)$signText->getLine(2);
+        $productData = explode(":", $signText->getLine(3));
+        $pID = $this->isItem($id = (int)array_shift($productData)) ? $id : false;
+        $pMeta = ($meta = array_shift($productData)) ? (int)$meta : 0;
+
+        $sign = $event->getBlock();
+
+        // Check sign format...
+        if ($signText->getLine(0) !== "") return;
+        if (!is_numeric($saleNum) or $saleNum <= 0) return;
+        if (!is_numeric($price) or $price < 0) return;
+        if ($pID === false) return;
+        if (($chest = $this->getSideChest($sign->getPosition())) === false) return;
+        $shops = $this->databaseManager->selectByCondition(["shopOwner" => "'$shopOwner'"]);
+        $res = true;
+        $count = [];
+        while ($res !== false) {
+            $res = $shops->fetchArray(SQLITE3_ASSOC);
+            if ($res !== false) {
+                $count[] = $res;
+                if ($res["signX"] === $event->getBlock()->getPosition()->getX() and $res["signY"] === $event->getBlock()->getPosition()->getY() and $res["signZ"] === $event->getBlock()->getPosition()->getZ()) {
+                    $productName = ItemFactory::getInstance()->get($pID, $pMeta)->getName();
+                    $event->setNewText(new SignText([
+                        $shopOwner,
+                        "Amount: $saleNum",
+                        "Price: " . $price . "$",
+                        $productName
+                    ]));
+
+                    $this->databaseManager->registerShop($shopOwner, $saleNum, $price, $pID, $pMeta, $sign, $chest);
+                    return;
+                }
             }
         }
+        if (empty($signText->getLine(3))) return;
+        /*if (count($count) >= $this->plugin->getMaxPlayerShops($event->getPlayer()) and !$event->getPlayer()->hasPermission("chestshop.admin")) {
+            $event->getPlayer()->sendMessage(TextFormat::RED . "You don't have permission to make more shops");
+            return;
+        }*/
+
+        $productName = ItemFactory::getInstance()->get($pID, $pMeta)->getName();
+        $event->setNewText(new SignText([
+            0 => "§f[§6" . $shopOwner . "§f]",
+            1 => "§ePreis §f: " . $price. "$",
+            2 => "§eMenge §f: §e" . $saleNum,
+            3 => "§e" . $productName
+
+        ]));
+
+        $this->databaseManager->registerShop($shopOwner, $saleNum, $price, $pID, $pMeta, $sign, $chest);
     }
 
-    public function findChest(Block $sign) {
-        // Chest is north of sign
-        if ($sign->getSide(Vector3::SIDE_NORTH)->getId() === Block::CHEST) {
-            return Chest::fromObject($sign->asVector3()->getSide(Vector3::SIDE_NORTH), $sign->getWorld());
-
-            // Chest is south of sign
-        } else if ($sign->getSide(Vector3::SIDE_SOUTH)->getId() === Block::CHEST) {
-            return Chest::fromObject($sign->asVector3()->getSide(Vector3::SIDE_SOUTH), $sign->getWorld());
-
-            // Chest is east of sign
-        } else if ($sign->getSide(Vector3::SIDE_EAST)->getId() === Block::CHEST) {
-            return Chest::fromObject($sign->asVector3()->getSide(Vector3::SIDE_EAST), $sign->getWorld());
-
-            // Chest is west of sign
-        } else if ($sign->getSide(Vector3::SIDE_WEST)->getId() === Block::CHEST) {
-            return Chest::fromObject($sign->asVector3()->getSide(Vector3::SIDE_WEST), $sign->getWorld());
-        } else {
-            return false;
-        }
+    private function getSideChest(Position $pos): Block|bool
+    {
+        $block = $pos->getWorld()->getBlock(new Vector3($pos->getX() + 1, $pos->getY(), $pos->getZ()));
+        if ($block->getID() === BlockLegacyIds::CHEST) return $block;
+        $block = $pos->getWorld()->getBlock(new Vector3($pos->getX() - 1, $pos->getY(), $pos->getZ()));
+        if ($block->getID() === BlockLegacyIds::CHEST) return $block;
+        $block = $pos->getWorld()->getBlock(new Vector3($pos->getX(), $pos->getY() - 1, $pos->getZ()));
+        if ($block->getID() === BlockLegacyIds::CHEST) return $block;
+        $block = $pos->getWorld()->getBlock(new Vector3($pos->getX(), $pos->getY(), $pos->getZ() + 1));
+        if ($block->getID() === BlockLegacyIds::CHEST) return $block;
+        $block = $pos->getWorld()->getBlock(new Vector3($pos->getX(), $pos->getY(), $pos->getZ() - 1));
+        if ($block->getID() === BlockLegacyIds::CHEST) return $block;
+        return false;
     }
 
+    private function isItem(int $id): bool
+    {
+        return ItemFactory::getInstance()->isRegistered($id);
+    }
 }
