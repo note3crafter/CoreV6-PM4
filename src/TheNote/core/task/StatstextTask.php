@@ -14,6 +14,7 @@ namespace TheNote\core\task;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\scheduler\Task;
+use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\world\particle\FloatingTextParticle;
 use TheNote\core\Main;
@@ -35,9 +36,9 @@ class StatstextTask extends Task
         $all = $this->plugin->getServer()->getOnlinePlayers();
 
         foreach ($all as $player) {
+            if(!$player->isOnline()) return;
 
             $config = new Config($this->plugin->getDataFolder() . Main::$setup . "Config" . ".yml", Config::YAML);
-            //$level = $this->plugin->getServer()->getWorldManager()->getWorldByName($config->get("level")); int:
 			$level = $this->plugin->getServer()->getWorldManager()->getWorldByName($config->get("level"));
 
 			$text = $this->getText($player);
@@ -52,15 +53,13 @@ class StatstextTask extends Task
             }
             if ($config->get("leaderboard") == true) {
                 if (!isset($this->floattext[$player->getName()])) {
-
                     # existiert noch nicht
                     $this->floattext[$player->getName()] = new FloatingTextParticle($text);
                     $particle = $this->floattext[$player->getName()];
                     #$packet = $particle->encode()
                     $particle->setInvisible(true);
-                    $level->addParticle(new Vector3($x, $y, $z),$particle, $all);
-
-				} else {
+                    $level->addParticle(new Vector3($x, $y, $z),$particle, [$player]);
+                } else {
                     # is schon da
                     $particle = $this->floattext[$player->getName()];
                     $particle->setInvisible(true);
@@ -68,8 +67,8 @@ class StatstextTask extends Task
                     $this->floattext[$player->getName()] = new FloatingTextParticle($text);
                     $newparticle = $this->floattext[$player->getName()];
                     $newparticle->setInvisible(false);
-					$level->addParticle(new Vector3($x, $y, $z), $newparticle, $all);
-				}
+                    $level->addParticle(new Vector3($x, $y, $z), $newparticle, [$player]);
+                }
             }
         }
     }
@@ -83,8 +82,8 @@ class StatstextTask extends Task
                 "§eDeine Sprünge §f: §e" . $stats->get("jumps") . "\n" .
                 "§eDeine Kicks §f: §e" . $stats->get("kicks") . "\n" .
                 "§eDeine Interacts §f: §e" . $stats->get("interact") . "\n" .
-                "§eGelaufene Meter §f: §e" . $stats->get("movewalk") . "m\n" .
-                "§eGeflogene Meter §f: §e" . $stats->get("movefly") . "m\n" .
+                "§eGelaufene Meter §f: §e" . round($stats->get("movewalk")) . "m\n" .
+                "§eGeflogene Meter §f: §e" . round($stats->get("movefly")) . "m\n" .
                 "§eBlöcke abgebaut §f: §e" . $stats->get("break") . "\n" .
                 "§eBlöcke gesetzt §f: §e" . $stats->get("place") . "\n" .
                 "§eGedroppte Items §f: §e" . $stats->get("drop") . "\n" .
@@ -98,8 +97,8 @@ class StatstextTask extends Task
                 "§eDeine Sprünge §f: §e" . $stats->get("jumps") . "\n" .
                 "§eDeine Kicks §f: §e" . $stats->get("kicks") . "\n" .
                 "§eDeine Interacts §f: §e" . $stats->get("interact") . "\n" .
-                "§eGelaufene Meter §f: §e" . $stats->get("movewalk") . "m\n" .
-                "§eGeflogene Meter §f: §e" . $stats->get("movefly") . "m\n" .
+                "§eGelaufene Meter §f: §e" . round($stats->get("movewalk")) . "m\n" .
+                "§eGeflogene Meter §f: §e" . round($stats->get("movefly")) . "m\n" .
                 "§eBlöcke abgebaut §f: §e" . $stats->get("break") . "\n" .
                 "§eBlöcke gesetzt §f: §e" . $stats->get("place") . "\n" .
                 "§eGedroppte Items §f: §e" . $stats->get("drop") . "\n" .
