@@ -107,7 +107,8 @@ class SimpleBlockData {
         $this->meta = $meta;
     }
 
-    public function getId(): int {
+    public function getId(): int
+    {
         return $this->id;
     }
 
