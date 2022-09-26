@@ -10,9 +10,6 @@ VoteSystem: true #Aktiviere\Deaktiviere das VoteSystem
 Buchstabenraetsel: false
 #In Modules.yml sind die restlichen funktionen die man ändern kann!
 
-#LightningRod fun
-Lightningrod: true
-
 #TimeStop
 #Stelle hier die Zeit ein die du dauerhaft haben möchtest!
 timestop: true
@@ -20,7 +17,6 @@ time: 1000
 
 #AFKTimeOut
 AFK: 240
-
 #ItemDisplay
 inames: true #aktiviere/deaktiviere die ItemNamen
 

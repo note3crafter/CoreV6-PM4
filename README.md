@@ -16,7 +16,6 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 - /vanish funktional
 - /burn command gefixt wooops
 - LightningRod (Zum Rumspielen xD) hinzugefügt (Lohenrute)
-- ChestShop System Hinzugefügt
 
 # Bekannte Fehler
 - MusicSystem nicht funktional
