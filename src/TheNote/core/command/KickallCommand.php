@@ -47,7 +47,7 @@ class KickallCommand extends Command
         }
         if (isset($args[0])) {
             $onlinePlayers = $this->plugin->getServer()->getOnlinePlayers();
-            if ($sender->hasPermission("core.command.kickall") || $sender->isOp()) {
+            if ($sender->hasPermission("core.command.kickall")) {
                 foreach ($this->plugin->getServer()->getOnlinePlayers() as $players) {
                     $name = $sender->getDisplayName();
                     if (count($onlinePlayers) === 0 || (count($onlinePlayers) === 1)) {

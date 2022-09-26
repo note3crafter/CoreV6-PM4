@@ -86,7 +86,6 @@ class FFAArena implements Listener
 											$dold = $money->getNested("money." . $dname);
 											$money->setNested("money." . $dname, $dold - $amount);
 											$money->setNested("money." . $name, $old + $amount);
-
 										} else {
 											EconomyAPI::getInstance()->addMoney($dname, $amount);
 											EconomyAPI::getInstance()->reduceMoney($name, $amount);

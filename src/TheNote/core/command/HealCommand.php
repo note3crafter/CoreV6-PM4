@@ -71,7 +71,7 @@ class HealCommand extends Command
             }
         }
         $sender->setHealth(20);
-        $sender->sendMessage($config->get("info") . $lang->get("healsucces"));
+        $sender->sendMessage($config->get("prefix") . $lang->get("healsucces"));
         return false;
     }
 }

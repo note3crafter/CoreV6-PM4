@@ -48,8 +48,8 @@ class ItemIDCommand extends Command implements Listener
             return false;
         }
         $item = $sender->getInventory()->getItemInHand();
-        $message = str_replace("{id}" , $sender->getNameTag(), $lang->get("healtargetsucces"));
-        $message1 = str_replace("{name}" , $item->getVanillaName());
+        $message = str_replace("{name}" , $sender->getNameTag() , $lang->get("idmessage"));
+        $message1 = str_replace("{id}" , $item->getVanillaName() , $message);
         $sender->sendMessage($config->get("prefix") . $message1);
         $sender->sendMessage($config->get("prefix") . "§6Dein Item in der Hand ist §f:§e " . $item->getId() . "§f:§e" . $item->getVanillaName());
         return true;

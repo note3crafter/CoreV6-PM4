@@ -30,7 +30,6 @@ class PowerBlock implements Listener
     {
         $this->plugin = $plugin;
     }
-
     public function onMove(PlayerMoveEvent $event)
     {
         $config = new Config($this->plugin->getDataFolder() . Main::$setup . "Config" . ".yml", Config::YAML);

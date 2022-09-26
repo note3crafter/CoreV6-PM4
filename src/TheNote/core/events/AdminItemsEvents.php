@@ -45,7 +45,7 @@ class AdminItemsEvents implements Listener
             }
             if ($value == "explode_bow") {
                 $projectile = $event->getProjectile();
-                $projectile->getNameTag()->setString("custom_data", "explode_arrow");
+                $projectile->setNameTag("string" . ["custom_data", "explode_arrow"]);
             }
         }
     }
@@ -56,7 +56,7 @@ class AdminItemsEvents implements Listener
         $entity = $event->getEntity();
         $block = $event->getBlockHit();
         $radius = 5;
-        if ($entity->getString("custom_data")) {
+        if ($entity->getNameTag()) {
             $value = $entity->getNameTag() === "custom_data";
             if ($value == "explode_egg") {
                 if (!$event->getEntity() instanceof Egg) {

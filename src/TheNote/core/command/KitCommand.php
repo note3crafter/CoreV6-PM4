@@ -15,7 +15,10 @@ use DateTimeZone;
 use Exception;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\console\ConsoleCommandSender;
 use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
+use pocketmine\item\ItemIds;
 use pocketmine\player\Player;
 use TheNote\core\Main;
 use TheNote\core\formapi\SimpleForm;
@@ -44,13 +47,13 @@ class KitCommand extends Command
         }
         $form = new SimpleForm(function (Player $sender, $data) {
             $name = $sender->getName();
-            $item = $sender->getPlayerInfo()->getUsername();
             $mymoney = $this->plugin->getServer()->getPluginManager()->getPlugin("EconomyAPI");
             $user = new Config($this->plugin->getDataFolder() . Main::$userfile . $name . ".json", Config::JSON);
             $result = $data;
             if ($result === null) {
                 return true;
             }
+            $if = ItemFactory::getInstance();
             switch ($result) {
                 case 0: #+7 day
                     $config = new Config($this->plugin->getDataFolder() . Main::$setup . "settings" . ".json", Config::JSON);
@@ -83,15 +86,15 @@ class KitCommand extends Command
                         }
                         $user->set("coins", $user->get("coins") + 200);
                         $user->save();
-                        $item->getInventory()->addItem(Item::get($kit->get("item1w")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item2w")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item3w")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item4w")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item5w")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item6w")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item7w")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item8w")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item9w")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item1w")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item2w")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item3w")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item4w")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item5w")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item6w")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item7w")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item8w")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item9w")));
                         $sender->sendMessage($config->get("kits") . "Du hast dein Wöchentliches Kit erhalten sowie " . $kit->get("moneyweekly") . "$ sowie " . $kit->get("coinsweekly") . " Coins Bekommen!");
                     }
                     break;
@@ -127,15 +130,15 @@ class KitCommand extends Command
                         }
                         $user->set("coins", $user->get("coins") + $kit->get("coinsdaily"));
                         $user->save();
-                        $item->getInventory()->addItem(Item::get($kit->get("item1d")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item2d")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item3d")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item4d")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item5d")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item6d")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item7d")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item8d")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item9d")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item1d")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item2d")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item3d")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item4d")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item5d")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item6d")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item7d")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item8d")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item9d")));
                         $sender->sendMessage($config->get("kits") . "Du hast dein Tägliches Kit erhalten sowie " . $kit->get("moneydaily") . "$, " . $kit->get("coinsdaily") . " Coins und 1 Dailykey!");
                     }
                     break;
@@ -169,15 +172,15 @@ class KitCommand extends Command
                         } else {
                             $mymoney->addMoney($sender, $kit->get("moneyhour"));
                         }
-                        $item->getInventory()->addItem(Item::get($kit->get("item1h")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item2h")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item3h")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item4h")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item5h")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item6h")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item7h")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item8h")));
-                        $item->getInventory()->addItem(Item::get($kit->get("item9h")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item1h")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item2h")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item3h")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item4h")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item5h")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item6h")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item7h")));
+                        $sender->g()->addItem($if->get($kit->get("item8h")));
+                        $sender->getInventory()->addItem($if->get($kit->get("item9h")));
                         $sender->sendMessage($config->get("kits") . "Du hast dein Stündliches Kit erhalten sowie " . $kit->get("moneyhour") . "$ und 1 Stündlicher Key!");
                     }
                     break;

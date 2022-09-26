@@ -11,6 +11,10 @@ webhookurl: "https://discord.com/api/webhooks/955500170823471175/cijTgpZDdeUFec4
 webhookdc: "https://discordapp.com/api/webhooks/"
 webhookname: "CoreV6"
 
+banned_words:
+  - '@here'
+  - '@everyone'
+
 #JoinNachrricht
 Joinmsg: "** {dcprefix} : {time} : {gruppe} {player} hat den Server betreten. [{count}/{slots}] **"
 #QuitNachrricht
@@ -23,4 +27,8 @@ Deathmsg: "** {dcprefix} : {time} : {gruppe} {player} starb an irgendwas!**"
 Chatmsg: "```{dcprefix} : {time} : {gruppe} {player} : {msg}```"
 #VoteNachrricht
 Votemsg: "```{dcprefix} : {time} : {player} : hat für uns abgestimmt! Danke :D```"
+#EnableNachrricht
+Enable: "Der Server wurde gestartet!"
+#DisableNachrricht
+Disable: "Der Server wurde heruntergefahren."
 ...

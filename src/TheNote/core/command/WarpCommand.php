@@ -61,7 +61,6 @@ class WarpCommand extends Command
                 } else {
                     $this->plugin->getServer()->getWorldManager()->loadWorld($world);
 					$sender->teleport(new Position($x , $y , $z, $this->plugin->getServer()->getWorldManager()->getWorldByName($world)));
-
                     $message = str_replace("{warp}", $args[0], $lang->get("warpsucces"));
                     $sender->sendMessage($config->get("prefix") . $message);
                 }

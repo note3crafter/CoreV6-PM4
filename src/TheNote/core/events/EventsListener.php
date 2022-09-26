@@ -18,10 +18,12 @@ use pocketmine\event\block\BlockSpreadEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerCreationEvent;
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\item\Item;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\protocol\ChangeDimensionPacket;
 use pocketmine\player\Player;
+use pocketmine\Server;
 use TheNote\core\entity\SkullEntity;
 use TheNote\core\player\Player as MyPlayer;
 
@@ -29,7 +31,8 @@ use TheNote\core\Main;
 
 class EventsListener implements Listener
 {
-	public function remove(EntityDamageEvent $event){
+
+    public function remove(EntityDamageEvent $event){
 		$entity = $event->getEntity();
 		if($entity instanceof Player && isset(Main::$godmod[$entity->getName()])){
 			if(Main::$godmod[$entity->getName()]){
@@ -37,10 +40,7 @@ class EventsListener implements Listener
 			}
 		}
 	}
-    public function onPlayerCreation(PlayerCreationEvent $event)
-    {
-        $event->setPlayerClass(MyPlayer::class);
-    }
+
     /*public function onBreak(BlockBreakEvent $event)
     {
         if ($event->isCancelled()) return;

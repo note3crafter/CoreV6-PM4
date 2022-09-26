@@ -83,7 +83,7 @@ class BurnCommand extends Command
         } else {
             $stp1 = str_replace("{seconds}", $ev->getSeconds(), $lang->get("burnmessage"));
             $msg = str_replace("{player}" , $player->getName(), $stp1);
-            $sender->sendMessage($config->get("info") . $msg);
+            $sender->sendMessage($config->get("prefix") . $msg);
         }
         return true;
     }

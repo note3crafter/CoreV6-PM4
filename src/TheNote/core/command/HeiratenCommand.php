@@ -14,6 +14,7 @@ namespace TheNote\core\command;
 use pocketmine\event\Listener;
 use pocketmine\network\mcpe\protocol\OnScreenTextureAnimationPacket;
 use pocketmine\player\Player;
+use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
@@ -135,31 +136,38 @@ class HeiratenCommand extends Command implements Listener
                         break;
                     case "scheidung":
                     case "divorce":
+
                         $scheidung = $this->getPCFG($sender->getName(), "heiraten");
                         $victim = $this->plugin->getServer()->getPlayerExact($scheidung);
+                        $hei = new Config($this->plugin->getDataFolder() . Main::$userfile . $sender->getName() . ".json", Config::JSON);
+                        $heiv = new Config($this->plugin->getDataFolder() . Main::$userfile . $scheidung . ".json", Config::JSON);
 
-                        if (isset($victim) AND $victim instanceof Player) {
-
-                            $this->setScheidung($victim);
-                            $hei = new Config($this->plugin->getDataFolder() . Main::$userfile . $sender->getName() . ".json", Config::JSON);
-                            $heiv = new Config($this->plugin->getDataFolder() . Main::$userfile . $victim->getName() . ".json", Config::JSON);
+                        //if (isset($victim) AND $victim instanceof Player) {
+                        if ($hei->get("heistatus") == true){
+                            $this->setScheidung($scheidung);
                             $hei->set("heistatus", false);
                             $hei->save();
                             $heiv->set("heistatus", false);
                             $heiv->save();
+
                             $message = str_replace("{sender}", $sender->getName(), $lang->get("heischbc"));
-                            $message1 = str_replace("{victim}", $victim->getName(), $message);
+                            $message1 = str_replace("{victim}", $scheidung, $message);
                             $this->plugin->getServer()->broadcastMessage($config->get("heirat") . $message1);
 
-                            $message2 = str_replace("{sender}", $sender->getName(), $lang->get("heischsender"));
-                            $victim->sendMessage($config->get("heirat") . $message2);
 
-                            $message3 = str_replace("{victim}", $victim->getNameTag(), $lang->get("heischtarget"));
+                            $message3 = str_replace("{victim}", $scheidung, $lang->get("heischtarget"));
                             $sender->sendMessage($config->get("heirat") . $message3);
                             $packet = new OnScreenTextureAnimationPacket();
                             $packet->effectId = 20;
                             $sender->sendData((array)$packet);
-                            $victim->sendData((array)$packet);
+                            if ($victim == null){
+
+                            } else {
+                                $victim->sendData((array)$packet);
+                                $message2 = str_replace("{sender}", $sender->getName(), $lang->get("heischsender"));
+                                $victim->sendMessage($config->get("heirat") . $message2);
+
+                            }
 
                         } else {
                             $sender->sendMessage($config->get("heirat") . $lang->get("heischerror"));
@@ -239,7 +247,7 @@ class HeiratenCommand extends Command implements Listener
         $langsettings = new Config($this->plugin->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
         $l = $langsettings->get("Lang");
         $lang = new Config($this->plugin->getDataFolder() . Main::$lang . "Lang_" . $l . ".json", Config::JSON);
-        $player = $a->getLowerCaseName();
+        $player = $a;
         $x = new Config($this->plugin->getDataFolder() . Main::$heifile . strtolower($player) . ".json", Config::JSON);
         $hochzeit = $x->get("heiraten");
 

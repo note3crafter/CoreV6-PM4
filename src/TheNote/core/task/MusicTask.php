@@ -38,27 +38,4 @@ class MusicTask extends Task
             $this->plugin->StartNewTask();
         }
     }
-
-    /*    protected function playTick() : void{
-        foreach($this->song->getLayerHashMap() as $layer){
-            $note = $layer->getNote($this->tick);
-            if (is_null($note)){
-                continue;
-            }
-            $volume = ($layer->getVolume() * 50) / 10000;
-            $pitch = 2 ** (($note->getKey() - 45) / 12);
-            $sound = NBSFile::MAPPING[$note->instrument] ?? NBSFile::MAPPING[NBSFile::INSTRUMENT_PIANO];
-            //Create play sound packet
-            $packet = new PlaySoundPacket();
-            $packet->soundName = $sound;
-            $packet->pitch = $pitch;
-            $packet->volume = $volume;
-            $pos = $this->player->getLocation()->asVector3();
-            $packet->x = $pos->x;
-            $packet->y = $pos->y + $this->player->getEyeHeight();
-            $packet->z = $pos->z;
-            $this->player->getNetworkSession()->sendDataPacket($packet);
-            unset($packet, $pos, $note);
-        }
-    }*/
 }

@@ -11,8 +11,7 @@
 
 namespace TheNote\core\server;
 
-use pocketmine\block\tile\Sign;
-use pocketmine\block\utils\SignText;
+
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use TheNote\core\Main;
@@ -26,12 +25,11 @@ class PlotBewertung implements Listener
 
     public function onInteract(PlayerInteractEvent $event)
     {
-
         $player = $event->getPlayer();
         if ($player->getServer()->isOp($player->getName())) {
             $block = $event->getBlock();
             $tile = $player->getLocation()->getWorld()->getTile($block);
-            if ($tile instanceof Sign) {
+
                 $signtext = $tile->getText();
                 if ($signtext[0] === "1") {
                     $tile->setText("§eBewertet mit", "§41§f/§a5 Sternen", "§fvon", "§c" . $player->getName());
@@ -48,7 +46,7 @@ class PlotBewertung implements Listener
                 if ($signtext[0] === "5") {
                     $tile->setText("§eBewertet mit", "§a5§f/§a5 Sternen", "§fvon", "§c" . $player->getName());
                 }
-            }
+
         }
     }
 }

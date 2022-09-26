@@ -12,6 +12,7 @@
 namespace TheNote\core\command;
 
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
+use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use TheNote\core\Main;
@@ -59,8 +60,8 @@ class FeedCommand extends Command
                 } else {
                     $sender->setAllowFlight(true);
                     $sender->getHungerManager()->setFood(20);
-                    $volume = mt_rand();
-                    $sender->getWorld()->addSound($sender->getPosition(), LevelSoundEventPacket::SOUND_EAT, [$volume]);
+                    //$volume = mt_rand();
+                    //$sender->getWorld()->addSound($sender->getPosition(), LevelSoundEvent::EAT, (int)[$volume]);
                     $message = str_replace("{sender}" , $sender->getNameTag(), $lang->get("feedtargetsucces"));
                     $target->sendMessage($config->get("prefix") . $message);
                     $message1 = str_replace("{victim}" , $victim->getName(), $lang->get("feedtargetsucces2"));
@@ -74,8 +75,8 @@ class FeedCommand extends Command
         }
         $sender->setAllowFlight(true);
         $sender->getHungerManager()->setFood(20);
-        $volume = mt_rand();
-        $sender->getWorld()->addSound($sender->getPosition(), LevelSoundEventPacket::SOUND_EAT, [$volume]);
+        //$volume = mt_rand();
+        //$sender->getWorld()->addSound($sender->getPosition(), LevelSoundEvent::EAT, (int)[$volume]);
         $sender->sendMessage($config->get("prefix") . $lang->get("feedsucces"));
         return false;
     }

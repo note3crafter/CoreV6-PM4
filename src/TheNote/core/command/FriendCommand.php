@@ -14,6 +14,7 @@ namespace TheNote\core\command;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
+use pocketmine\Server;
 use pocketmine\utils\Config;
 use TheNote\core\formapi\SimpleForm;
 use TheNote\core\Main;
@@ -36,7 +37,7 @@ class FriendCommand extends Command
             $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
             return false;
         }
-
+        $target = Server::getInstance()->getPlayerExact(strtolower($args[0]));
         $playerfile = new Config($this->plugin->getDataFolder() . Main::$freundefile . $sender->getName() . ".json", Config::JSON);
         if (empty($args[0])) {
             $form = new SimpleForm(function (Player $player, int $data = null) {
@@ -66,6 +67,14 @@ class FriendCommand extends Command
             if (empty($args[1])) {
                 $sender->sendMessage($config->get("friend") . "§7Benutze: §c/friend add [name]");
                 return false;
+            }
+            if ($sender->getName() == $args[1]) {
+                $sender->sendMessage($config->get("friend") . "§cDu kannst dich nicht selbst befreunden!");
+                return false;
+            }
+            if ($target == null) {
+                $sender->sendMessage($config->get("error") . "§cDer Spieler ist nicht Online!");
+                return false;
             } else {
                 if (file_exists($this->plugin->getDataFolder() . Main::$freundefile . $args[1] . ".json")) {
                     $vplayerfile = new Config($this->plugin->getDataFolder() . Main::$freundefile . $args[1] . ".json", Config::JSON);
@@ -74,13 +83,10 @@ class FriendCommand extends Command
                         $einladungen[] = $sender->getName();
                         $vplayerfile->set("Invitations", $einladungen);
                         $vplayerfile->save();
-                        if ($args[1] === $sender) {
-                            $sender->sendMessage($config->get("friend") . "§cDu kannst dich nicht selbst befreunden!");
-                            return false;
-                        } else {
-                            $sender->sendMessage($config->get("friend") . "§aDeine Freundschaftsanfrage wurde gesendet zu  " . $args[1]);
-                            $v = $this->plugin->getServer()->getPlayerExact($args[1]);
-                        }
+
+                        $sender->sendMessage($config->get("friend") . "§aDeine Freundschaftsanfrage wurde gesendet zu  " . $args[1]);
+                        $v = $this->plugin->getServer()->getPlayerExact($args[1]);
+
                         if (!$v == null) {
                             $v->sendMessage($config->get("friend") . "§a" . $sender->getName() . " hat Dir eine Freundschafts Anfrage gesendet akzeptier sie mit §e/friend accept " . $sender->getName() . "§a oder lehne sie ab mit §e /friend deny " . $sender->getName() . "§a!");
                         }
@@ -200,6 +206,7 @@ class FriendCommand extends Command
             $this->plugin->getLogger()->info($config->get("friend") . "§aDie Console hat keine Freunde!");
             return false;
         }
+        return true;
     }
 }
 

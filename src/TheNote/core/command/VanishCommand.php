@@ -49,18 +49,11 @@ class VanishCommand extends Command
             return false;
         }
         if ($sender->hasPermission("core.command.vanish")) {
-            if(!isset($this->vanish[$sender->getName()])){
-                $this->vanish[$sender->getName()] = true;
-                $sender->setNameTagVisible(false);
-                $sender->setSilent(true);
-                $sender->setInvisible(true);
-                $sender->sendMessage($config->get("prefix") . $lang->get("vanishon"));
-            }else{
-                unset($this->vanish[$sender->getName()]);
-                $sender->setNameTagVisible(true);
-                $sender->setInvisible(false);
-                $sender->setSilent(false);
+            $this->plugin->switchVanish($sender);
+            if (!$this->plugin->isVanished($sender)) {
                 $sender->sendMessage($config->get("prefix") . $lang->get("vanishoff"));
+            } else {
+                $sender->sendMessage($config->get("prefix") . $lang->get("vanishon"));
             }
         }
         return false;

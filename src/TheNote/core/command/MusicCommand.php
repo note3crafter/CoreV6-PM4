@@ -66,7 +66,7 @@ class MusicCommand extends Command
 				case "pause":
 
 					$this->plugin->getScheduler()->cancelAllTasks();
-					$sender->sendMessage($config->get("prefix") . $lang->get("musicplay"));
+					$sender->sendMessage($config->get("prefix") . $lang->get("musicstop"));
 					return true;
 					break;
 				case "start":

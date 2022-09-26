@@ -7,26 +7,23 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 # Download und Wichtig
 - [Hier downloaden](https://poggit.pmmp.io/ci/note3crafter/Core-V6/Core-V6)!
 - Bitte jeden Fehler umgehend Melden!!!
-- Es kann bei der größe vorkommen das ich was vergesse hochzuladen xD
 
-# Neues v6.1.0 BETA
-- SprachenSystem nun abgeschlossen
-- ScoreBoards sind nun vollständig bearbeitbar!
-- Modulsystem -> Das heißt ihr könnt absofort einzelne Teile der Core Abschalten!
-- Heiratssystem & ClanSystem etwas Angepasst damit es im Scoreboardsystem kein Fehler gibt!
-- Fernglas Hinzugefügt
-- /animation entfernt da nur spielerrei
-- /servermute entfernt
-- MSG System Überarbeitet!
-- Sprachensystem sind folgende Commands noch nicht übernommen
-- /ban /banid /banlist /booster /credits /erfolg /fake /friend /kit /perk /perkshop /seeperms /serverstats /stats /unban
-- Es wurden zudem kleinere Fehler behoben 
+# Neues v6.1.2 BETA
+- Kleinere Fehler Behoben! 
+- Leaderboard überarbeitet und einstellbar
+- Liftsystem nun nichtmehr MyPlot abhängig
+- AFK System Auto Kick funktion hinzugefügt!
+- /vanish funktional
+- /burn command gefixt wooops
+- LightningRod (Zum Rumspielen xD) hinzugefügt (Lohenrute)
 
 # Bekannte Fehler
 - MusicSystem nicht funktional
 - AdminItems aktuell nicht funktional
 - /vanish nicht funktional
-
+- Sprachensystem sind folgende Commands und Funktionen noch nicht übernommen
+- /ban /banid /banlist /booster /credits /erfolg /fake /friend /kit /perk /perkshop /seeperms /serverstats /stats /unban
+- EconomyShop/Sell/Chest
  
 # Mindestanforderungen 
 - 2 Kern CPU (Bestenfalls hohe Singlecore Performance)
@@ -34,13 +31,19 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 - 1GB Festplatte -
 
 # Für die Zukunft Geplant :
-- ScoreBoard Feature überarbeiten
 - Weitere Commands wie : /top, /nofire, /speed sind geplant
 - Neuschreiben des Booster Commands
 - Neuschreiben des Ban Systems
 - API für die Core
 - Internes World Edit System
-- ChestShop System -> kommt auf jeden fall!
+- 
+# Funktion EconomyShop/Sell/Chest:
+    | Zeile | Wert |
+    | :------: | :---: |
+    | 1 | sell\shop\leer |
+    | 2 | Menge |
+    | 3 | Preis |
+    | 4 | Item ID:meta |
 
 # Features
 - [Alle Commands](https://github.com/note3crafter/Core-V6/blob/main/resources/commands.md)
@@ -83,7 +86,7 @@ Und an unseren Forker! Gebt das Plugin nicht als Euers aus! Ich habe eine menge 
 - [ipad54](https://github.com/ipad54/INether) (Für Composter und Netherstuff)
 - [LookitsAku](https://github.com/Akuroma) & und vielen vielen weiteren Helfern!
 
-2017-2022 ©NoteLand & TheNote/RetroRolf/note3crafter
+2017-2022 ©TheNote/RetroRolf/note3crafter
 
 
 

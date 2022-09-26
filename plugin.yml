@@ -1,6 +1,6 @@
 name: CoreV6
 main: TheNote\core\Main
-version: 6.1.0_BETA
+version: 6.1.2_BETA
 api:
   - 4.8.1
 author: TheNote/Rudolf2000/note3crafter
@@ -23,8 +23,9 @@ authors:
   - muqsit #InvMenü
   - TheBalkanDev #ecinvsee, invsee
   - GamerMJay #hilfe
-description: Core v6.1.0 Beta
-
+description: Core v6.1.2 Beta
+extensions:
+  - sqlite3
 permissions:
   core.command.adventure:
     description: "Setze deinen Spielermodus zu Abendteuer"
@@ -43,6 +44,9 @@ permissions:
     default: op
   core.command.admintitems.explosivegg:
     description: "gebe dir den Explosiveg"
+    default: op
+  core.command.afk.bypass:
+    description: "Werde nicht automatich gekickt"
     default: op
   core.command.animation:
     description: "Teste verschiednene Animationen aus"
@@ -266,6 +270,8 @@ permissions:
     default: op
   core.events.blockbreak:
     default: op
+  core.events.chat:
+    default: op
   core.lift.admin.remove:
     default: op
   core.lift.admin.create:
@@ -275,3 +281,8 @@ permissions:
   core.lift.admin.use:
     default: op
   core.event.colorchat:
+    default: op
+  core.economy.chestshop.admin:
+    default: op
+  core.events.lightningrod:
+    default: op

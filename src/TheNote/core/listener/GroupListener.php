@@ -55,7 +55,7 @@ class GroupListener implements Listener
 
         //Group Perms
         $permissionlist = (array)$groups->getNested("Groups." . $playergroup . ".permissions", []);
-        foreach ($permissionlist as $name => $data) {
+        foreach ($permissionlist as /*$name =>*/ $data) {
             $player->addAttachment($this->plugin)->setPermission($data, true);
         }
 
