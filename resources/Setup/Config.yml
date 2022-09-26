@@ -1,14 +1,25 @@
 ---
 #Allgemeine Einstellungen
-ConfigVersion: 6.1.0 #FingerWeg! Dont touch this!
+ConfigVersion: 6.1.2 #FingerWeg! Dont touch this!
 
 #Commands & Funktionen
 BoosterCommand: false #Muss Überarbeitet werden jedoch aktuell keine Zeit dafür...
 StarterKit: true #Aktiviere\Deaktiviere das StarterKit
-Kits: true #Aktiviere\Deaktiviere das KitSystem
+Kits: false #Aktiviere\Deaktiviere das KitSystem Braucht eine überarbeitung
 VoteSystem: true #Aktiviere\Deaktiviere das VoteSystem
+Buchstabenraetsel: false
 #In Modules.yml sind die restlichen funktionen die man ändern kann!
 
+#LightningRod fun
+Lightningrod: true
+
+#TimeStop
+#Stelle hier die Zeit ein die du dauerhaft haben möchtest!
+timestop: true
+time: 1000
+
+#AFKTimeOut
+AFK: 240
 
 #ItemDisplay
 inames: true #aktiviere/deaktiviere die ItemNamen
@@ -55,10 +66,10 @@ PingLimit: 30000 #Setze das Maximale Pinglimit ein
 ExplodeEgg: true #Setzt auf True um Explodierende Eier ohne Damage zu erhalten!
 
 #Regelwerk
-Regeln: true #Entscheide selber ob du die Regeln nutzten willst oder nicht...
+Regeln: false #Entscheide selber ob du die Regeln nutzten willst oder nicht...
 
 #FFA
-FFA: true #Aktiviere/Deaktiviere FFA
+FFA: false #Aktiviere/Deaktiviere FFA
 FFA_Map: FFA #Setze hier deine Welt ein wo du FFA Nutzen willst
 
 #HubCommand
@@ -115,7 +126,7 @@ Bucketfill:
   - Lobby
 
 #RankShop
-RankShopCommand: true #<- Setze es auf false um dem Command zu deaktivieren!
+RankShopCommand: false #<- Setze es auf false um dem Command zu deaktivieren!
 
 Rankname1: premium #<- Setze hier die Gruppe rein (Muss genauso heißen wie die Gruppe!
 Rankprice1: 125000 #<- Setze hier den Betrag fest!
@@ -151,12 +162,12 @@ PowerBlock: true #Aktiviere\Deaktiviere den PowerBlock
 
 ##PowerBlock 1
 BlockID1: 100 #Setze hier die Blockid hin
-BlockStaerke1: 1 #Setze hier die Stärke ein
+BlockStaerke1: 5 #Setze hier die Stärke ein
 BlockSound1: AnvilFallSound
 
 ##PowerBlock 2
 BlockID2: 133
-BlockStaerke2: 2
+BlockStaerke2: 4
 BlockSound: GhastShootSound
 
 ##Verfügbare Sounds
