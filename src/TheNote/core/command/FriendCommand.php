@@ -37,7 +37,6 @@ class FriendCommand extends Command
             $sender->sendMessage($config->get("error") . "§cDiesen Command kannst du nur Ingame benutzen");
             return false;
         }
-        $target = Server::getInstance()->getPlayerExact(strtolower($args[0]));
         $playerfile = new Config($this->plugin->getDataFolder() . Main::$freundefile . $sender->getName() . ".json", Config::JSON);
         if (empty($args[0])) {
             $form = new SimpleForm(function (Player $player, int $data = null) {
@@ -62,6 +61,33 @@ class FriendCommand extends Command
             $form->sendToPlayer($sender);
             return true;
         }
+        if ($args[0] == "list") {
+            if (empty($playerfile->get("Friend"))) {
+                $sender->sendMessage($config->get("friend") . "§aDu hast keine Freunde!");
+                return false;
+            } else {
+                $sender->sendMessage("§f=======[§aDeine Freunde§f]=======");
+                foreach ($playerfile->get("Friend") as $f) {
+                    if ($this->plugin->getServer()->getPlayerExact($f) == null) {
+                        $sender->sendMessage("§b" . $f . " » §7(§cOffline§7)");
+                    } else {
+                        $sender->sendMessage("§b" . $f . " » §7(§aOnline§7)");
+                    }
+                }
+                return true;
+            }
+        }
+        if ($args[0] == "block") {
+            if ($playerfile->get("blocked") === false) {
+                $playerfile->set("blocked", true);
+                $playerfile->save();
+                $sender->sendMessage($config->get("friend") . "§aDu wirst nun keine Freundschaftsanfrage mehr bekommen!");
+            } else {
+                $sender->sendMessage($config->get("friend") . "§aDu wirst nun wieder Freundschaftsanfragen bekommen!");
+                $playerfile->set("blocked", false);
+                $playerfile->save();
+            }
+        }
 
         if ($args[0] == "add") {
             if (empty($args[1])) {
@@ -72,6 +98,7 @@ class FriendCommand extends Command
                 $sender->sendMessage($config->get("friend") . "§cDu kannst dich nicht selbst befreunden!");
                 return false;
             }
+            $target = Server::getInstance()->getPlayerExact(strtolower($args[1]));
             if ($target == null) {
                 $sender->sendMessage($config->get("error") . "§cDer Spieler ist nicht Online!");
                 return false;
@@ -175,37 +202,11 @@ class FriendCommand extends Command
                     return false;
                 }
             }
-        }
-        if ($args[0] == "list") {
-            if (empty($playerfile->get("Friend"))) {
-                $sender->sendMessage($config->get("friend") . "§aDu hast keine Freunde!");
-                return false;
-            } else {
-                $sender->sendMessage("§f=======[§aDeine Freunde§f]=======");
-                foreach ($playerfile->get("Friend") as $f) {
-                    if ($this->plugin->getServer()->getPlayerExact($f) == null) {
-                        $sender->sendMessage("§b" . $f . " » §7(§cOffline§7)");
-                    } else {
-                        $sender->sendMessage("§b" . $f . " » §7(§aOnline§7)");
-                    }
-                }
-                return true;
-            }
-        }
-        if ($args[0] == "block") {
-            if ($playerfile->get("blocked") === false) {
-                $playerfile->set("blocked", true);
-                $playerfile->save();
-                $sender->sendMessage($config->get("friend") . "§aDu wirst nun keine Freundschaftsanfrage mehr bekommen!");
-            } else {
-                $sender->sendMessage($config->get("friend") . "§aDu wirst nun wieder Freundschaftsanfragen bekommen!");
-                $playerfile->set("blocked", false);
-                $playerfile->save();
-            }
         } else {
             $this->plugin->getLogger()->info($config->get("friend") . "§aDie Console hat keine Freunde!");
             return false;
         }
+
         return true;
     }
 }
