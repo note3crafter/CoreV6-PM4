@@ -826,7 +826,7 @@ class Main extends PluginBase implements Listener
         }
         Main::getInstance()->getScheduler()->scheduleRepeatingTask(new AFKTask($event->getPlayer()), 20);
         $this->TotemEffect($player);
-        $this->addStrike($player);
+        //$this->addStrike($player);
 
         //Spieler Erster Join
         if ($user->get("register") == null or false) {
