@@ -42,6 +42,7 @@ use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\OnScreenTextureAnimationPacket;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\network\mcpe\protocol\serializer\PacketBatch;
+use pocketmine\network\mcpe\protocol\types\entity\PropertySyncData;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
@@ -826,7 +827,7 @@ class Main extends PluginBase implements Listener
         }
         Main::getInstance()->getScheduler()->scheduleRepeatingTask(new AFKTask($event->getPlayer()), 20);
         $this->TotemEffect($player);
-        //$this->addStrike($player);
+        $this->addStrike($player);
 
         //Spieler Erster Join
         if ($user->get("register") == null or false) {
@@ -1015,17 +1016,17 @@ class Main extends PluginBase implements Listener
         $prefix = $playerdata->getNested($player->getName() . ".groupprefix");
         $slots = $settings->get("slots");
         $spielername = $gruppe->get("Nickname");
-        if ($config->get("JoinTitle") == true) { //JoinTitle
+        if ($config->get("JoinTitle")) { //JoinTitle
             $subtitle = str_replace("{player}", $player->getName(), $config->get("Subtitlemsg"));
             $title = str_replace("{player}", $player->getName(), $config->get("Titlemsg"));
             $player->sendTitle($title);
             $player->sendSubTitle($subtitle);
         }
-        if ($config->get("JoinTip") == true) { //JoinTip
+        if ($config->get("JoinTip")) { //JoinTip
             $tip = str_replace("{player}", $player->getName(), $config->get("Tipmsg"));
             $player->sendTip($tip);
         }
-        if ($config->get("JoinMessage") == true) { //Joinmessage
+        if ($config->get("JoinMessage")) { //Joinmessage
             if ($gruppe->get("Nickname") == null) {
                 $stp1 = str_replace("{player}", $player->getName(), $config->get("Joinmsg"));
             } else {
@@ -1095,7 +1096,7 @@ class Main extends PluginBase implements Listener
     public function addStrike(Player $player): void
     {
         $pos = $player->getPosition();
-        $light2 = AddActorPacket::create(Entity::nextRuntimeId(), 1, "minecraft:lightning_bolt", $player->getPosition()->asVector3(), null, $player->getLocation()->getYaw(), $player->getLocation()->getPitch(), 0.0, 0.0, [], [], []);
+        $light2 = AddActorPacket::create(Entity::nextRuntimeId(), 1, "minecraft:lightning_bolt", $player->getPosition()->asVector3(), null, $player->getLocation()->getYaw(), $player->getLocation()->getPitch(), 0.0, 0.0, [], [], new PropertySyncData([], []), []);
         $block = $player->getWorld()->getBlock($player->getPosition()->floor()->down());
         $particle = new BlockBreakParticle($block);
         $player->getWorld()->addParticle($pos, $particle, $player->getWorld()->getPlayers());
