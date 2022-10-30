@@ -9,7 +9,7 @@
 //   Copyright by TheNote! Not for Resale! Not for others
 //
 
-namespace TheNote\core\Task;
+namespace TheNote\core\task;
 
 use pocketmine\network\mcpe\protocol\SetDisplayObjectivePacket;
 use pocketmine\network\mcpe\protocol\SetScorePacket;
@@ -21,8 +21,7 @@ use pocketmine\utils\Config;
 use TheNote\core\Main;
 use TheNote\core\utils\Manager as SBM;
 
-class ScoreboardTask extends Task
-{
+class ScoreboardTask extends Task{
     //private $plugin;
     //private $line = [];
 
