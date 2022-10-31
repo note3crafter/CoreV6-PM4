@@ -13,6 +13,7 @@ namespace TheNote\core\utils;
 
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\StringTag;
+use TheNote\core\utils\SimpleBlockData;
 
 class BlockLoader {
 
@@ -89,10 +90,8 @@ class BlockLoader {
                     }
                 }
             }
-
             return new SimpleBlockData($id, $data["facing"][$facing]);
         }
-
         return new SimpleBlockData(0, 0);
     }
 }

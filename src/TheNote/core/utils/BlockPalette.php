@@ -11,6 +11,8 @@
 
 namespace TheNote\core\utils;
 
+use TheNote\core\utils\SimpleBlockData;
+
 class BlockPalette {
 
     public $palette = [];

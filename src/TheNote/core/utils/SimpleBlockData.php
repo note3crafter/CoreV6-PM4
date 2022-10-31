@@ -12,7 +12,6 @@
 namespace TheNote\core\utils;
 
 class SimpleBlockData{
-
     public $id;
     public $meta;
 
