@@ -1,0 +1,34 @@
+---
+#DiscordEinstellungen
+
+#Möchtest du MCPEtoDiscord funktion Aktivieren?
+DC: true #setze auf true um es zu aktivieren
+
+#Haupteinstellungen
+dclink: "https://discord.gg/ju2gGzq"
+chatprefix: "CoreV6_BETA"
+webhookurl: "https://discord.com/api/webhooks/955500170823471175/cijTgpZDdeUFec46VUof3ChwxgErUQQ4ZNyIoldfwItzCxg6noAqHIs_Ww6B9Wq-Ek3N" #füge hier deine Webhockurl ein
+webhookdc: "https://discordapp.com/api/webhooks/"
+webhookname: "CoreV6"
+
+banned_words:
+  - '@here'
+  - '@everyone'
+
+#JoinNachrricht
+Joinmsg: "** {dcprefix} : {time} : {gruppe} {player} hat den Server betreten. [{count}/{slots}] **"
+#QuitNachrricht
+Quitmsg: "** {dcprefix} : {time} : {gruppe} {player} hat den Server verlassen. [{count}/{slots}] **"
+#KickNachrricht
+Kickmsg: "** {dcprefix} : {time} : {gruppe} {player} wurde vom Server gekickt!**"
+#DeathNachrricht
+Deathmsg: "** {dcprefix} : {time} : {gruppe} {player} starb an irgendwas!**"
+#ChatNachrricht
+Chatmsg: "```{dcprefix} : {time} : {gruppe} {player} : {msg}```"
+#VoteNachrricht
+Votemsg: "```{dcprefix} : {time} : {player} : hat für uns abgestimmt! Danke :D```"
+#EnableNachrricht
+Enable: "Der Server wurde gestartet!"
+#DisableNachrricht
+Disable: "Der Server wurde heruntergefahren."
+...

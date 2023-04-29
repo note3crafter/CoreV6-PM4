@@ -1,8 +1,8 @@
 name: CoreV6
 main: TheNote\core\Main
-version: 6.1.2_BETA
+version: 6.3.1_STABLE
 api:
-  - 4.8.1
+  - 4.20.1
 author: TheNote/Rudolf2000/note3crafter
 authors:
   - TheNote/Rudolf2000 #Inhaber der Core
@@ -14,7 +14,6 @@ authors:
   - LookItsAku #Hilfe
   - Philip #Für Hilfe
   - galaxytwenty #Hilfe bei den Blöcken
-  - ipad54 #iNether & Composter
   - Hagnbrain #homesystem
   - EnderDirt #füraltecodes
   - Crasher508 #Fixxer
@@ -23,7 +22,7 @@ authors:
   - muqsit #InvMenü
   - TheBalkanDev #ecinvsee, invsee
   - GamerMJay #hilfe
-description: Core v6.1.2 Beta
+description: Core v6.3.1 STABLE
 extensions:
   - sqlite3
 permissions:
@@ -65,12 +64,6 @@ permissions:
     default: op
   core.command.chatclear:
     description: "Lösche den Chat"
-    default: op
-  core.command.givemoney:
-    description: "Gebe dir Geld"
-    default: op
-  core.command.givecoins:
-    description: "Gebe dir Coins"
     default: op
   core.command.clear:
     description: "Cleare dein Inventar"
@@ -120,8 +113,11 @@ permissions:
   core.command.fly.other:
     description: "Redbull verleiht einem anderen die Macht zu fliegen!"
     default: op
-  core.comamnd.givecoins:
-    description: "Geld für die Armen"
+  core.command.givecoins:
+    description: "Gebe dir Coins"
+    default: op
+  core.command.givemoney:
+    description: "Gebe dir Geld"
     default: op
   core.command.group:
     description: "Stelle deine Gruppe ein"
@@ -159,6 +155,9 @@ permissions:
   core.command.nightvision:
     description: "Obwohl es Nacht ist ist es Tag!"
     default: op
+  core.command.nodm.bypass:
+    description: "Bypass für MSGs zu schreiben"
+    default: op
   core.command.nuke:
     desctiption: "Jage ein dickes Loch in den Boden!"
     default: op
@@ -166,7 +165,7 @@ permissions:
     desctiption: "Nuke einen anderen Spieler!"
     default: op
   core.command.paycoins:
-    description: "Schenke einen Armen Geld"
+    description: "Zahle einen Spieler Coins"
     default: op
   core.command.position:
     description: "Schaue deine Position"
@@ -218,6 +217,7 @@ permissions:
     default: op
   core.command.takemoney:
     description: "Nehme das Held eines anderen Spielers"
+    default: op
   core.command.tpall:
     description: "Teleportiere alle Spieler zu dir"
     default: op
@@ -272,6 +272,8 @@ permissions:
     default: op
   core.events.chat:
     default: op
+  core.events.spawnbypass:
+    default: op
   core.lift.admin.remove:
     default: op
   core.lift.admin.create:
@@ -285,4 +287,33 @@ permissions:
   core.economy.chestshop.admin:
     default: op
   core.events.lightningrod:
+    default: op
+  core.command.top:
+    default: op
+    description: "Teleportiert dich zum höchsten Block"
+  core.command.compass:
+    default: op
+    description: "Zeige wo du hinschauts"
+  core.command.speed:
+    default: op
+    description: "Gebe deine Geschwindigkeit an"
+  core.command.extinguish:
+    default: op
+    description: "Lösche dein Brand"
+  core.command.extinguish.other:
+    default: op
+  core.command.realname:
+    default: op
+    description: "zeige den Spielernamen von einem Genickten name"
+  core.command.near:
+    default: op
+    description: "Zeige Spieler in deiner nähe"
+  core.command.jump:
+    default: op
+    description: "tp dich zum angesehenen block"
+  core.event.itemframe:
+    default: op
+  core.event.flint:
+    default: op
+  core.event.doors:
     default: op

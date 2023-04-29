@@ -1,0 +1,116 @@
+---
+LuckyBlockId: 19
+
+#types availables : items, blocks, money, coins, commands
+Chance-0: #Steak
+  Type: items
+  idItems: 364
+  metaItems: 0
+  amountItems: 30
+Chance-1: #Goldblock
+  Type: blocks
+  idBlocks: 41
+  metaBlocks: 0
+Chance-2:
+  Type: coins
+  coinsToAdd: 100
+Chance-3:
+  Type: money
+  moneyToAdd: 500
+Chance-4:
+  Type: null
+Chance-5: #HoneyComb
+  Type: items
+  idItems: 736
+  metaItems: 0
+  amountItems: 5
+Chance-6: #Copper
+  Type: blocks
+  idBlocks: 595
+  metaBlocks: 0
+Chance-7: #LuckyBlock
+  Type: blocks
+  idBlocks: 19
+  metaBlocks: 0
+Chance-8: #NetheriteBarren
+  Type: items
+  idItems: 742
+  metaItems: 0
+  amountItems: 8
+Chance-9: #Turtle Helmet
+  Type: items
+  idItems: 469
+  metaItems: 0
+  amountItems: 1
+Chance-10: #Dirt
+  Type: blocks
+  idBlocks: 3
+  metaBlocks: 0
+Chance-11: #Dia Pickaxe
+  Type: items
+  idItems: 278
+  metaItems: 0
+  amountItems: 1
+Chance-12: #Cake
+  Type: items
+  idItems: 354
+  metaItems: 0
+  amountItems: 1
+Chance-13: #Coockie
+  Type: items
+  idItems: 357
+  metaItems: 0
+  amountItems: 16
+Chance-14:
+  Type: coins
+  coinsToAdd: 250
+Chance-15:
+  Type: money
+  moneyToAdd: 2000
+Chance-16: #Amethyst Block
+  Type: items
+  idItems: -327
+  metaItems: 0
+  amountItems: 4
+Chance-17: #Warped Stem
+  Type: items
+  idItems: -226
+  metaItems: 0
+  amountItems: 32
+Chance-18: #Crimson Stem
+  Type: items
+  idItems: -225
+  metaItems: 0
+  amountItems: 32
+Chance-19: #Cooked Porkshop
+  Type: items
+  idItems: 320
+  metaItems: 0
+  amountItems: 32
+Chance-20: #diamond
+  Type: items
+  idItems: 264
+  metaItems: 0
+  amountItems: 8
+Chance-21: #basalt
+  Type: items
+  idItems: -235
+  metaItems: 0
+  amountItems: 8
+Chance-22: #Sandstone
+  Type: blocks
+  idBlocks: 24
+  metaBlocks: 0
+Chance-23: #Glass
+  Type: blocks
+  idBlocks: 20
+  metaBlocks: 0
+Chance-24: #Bedrock
+  Type: blocks
+  idBlocks: 7
+  metaBlocks: 0
+Chance-25: #Lava
+  Type: blocks
+  idBlocks: 10
+  metaBlocks: 0
+...

@@ -1,29 +1,25 @@
-<h1>CoreV6 BETA<img src="https://github.com/note3crafter/Core-V5/blob/main/resources/icon.png" height="64" width="64" align="left"></img></h1>
+<h1>CoreV6 Release<img src="https://github.com/note3crafter/Core-V5/blob/main/resources/icon.png" height="64" width="64" align="left"></img></h1>
 <br />
-Für Pocketmine API 4.10.0
+Für Pocketmine API 4.20.1
 
 
 Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/427472879072968714.svg?style=flat-square&label=discord&colorB=7289da)](https://discord.gg/Pebq8Wu) <br>
 # Download und Wichtig
 - [Hier downloaden](https://poggit.pmmp.io/ci/note3crafter/Core-V6/Core-V6)!
 - Bitte jeden Fehler umgehend Melden!!!
+- Warscheinlich wohl das Letzte Update wegen Zeitmangel...
 
-# Neues v6.1.2 BETA
-- Kleinere Fehler Behoben! 
-- Leaderboard überarbeitet und einstellbar
-- Liftsystem nun nichtmehr MyPlot abhängig
-- AFK System Auto Kick funktion hinzugefügt!
-- /vanish funktional
-- /burn command gefixt wooops
-- LightningRod (Zum Rumspielen xD) hinzugefügt (Lohenrute)
+# Neues v6.3.1 STABLE
+- Neues Language System womit es möglich ist in mehreren Sprachen zu Übersetzen!
+- Neue BaseAPI womit es möglich ist auf die Core zurückzugreifen!
+- Überarbeitetes Scoreboard (Lässt sich nun selbst anpassen!)
+- Sämtliche Blöcke und Items wurden aus der Core zwangsweise entfernt!
 
 # Bekannte Fehler
-- MusicSystem nicht funktional
-- AdminItems aktuell nicht funktional
+- MusicSystem Spielt nur den ersten Ton eines Liedes ab?
 - /vanish nicht funktional
 - Sprachensystem sind folgende Commands und Funktionen noch nicht übernommen
 - /ban /banid /banlist /booster /credits /erfolg /fake /friend /kit /perk /perkshop /seeperms /serverstats /stats /unban
-- EconomyShop/Sell/Chest
  
 # Mindestanforderungen 
 - 2 Kern CPU (Bestenfalls hohe Singlecore Performance)
@@ -34,7 +30,6 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 - Weitere Commands wie : /top, /nofire, /speed sind geplant
 - Neuschreiben des Booster Commands
 - Neuschreiben des Ban Systems
-- API für die Core
 - Internes World Edit System
 - 
 # Funktion EconomyShop/Sell/Chest:
@@ -46,6 +41,7 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
     | 4 | Item ID:meta |
 
 # Features
+- eigene BaseAPI für sämtliches der Core
 - [Alle Commands](https://github.com/note3crafter/Core-V6/blob/main/resources/commands.md)
 - Multi Language Support! (Aktuell noch nicht vollständig)
 - [MCPEtoDiscord](https://github.com/JaxkDev/MCPEToDiscord) (by [JaxkDev](https://github.com/JaxkDev))
@@ -53,7 +49,7 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 - ClanSystem
 - HeiratsSystem
 - FreundeSystem
-- ScoreboardSystem
+- ScoreboardSystem (Anpassbar)
 - SprachenSystem
 - Perks, Booster und vieles Weiteres
 - NetheriteRüstung, Barren, Schrott sowie Werkzeuge
@@ -70,7 +66,6 @@ Beachtet die Configs etc und stellt dort eure sachen ein...
 Und an unseren Forker! Gebt das Plugin nicht als Euers aus! Ich habe eine menge arbeit reingsteckt über Jahre! Sowie um erlaubnis anderer Developer gefragt ob ich ihre werke Intregieren darf
 
 # Großes Dankeschön geht an :
-- [ipad54](https://github.com/ipad54) (INether & Composter)
 - [tim03we](https://github.com/tim03we) (Ban & MSG System)
 - xxflow (Heiratsystem & Payall)
 - Aneoxic (Für das Grundgerüst und den Einstig)
@@ -80,13 +75,11 @@ Und an unseren Forker! Gebt das Plugin nicht als Euers aus! Ich habe eine menge 
 - [CortexPE](https://github.com/CortexPE) (Für ein Teil das ich von Teaspoon mit Intregiert habe) 
 - [MDevPmmP](https://github.com/MarlonDevPMMP) (Für das GroupSystem, EconomySystem)
 - [TheBalkanDev](https://github.com/TheBalkanDev) (Für das Invsee/Enderinvsee)  
-- [TuranicTeam](https://github.com/TuranicTeam) (Für Sämtliche Items/Blöcke etc)
 - [Muqsit](https://github.com/Muqsit) (Für das InvMenü)
 - [jojoe77777](https://github.com/jojoe77777) (Für FormAPI)
-- [ipad54](https://github.com/ipad54/INether) (Für Composter und Netherstuff)
 - [LookitsAku](https://github.com/Akuroma) & und vielen vielen weiteren Helfern!
 
-2017-2022 ©TheNote/RetroRolf/note3crafter
+2017-2023 ©TheNote/RetroRolf/note3crafter
 
 
 
