@@ -12,80 +12,33 @@
 namespace TheNote\core;
 
 use pocketmine\block\Block;
-use pocketmine\block\BlockBreakInfo;
-use pocketmine\block\BlockFactory;
-use pocketmine\block\BlockIdentifier as BID;
-use pocketmine\block\BlockIdentifierFlattened as BIDFlattened;
-use pocketmine\block\BlockLegacyIds;
-use pocketmine\block\BlockLegacyIds as Ids;
-use pocketmine\block\BlockToolType;
 use pocketmine\block\DaylightSensor;
-use pocketmine\block\Door;
-use pocketmine\block\Fence;
-use pocketmine\block\FenceGate;
-use pocketmine\block\Opaque;
-use pocketmine\block\Stair;
-use pocketmine\block\StonePressurePlate;
-use pocketmine\block\tile\Sign as TileSign;
-use pocketmine\block\utils\RecordType;
-use pocketmine\block\utils\SlabType;
-use pocketmine\block\utils\TreeType;
-use pocketmine\block\Wall;
-use pocketmine\block\WoodenButton;
-use pocketmine\block\WoodenPressurePlate;
-use pocketmine\block\WoodenTrapdoor;
 use pocketmine\color\Color;
 use pocketmine\command\CommandSender;
 use pocketmine\console\ConsoleCommandSender;
 use pocketmine\crafting\ShapedRecipe;
-use pocketmine\data\bedrock\LegacyBlockIdToStringIdMap;
-use pocketmine\data\bedrock\LegacyToStringBidirectionalIdMap;
 use pocketmine\entity\animation\TotemUseAnimation;
 use pocketmine\entity\Entity;
-use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\ItemSpawnEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
-use pocketmine\event\player\PlayerCreationEvent;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
 use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\QueryRegenerateEvent;
-use pocketmine\inventory\ArmorInventory;
-use pocketmine\inventory\CreativeInventory;
-use pocketmine\item\Armor;
-use pocketmine\item\ArmorTypeInfo;
-use pocketmine\item\Axe;
-use pocketmine\item\Hoe;
-use pocketmine\item\Item;
-use pocketmine\item\ItemBlock;
-use pocketmine\item\ItemBlockWallOrFloor;
 use pocketmine\item\ItemFactory;
-use pocketmine\item\ItemIdentifier;
 use pocketmine\item\ItemIds;
-use pocketmine\item\Pickaxe;
-use pocketmine\item\Record;
-use pocketmine\item\Shovel;
-use pocketmine\item\StringToItemParser;
-use pocketmine\item\Sword;
-use pocketmine\item\ToolTier;
 use pocketmine\item\VanillaItems;
-use pocketmine\lang\Translatable;
 use pocketmine\math\Vector3;
-use pocketmine\network\mcpe\convert\ItemTranslator;
-use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
-use pocketmine\plugin\PluginException;
-use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\network\mcpe\protocol\types\DeviceOS;
@@ -110,17 +63,11 @@ use TheNote\core\command\FlySpeedCommand;
 use TheNote\core\command\OnlineTimeCommand;
 use TheNote\core\item\Compass;
 use TheNote\core\listener\OnlineListener;
-use TheNote\core\listener\SpawnProtectionListener;
-use TheNote\core\tile\Campfire as TileCampfire;
 
-
-use pocketmine\world\generator\GeneratorManager;
 use pocketmine\world\particle\BlockBreakParticle;
 use pocketmine\world\particle\DustParticle;
 
 use pocketmine\world\sound\TotemUseSound;
-use ReflectionClass;
-use ReflectionMethod;
 use TheNote\core\anderes\commands\CyberInfo;
 use TheNote\core\anderes\emotes\bier;
 use TheNote\core\anderes\emotes\Bitburger;
@@ -148,7 +95,6 @@ use TheNote\core\command\ScoreboardCommand;
 use TheNote\core\command\SpeedCommand;
 use TheNote\core\command\TopCommand;
 use TheNote\core\command\WorldCommand;
-use TheNote\core\entity\EntityManager;
 use TheNote\core\events\AntiCheatEvent;
 use TheNote\core\events\BlocketRecipes;
 use TheNote\core\events\EconomyChest;
@@ -156,14 +102,7 @@ use TheNote\core\events\EconomyJob;
 use TheNote\core\events\Eventsettings;
 use TheNote\core\events\EventsListener;
 use TheNote\core\events\LightningRod;
-use TheNote\core\item\LodestoneCompass;
-use TheNote\core\item\Spyglass;
-use TheNote\core\player\CustomPlayer;
 use TheNote\core\server\FFAArena;
-use TheNote\core\server\generators\ender\EnderGenerator;
-use TheNote\core\server\generators\nether\NetherGenerator;
-use TheNote\core\server\generators\normal\NormalGenerator;
-use TheNote\core\server\generators\void\VoidGenerator;
 use TheNote\core\server\Music;
 use TheNote\core\command\ItemIDCommand;
 use TheNote\core\command\RankShopCommand;
@@ -288,10 +227,8 @@ use TheNote\core\emotes\traurig;
 use TheNote\core\server\RestartServer;
 use TheNote\core\server\Stats;
 use TheNote\core\server\PlotBewertung;
-use TheNote\core\server\Rezept;
 
 //Anderes
-use TheNote\core\item\ItemManager;
 use TheNote\core\blocks\PowerBlock;
 use TheNote\core\server\LiftSystem\BlockBreakListener;
 use TheNote\core\server\LiftSystem\BlockPlaceListener;
@@ -308,9 +245,7 @@ use TheNote\core\task\RTask;
 use TheNote\core\task\PingTask;
 use TheNote\core\task\SignStatsTask;
 use TheNote\core\task\StopTimeTask;
-use TheNote\core\tile\Tiles;
 use TheNote\core\utils\ChestShopDataManager;
-use TheNote\core\utils\CustomIds;
 
 use TheNote\core\utils\Manager;
 use TheNote\core\utils\OnlineSQLite;
@@ -320,10 +255,10 @@ class Main extends PluginBase implements Listener
 {
 
     //PluginVersion
-    public static string $version = "6.3.1 Stable";
+    public static string $version = "6.3.2 Stable";
     public static string $protokoll = "575";
-    public static string $mcpeversion = "1.19.80";
-    public static string $dateversion = "27.04.2023";
+    public static string $mcpeversion = "1.19.81";
+    public static string $dateversion = "013.05.2023";
     public static string $plname = "CoreV6";
     public static string $configversion = "6.1.3";
     public static string $moduleversion = "6.1.3";
@@ -379,6 +314,7 @@ class Main extends PluginBase implements Listener
     // How long to wait in seconds before not counting a players online time
     public int $timeout = 300;
     public static $lastmoved = [];
+    private $song;
 
     public static function getInstance()
     {
@@ -396,18 +332,6 @@ class Main extends PluginBase implements Listener
         $start = !isset(Main::$instance);
         Main::$instance = $this;
 
-        if ($start) {
-            $generators = [
-                "ender" => EnderGenerator::class,
-                "void" => VoidGenerator::class,
-                "nether" => NetherGenerator::class,
-                "normal" => NormalGenerator::class
-            ];
-
-            foreach ($generators as $name => $class) {
-                GeneratorManager::getInstance()->addGenerator($class, $name, fn() => null, true);
-            }
-        }
         $this->getServer()->getCraftingManager()->registerShapedRecipe(new ShapedRecipe( #Spyglass
                 [
                     'AAA',
@@ -469,9 +393,9 @@ class Main extends PluginBase implements Listener
     public function onEnable(): void
     {
         if (!$this->isSpoon()) {
-            /*if (!InvMenuHandler::isRegistered()) {
+            if (!InvMenuHandler::isRegistered()) {
                 InvMenuHandler::register($this);
-            }*/
+            }
             foreach (scandir($this->getServer()->getDataPath() . "worlds") as $file) {
                 if (Server::getInstance()->getWorldManager()->isWorldGenerated($file)) {
                     $this->getServer()->getWorldManager()->loadWorld($file);
@@ -536,7 +460,6 @@ class Main extends PluginBase implements Listener
             #ShopSystemEnde
             $this->myplot = $this->getServer()->getPluginManager()->getPlugin("MyPlot");
             $this->economyapi = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI");
-            $this->multiworld = $this->getServer()->getPluginManager()->getPlugin("MultiWorld");
             $this->starterkit = $this->getServer()->getPluginManager()->getPlugin("StarterKit");
             $this->bedrockeconomy = $this->getServer()->getPluginManager()->getPlugin("BedrockEconomy");
             $this->world = $this->getServer()->getPluginManager()->getPlugin("Worlds");
@@ -664,8 +587,8 @@ class Main extends PluginBase implements Listener
             $this->getServer()->getCommandMap()->register("adminitem", new AdminItemsCommand($this));
             $this->getServer()->getCommandMap()->register("chatclear", new ChatClearCommand($this));
             $this->getServer()->getCommandMap()->register("clearlagg", new ClearlaggCommand($this));
-            //$this->getServer()->getCommandMap()->register("craft", new CraftCommand($this));
-            //$this->getServer()->getCommandMap()->register("ec", new EnderChestCommand($this));
+           // $this->getServer()->getCommandMap()->register("craft", new CraftCommand($this));
+           // $this->getServer()->getCommandMap()->register("ec", new EnderChestCommand($this));
             $this->getServer()->getCommandMap()->register("erfolg", new ErfolgCommand($this));
             $this->getServer()->getCommandMap()->register("fake", new FakeCommand($this));
 
@@ -733,17 +656,6 @@ class Main extends PluginBase implements Listener
             }
             $this->getServer()->getPluginManager()->registerEvents(new EconomyChest($this, new ChestShopDataManager($this->getDataFolder() . Main::$cloud . 'ChestShop.sqlite3')), $this);
 
-            if ($this->multiworld or $this->world === null) {
-                /*foreach (scandir($this->getServer()->getDataPath() . "worlds") as $file) {
-                    if (Server::getInstance()->getWorldManager()->isWorldGenerated($file)) {
-                        $this->getServer()->getWorldManager()->loadWorld($file);
-                    }
-                }*/
-                $this->getServer()->getCommandMap()->register("world", new WorldCommand($this));
-            } else {
-                $this->getLogger()->info("Da MultiWorld oder Worlds bereits Installiert wurde ist das Interne WorldSystem Deaktiviert");
-            }
-
             //LiftSystem
             if ($modules->get("LiftSystem") === true) {
                 $this->getServer()->getPluginManager()->registerEvents(new BlockBreakListener($this), $this);
@@ -775,9 +687,9 @@ class Main extends PluginBase implements Listener
             $this->getServer()->getPluginManager()->registerEvents(new EventsListener(), $this);
             $this->getServer()->getPluginManager()->registerEvents(new Eventsettings($this), $this);
             //$this->getServer()->getPluginManager()->registerEvents(new BlocketRecipes($this), $this);
-            if ($api->getConfig("Lightningrod") === true) {
+            /*if ($api->getConfig("Lightningrod") === true) {
                 $this->getServer()->getPluginManager()->registerEvents(new LightningRod($this), $this);
-            }
+            }*/
 
             //listener
             $this->getServer()->getPluginManager()->registerEvents(new CollisionsListener($this), $this);
@@ -786,7 +698,6 @@ class Main extends PluginBase implements Listener
 
             //Server
             //$this->getServer()->getPluginManager()->registerEvents(new PlotBewertung($this), $this);
-            $this->getServer()->getPluginManager()->registerEvents(new Rezept($this), $this);
             if ($modules->get("RegelSystem") === true) {
                 $this->getServer()->getCommandMap()->register("regeln", new RegelServer($this));
                 $this->getServer()->getPluginManager()->registerEvents(new RegelEvent($this), $this);
@@ -828,18 +739,6 @@ class Main extends PluginBase implements Listener
                 }
             }
         }
-        /*$cfgs = $this->getConfig()->getAll();
-        if(count($cfgs) !== 1 || !isset($cfgs['radius'])){
-            throw new PluginException("Invalid configuration file: Must only contain 'radius'");
-        }
-        if(!is_int($cfgs['radius']) || $cfgs['radius'] <= 0){
-            throw new PluginException("Invalid configuration file: Radius must be a number bigger than 0");
-        }
-
-        $this->getServer()->getPluginManager()->registerEvents(
-            new SpawnProtectionListener($cfgs['radius']),
-            $this
-        );*/
     }
 
     public function onDisable(): void
@@ -910,7 +809,7 @@ class Main extends PluginBase implements Listener
         //Configs
         $modules = new Config($this->getDataFolder() . Main::$setup . "Modules.yml", Config::YAML);
         $gruppe = new Config($this->getDataFolder() . Main::$gruppefile . $player->getName() . ".json", Config::JSON);
-        $log = new Config($this->getDataFolder() . Main::$logdatafile . $player->getName() . ".json", Config::JSON);
+        $log = new Config($this->getDataFolder() . Main::$logdatafile . strtolower($player->getName()) . ".json", Config::JSON);
         $stats = new Config($this->getDataFolder() . Main::$statsfile . $player->getName() . ".json", Config::JSON);
         $user = new Config($this->getDataFolder() . Main::$userfile . $player->getName() . ".json", Config::JSON);
         $sstats = new Config($this->getDataFolder() . Main::$cloud . "stats.json", Config::JSON);
@@ -969,16 +868,16 @@ class Main extends PluginBase implements Listener
                 }
                 switch ($result) {
                     case 0:
-                        $api->addMarry($player, "partner", "Kein Partner/in");
-                        $api->addMarry($player, "application", "Keine Anfrage");
-                        $api->addMarry($player, "status", "Single");
-                        $api->addMarry($player, "hits", 0);
-                        $api->addMarry($player, "divorces", 0);
-                        $api->addMarry($player, "marrypoints", 0);
-                        $api->addMarry($player, "denieds", 0);
-                        $api->addMarry($player, "marry", false);
-                        $api->addMarry($player, "marryapplication", false);
-                        $api->addMarry($player, "registermarry", true);
+                        $api->addMarry($player->getName(), "partner", "Kein Partner/in");
+                        $api->addMarry($player->getName(), "application", "Keine Anfrage");
+                        $api->addMarry($player->getName(), "status", "Single");
+                        $api->addMarry($player->getName(), "hits", 0);
+                        $api->addMarry($player->getName(), "divorces", 0);
+                        $api->addMarry($player->getName(), "marrypoints", 0);
+                        $api->addMarry($player->getName(), "denieds", 0);
+                        $api->addMarry($player->getName(), "marry", false);
+                        $api->addMarry($player->getName(), "marryapplication", false);
+                        $api->addMarry($player->getName(), "registermarry", true);
                         break;
                 }
             });
@@ -1078,15 +977,15 @@ class Main extends PluginBase implements Listener
             $user->set("Clananfrage", false);
             $user->set("Clan", "No Clan");
             $user->set("register", true);
-            $api->addMarry($player, "partner", "Kein Partner/in");
-            $api->addMarry($player, "application", "Keine Anfrage");
-            $api->addMarry($player, "status", "Single");
-            $api->addMarry($player, "hits", 0);
-            $api->addMarry($player, "divorces", 0);
-            $api->addMarry($player, "marrypoints", 0);
-            $api->addMarry($player, "denieds", 0);
-            $api->addMarry($player, "marry", false);
-            $api->addMarry($player, "marryapplication", false);
+            $api->addMarry($player->getName(), "partner", "Kein Partner/in");
+            $api->addMarry($player->getName(), "application", "Keine Anfrage");
+            $api->addMarry($player->getName(), "status", "Single");
+            $api->addMarry($player->getName(), "hits", 0);
+            $api->addMarry($player->getName(), "divorces", 0);
+            $api->addMarry($player->getName(), "marrypoints", 0);
+            $api->addMarry($player->getName(), "denieds", 0);
+            $api->addMarry($player->getName(), "marry", false);
+            $api->addMarry($player->getName(), "marryapplication", false);
             $user->set("nodm", false);
             $user->set("rulesaccpet", false);
             $user->set("clananfrage", false);
@@ -2013,10 +1912,6 @@ class Main extends PluginBase implements Listener
     }
 
     //VanishEnde
-    public function onPlayerCreation(PlayerCreationEvent $event)
-    {
-        $event->setPlayerClass(CustomPlayer::class);
-    }
     //OnlineTime
     public function getDatabase(): OnlineSQLite
     {

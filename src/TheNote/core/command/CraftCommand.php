@@ -11,7 +11,12 @@
 
 namespace TheNote\core\command;
 
+use pocketmine\block\BlockFactory;
+use pocketmine\block\BlockLegacyIds;
+use pocketmine\block\inventory\CraftingTableInventory;
 use pocketmine\block\VanillaBlocks;
+use pocketmine\crafting\CraftingGrid;
+use pocketmine\network\mcpe\protocol\ContainerOpenPacket;
 use pocketmine\network\mcpe\protocol\types\inventory\WindowTypes;
 use pocketmine\player\Player;
 use pocketmine\utils\Config;
@@ -39,17 +44,28 @@ class CraftCommand extends Command
 
 	}
 	public function execute(CommandSender $sender, string $commandLabel, array $args): bool
-	{
-		$api = new BaseAPI();
-		if (!$sender instanceof Player) {
-			$sender->sendMessage($api->getSetting("error") . $api->getLang("commandingame"));
-			return false;
-		}
-		if (!$this->testPermission($sender)) {
-			$sender->sendMessage($api->getSetting("error") . $api->getLang("nopermission"));
-			return false;
-		}
-        self::WORKBENCH()->send($sender);
+    {
+        $api = new BaseAPI();
+        if (!$sender instanceof Player) {
+            $sender->sendMessage($api->getSetting("error") . $api->getLang("commandingame"));
+            return false;
+        }
+        if (!$this->testPermission($sender)) {
+            $sender->sendMessage($api->getSetting("error") . $api->getLang("nopermission"));
+            return false;
+        }
+        $sender->setCurrentWindow(new CraftingTableInventory($sender->getPosition()));
+
+        //self::WORKBENCH()->send($sender);
         return true;
-	}
+    }
+    /*public function sendCraftingTable(Player $player)
+    {
+        $block1 = BlockFactory::get(BlockLegacyIds::CRAFTING_TABLE, 0);
+        $block1->x = (int)floor($player->getPosition()->x);
+        $block1->y = (int)floor($player->getPosition()->y) - 2;
+        $block1->z = (int)floor($player->getPosition()->z);
+        $block1->level = $player->getWorld();
+        $block1->level->sendBlocks([$player], [$block1]);
+    }*/
 }

@@ -2,12 +2,13 @@
 
 namespace TheNote\core\task;
 
+use pocketmine\player\Player;
 use pocketmine\scheduler\Task;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use TheNote\core\BaseAPI;
 use TheNote\core\Main;
-use TheNote\core\player\Player;
+
 
 class AFKTask extends Task
 {

@@ -13,9 +13,7 @@ namespace TheNote\core\events;
 
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerCreationEvent;
 use pocketmine\player\Player;
-use TheNote\core\player\Player as MyPlayer;
 
 use TheNote\core\Main;
 
@@ -30,7 +28,4 @@ class EventsListener implements Listener
 			}
 		}
 	}
-    public function onPlayerCreation(PlayerCreationEvent $event){
-        $event->setPlayerClass(MyPlayer::class);
-    }
 }

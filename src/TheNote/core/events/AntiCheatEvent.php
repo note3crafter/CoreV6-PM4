@@ -7,16 +7,18 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\player\GameMode;
+use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use TheNote\core\BaseAPI;
 use TheNote\core\Main;
-use TheNote\core\player\Player;
 
 class AntiCheatEvent implements Listener
 {
     public $User = [];
     private $breakTimes = [];
+
+    private Main $plugin;
 
     public function __construct(Main $plugin)
     {

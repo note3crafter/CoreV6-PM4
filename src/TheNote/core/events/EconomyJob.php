@@ -17,6 +17,7 @@ class EconomyJob implements Listener
     private $jobs;
     private $player;
     private $api;
+    private $plugin;
 
     public function __construct(Main $plugin)
     {

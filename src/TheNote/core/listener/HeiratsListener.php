@@ -84,14 +84,14 @@ class HeiratsListener implements Listener {
                             $message2 = str_replace("{victim}", $sender->getName(), $lang->get("heischsender"));
                             $target->sendMessage($config->get("heirat") . $message2);
                         }
-                        $api->addMarry($sender, "marry", false);
-                        $api->addMarry($target, "marry", false);
-                        $api->addMarry($sender, "partner", "Kein Partner");
-                        $api->addMarry($target, "partner", "Kein Partner");
-                        $api->addMarry($sender, "status", "Single");
-                        $api->addMarry($target, "status", "Single");
-                        $api->addMarry($sender, "divorces", ($api->getMarry($sender->getName(), "divorces") + 1));
-                        $api->addMarry($target, "divorces", ($api->getMarry($target->getName(), "divorces") + 1));
+                        $api->addMarry($sender->getName(), "marry", false);
+                        $api->addMarry($target->getName(), "marry", false);
+                        $api->addMarry($sender->getName(), "partner", "Kein Partner");
+                        $api->addMarry($target->getName(), "partner", "Kein Partner");
+                        $api->addMarry($sender->getName(), "status", "Single");
+                        $api->addMarry($target->getName(), "status", "Single");
+                        $api->addMarry($sender->getName(), "divorces", ($api->getMarry($sender->getName(), "divorces") + 1));
+                        $api->addMarry($target->getName(), "divorces", ($api->getMarry($target->getName(), "divorces") + 1));
                     }
                 }
             }

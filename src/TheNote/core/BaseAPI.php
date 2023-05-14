@@ -9,7 +9,6 @@ use pocketmine\utils\Config;
 
 class BaseAPI implements Listener
 {
-
     //PlayerFinder
     public function findPlayer(CommandSender $sender, string $playerName) : ?Player{
         $langsettings = new Config(Main::getInstance()->getDataFolder() . Main::$lang . "LangConfig.yml", Config::YAML);
@@ -304,15 +303,15 @@ class BaseAPI implements Listener
 
     //ClanAPI
     //MarryAPI
-    public function getMarry(string $player, $marry)
+    public function getMarry($player, $marry)
     {
         $hei = new Config(Main::getInstance()->getDataFolder() . Main::$heifile . $player . ".json", Config::JSON);
         $x = $hei->get($marry);
         return $x;
     }
-    public function addMarry(Player $player, $marry, $result): bool
+    public function addMarry($player, $marry, $result): bool
     {
-        $hei = new Config(Main::getInstance()->getDataFolder() . Main::$heifile . $player->getName() . ".json", Config::JSON);
+        $hei = new Config(Main::getInstance()->getDataFolder() . Main::$heifile . $player . ".json", Config::JSON);
         $hei->set($marry, $result);
         $hei->save();
         return true;

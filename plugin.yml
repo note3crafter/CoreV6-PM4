@@ -1,6 +1,6 @@
 name: CoreV6
 main: TheNote\core\Main
-version: 6.3.1_STABLE
+version: 6.3.2_STABLE
 api:
   - 4.20.1
 author: TheNote/Rudolf2000/note3crafter
@@ -14,6 +14,7 @@ authors:
   - LookItsAku #Hilfe
   - Philip #Für Hilfe
   - galaxytwenty #Hilfe bei den Blöcken
+  - ipad54 #iNether & Composter
   - Hagnbrain #homesystem
   - EnderDirt #füraltecodes
   - Crasher508 #Fixxer
@@ -22,7 +23,7 @@ authors:
   - muqsit #InvMenü
   - TheBalkanDev #ecinvsee, invsee
   - GamerMJay #hilfe
-description: Core v6.3.1 STABLE
+description: Core v6.3.2 STABLE
 extensions:
   - sqlite3
 permissions:
@@ -271,8 +272,6 @@ permissions:
   core.events.blockbreak:
     default: op
   core.events.chat:
-    default: op
-  core.events.spawnbypass:
     default: op
   core.lift.admin.remove:
     default: op

@@ -21,6 +21,8 @@ use TheNote\core\formapi\SimpleForm;
 
 class UserdataCommand extends Command
 {
+    private Main $plugin;
+
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
@@ -41,14 +43,14 @@ class UserdataCommand extends Command
             return false;
         }
         $target = $api->findPlayer($sender, $args[0]);
-        if (!file_exists($this->plugin->getDataFolder() . Main::$logdatafile . "$target.json")) {
+        if (!file_exists($this->plugin->getDataFolder() . Main::$logdatafile . strtolower($target) . ".json")) {
             $sender->sendMessage($api->getSetting("error") . $api->getLang("userdataerror"));
             return false;
         }
         if (isset($args[0])) {
-            $ud = new Config($this->plugin->getDataFolder() . Main::$logdatafile . "$target.json", Config::JSON);
+            $ud = new Config($this->plugin->getDataFolder() . Main::$logdatafile . strtolower($target) . ".json", Config::JSON);
             if ($args[0]) {
-                if (!file_exists($this->plugin->getDataFolder() . Main::$logdatafile . "$target.json")) {
+                if (!file_exists($this->plugin->getDataFolder() . Main::$logdatafile . strtolower($target) . ".json")) {
                     $sender->sendMessage($api->getSetting("error") . $api->getLang("userdataerror"));
                     return true;
                 } else {

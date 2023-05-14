@@ -39,9 +39,9 @@ class  CollisionsListener implements Listener
                     $speed = round($from->distanceSquared($to), 3);
                     if ($speed > 0.15) {
                         $knockvalue = $speed / 1.4;
-                        $viewer->knockBack($viewer->getPosition()->getX() - $player->getPosition()->getX(), $viewer->getPosition()->getZ() - $player->getPosition()->getZ(), $knockvalue);
-                        $player->knockBack($player->getPosition()->getX() - $viewer->getPosition()->getX(), $player->getPosition()->getZ() - $viewer->getPosition()->getZ(), $knockvalue);
-                    } else $player->knockBack($player->getPosition()->getX() - $viewer->getPosition()->getX(), $player->getPosition()->getZ() - $viewer->getPosition()->getZ(), 0.1);
+                        $viewer->knockBack($viewer->getPosition()->getX() - $player->getPosition()->getX(), $viewer->getPosition()->getZ() - $player->getPosition()->getZ(), $knockvalue, 0);
+                        $player->knockBack($player->getPosition()->getX() - $viewer->getPosition()->getX(), $player->getPosition()->getZ() - $viewer->getPosition()->getZ(), $knockvalue, 0);
+                    } else $player->knockBack($player->getPosition()->getX() - $viewer->getPosition()->getX(), $player->getPosition()->getZ() - $viewer->getPosition()->getZ(), 0.1, 0);
                 }
             }
         }

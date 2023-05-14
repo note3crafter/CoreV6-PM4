@@ -37,6 +37,7 @@ class EconomyChest implements Listener
         switch ($block->getID()) {
             case BlockLegacyIds::SIGN_POST:
             case BlockLegacyIds::WALL_SIGN:
+
                 if (($shopInfo = $this->databaseManager->selectByCondition([
                         "signX" => $block->getPosition()->getFloorX(),
                         "signY" => $block->getPosition()->getFloorY(),
@@ -61,6 +62,11 @@ class EconomyChest implements Listener
                     $player->sendTip($api->getSetting("error") . "§cDu hast zu wenig Geld!");
                     return;
                 }
+                $subject = $player->getServer()->getPlayerByPrefix($shopInfo['shopOwner']);
+                if ($subject === null) {
+                    $player->sendMessage($api->getSetting("error") . $api->getLang("playernotonline"));
+                    return;
+                }
                 $chest = $player->getWorld()->getTile(new Vector3($shopInfo['chestX'], $shopInfo['chestY'], $shopInfo['chestZ']));
                 $itemNum = 0;
                 $pID = $shopInfo['productID'];
@@ -77,13 +83,15 @@ class EconomyChest implements Listener
                     }
                     return;
                 }
+
                 $item = ItemFactory::getInstance()->get((int)$shopInfo['productID'], (int)$shopInfo['productMeta'], (int)$shopInfo['saleNum']);
                 $chest->getInventory()->removeItem($item);
                 $player->getInventory()->addItem($item);
                 $sellerMoney = $api->getMoney($shopInfo['shopOwner']);
 
                 $chestShopIssuer = "ChestShop";
-                if ($api->removeMoney($shopInfo['shopOwner'], (int)$shopInfo['price']) === $api->addMoney($shopInfo['shopOwner'], (int)$shopInfo['price'])) {
+
+                if ($api->removeMoney($player, (int)$shopInfo['price']) === $api->addMoney($subject, (int)$shopInfo['price'])) {
                     $player->sendTip($api->getSetting("money") . "§dDer Einkauf war erfolgreich!");
                     if (($p = $this->plugin->getServer()->getPlayerExact($shopInfo['shopOwner'])) !== null) {
                         $p->sendTip($api->getSetting("money") . "§e{$player->getName()} §dhat von dir §e" . ItemFactory::getInstance()->get($pID, $pMeta)->getName() . " §dfür§e " . $shopInfo['price'] . "§e$ §dgekauft!");
@@ -95,6 +103,7 @@ class EconomyChest implements Listener
                     $api->setMoney($shopInfo['shopOwner'], $sellerMoney);
                     $player->sendTip($api->getSetting("error") . "§cDer Kauf ist Fehlgeschlagen!");
                 }
+
                 break;
 
             case BlockLegacyIds::CHEST:
