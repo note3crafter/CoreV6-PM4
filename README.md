@@ -8,7 +8,7 @@ Du willst helfen? Hier mein Discord! [![Discord](https://img.shields.io/discord/
 - [Hier downloaden](https://poggit.pmmp.io/ci/note3crafter/Core-V6/Core-V6)!
 - Bitte jeden Fehler umgehend Melden!!!
 
-# Neues v6.3.2 BETA
+# Neues v6.3.2 STABLE
 - WorldSystem Entfernt wegen Probleme
 - Sämtliche Unnötigen Dinge Entfernt!  
 - ChestShop überarbeitet bzw Fehler Behoben
@@ -79,7 +79,6 @@ Und an unseren Forker! Gebt das Plugin nicht als Euers aus! Ich habe eine menge 
 - [CortexPE](https://github.com/CortexPE) (Für ein Teil das ich von Teaspoon mit Intregiert habe) 
 - [MDevPmmP](https://github.com/MarlonDevPMMP) (Für das GroupSystem, EconomySystem)
 - [TheBalkanDev](https://github.com/TheBalkanDev) (Für das Invsee/Enderinvsee)  
-- [TuranicTeam](https://github.com/TuranicTeam) (Für Sämtliche Items/Blöcke etc)
 - [Muqsit](https://github.com/Muqsit) (Für das InvMenü)
 - [jojoe77777](https://github.com/jojoe77777) (Für FormAPI)
 - [ipad54](https://github.com/ipad54/INether) (Für Composter und Netherstuff)
