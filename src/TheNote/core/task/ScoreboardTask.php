@@ -16,7 +16,6 @@ use pocketmine\network\mcpe\protocol\SetScorePacket;
 use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
 use pocketmine\player\Player;
 use pocketmine\scheduler\Task;
-use pocketmine\Server;
 use pocketmine\utils\Config;
 use TheNote\core\BaseAPI;
 use TheNote\core\Main;
@@ -24,8 +23,7 @@ use TheNote\core\utils\Manager as SBM;
 
 class ScoreboardTask extends Task
 {
-    //private $plugin;
-    //private $line = [];
+    private Main $plugin;
 
     function __construct(Main $plugin)
     {
