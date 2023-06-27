@@ -1,5 +1,8 @@
 <h1>CoreV6 BETA<img src="https://github.com/note3crafter/Core-V5/blob/main/resources/icon.png" height="64" width="64" align="left"></img></h1>
 <br />
+
+CoreV6 is outdatet Please Use [ProjectCore](https://github.com/note3crafter/ProjectCore) its time for a new Ära!
+
 Für Pocketmine API 4.20.1
 
 
